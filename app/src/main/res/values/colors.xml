@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="navigation">@android:color/darker_gray</color>
+    <color name="navigation_checked">@android:color/black</color>
+
+    <color name="colorGray">#CCCACA</color>
+    <color name="colorwhite">#FAF8F8</color>
+
+    <color name="colorRed">#f44336</color>
+    <color name="hintcolor">#ef7e49</color>
+    <color name="editcolor">#f96621</color>
+
+
+</resources>

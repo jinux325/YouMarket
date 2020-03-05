@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context=".signup.SmsActivity">
+<!--
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/sms_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+
+        android:elevation="2dp"/>
+-->
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        >
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_locked"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textSize="15sp"
+            android:text="UMarket은 휴대폰 번호로 가입해요. 번호는 안전하게 보관되며 어디에도 공개되지 않아요."
+            />
+
+
+    </LinearLayout>
+
+
+
+    <EditText
+        android:id="@+id/editTextMobile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        android:digits="0123456789"
+
+        android:drawablePadding="10dp"
+        android:hint="번호입력 "
+        android:inputType="phone"
+        android:maxLength="11" />
+
+    <Button
+        android:id="@+id/buttonContinue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextMobile"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        android:background="@color/colorPrimaryDark"
+        android:text="인증문자 받기"
+        android:textAllCaps="false"
+        android:textSize="18dp"
+        android:textColor="@color/colorPrimary" />
+
+
+
+
+
+
+
+
+
+
+
+
+    <EditText
+        android:id="@+id/verifyEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        android:digits="0123456789"
+
+        android:drawablePadding="10dp"
+        android:hint="인증번호 "
+        android:inputType="phone"
+        android:maxLength="11" />
+
+    <Button
+        android:id="@+id/verifyButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextMobile"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        android:background="@color/colorPrimaryDark"
+        android:text="인증"
+        android:textAllCaps="false"
+        android:textSize="18dp"
+        android:textColor="@color/colorPrimary" />
+
+   <!-- <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextMobile"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        android:background="@color/colorPrimaryDark"
+        android:text="로그인"
+        android:textAllCaps="false"
+        android:textSize="18dp"
+        android:textColor="@color/colorPrimary" />
+    <Button
+        android:id="@+id/addrButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextMobile"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        android:background="@color/colorPrimaryDark"
+        android:text="주소"
+        android:textAllCaps="false"
+        android:textSize="18dp"
+        android:textColor="@color/colorPrimary" />
+-->
+
+
+
+</LinearLayout>

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/setting_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:elevation="2dp"/>
+
+    <TextView
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:text="동네 선택"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:textSize="12dp"
+        android:textStyle="normal"
+        android:text="지역은 최소 1개 이상 최대 2개까지 설정 가능해요."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        >
+
+        <LinearLayout
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/addr1"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/button">
+
+            <TextView
+                android:id="@+id/tv_addr1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_marginLeft="13dp"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:textColor="@color/colorwhite"
+                android:layout_gravity="center_vertical"
+                />
+
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="horizontal"
+                android:layout_marginRight="10dp"
+                android:gravity="right">
+                <ImageView
+                    android:id="@+id/addr1_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|right"
+                    android:src="@drawable/ic_circlecancel" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+        <!--
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_circlecancel"
+                            android:layout_gravity="right"
+                            />
+                </LinearLayout>-->
+
+        <LinearLayout
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="5dp"
+            android:id="@+id/addr2_add"
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/location_button"
+            android:gravity="center_horizontal|center"
+            >
+
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_plus"
+                android:gravity="center_horizontal"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/addr2"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/button"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_addr2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_marginLeft="13dp"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:textColor="@color/colorwhite"
+                android:layout_gravity="center_vertical"
+                />
+
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="horizontal"
+                android:layout_marginRight="10dp"
+                android:gravity="right">
+                <ImageView
+                    android:id="@+id/addr2_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|right"
+                    android:src="@drawable/ic_circlecancel" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

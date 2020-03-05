@@ -1,0 +1,93 @@
+{
+  "project_info": {
+    "project_number": "34594926605",
+    "firebase_url": "https://umarket-d3048.firebaseio.com",
+    "project_id": "umarket-d3048",
+    "storage_bucket": "umarket-d3048.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34594926605:android:d38ef280cc50360f",
+        "android_client_info": {
+          "package_name": "com.market.u"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "34594926605-mq13qgr59eanmct4dhe1lqadi3meqi8d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.market.u",
+            "certificate_hash": "f0872ee63af6492759b8539558fc21b65ad12fee"
+          }
+        },
+        {
+          "client_id": "34594926605-r4f483dl8vfkuimvp7kird96bm9hfqqh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.market.u",
+            "certificate_hash": "ac3fcc2035f5de69925858d7beb3d76f12e00ef6"
+          }
+        },
+        {
+          "client_id": "34594926605-m5sf329fbka9m0lqdrrhn2r8jp6viri1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdTSXoJXwGjndhtxN2hfCd_mRuPuPymdk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "34594926605-m5sf329fbka9m0lqdrrhn2r8jp6viri1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34594926605:android:87d7af753d967ab5a66544",
+        "android_client_info": {
+          "package_name": "com.u.marketapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "34594926605-g74tkp0ibg282iojtvn5cd9sjvh19v2v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.u.marketapp",
+            "certificate_hash": "f0872ee63af6492759b8539558fc21b65ad12fee"
+          }
+        },
+        {
+          "client_id": "34594926605-m5sf329fbka9m0lqdrrhn2r8jp6viri1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdTSXoJXwGjndhtxN2hfCd_mRuPuPymdk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "34594926605-m5sf329fbka9m0lqdrrhn2r8jp6viri1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

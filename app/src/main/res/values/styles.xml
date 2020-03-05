@@ -1,0 +1,58 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="edit_color" parent="@android:style/TextAppearance">
+        <item name="colorControlNormal">@color/editcolor</item>
+        <item name="colorControlActivated">@color/editcolor</item>
+        <item name="android:textCursorDrawable">@color/editcolor</item>
+        <item name="android:textColor">@color/editcolor</item>
+        <item name="android:textColorHighlight">@color/editcolor</item>
+    </style>
+
+    <!--No actionbar-->
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <!-- 에러 -->
+    <style name="error_appearance" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/colorRed</item>
+    </style>
+
+    <!-- 힌트 -->
+    <style name="hint_color" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/hintcolor</item>
+    </style>
+
+    <!-- 선 - 상품등록 -->
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/black_30</item>
+    </style>
+
+    <!-- BottomNavigationView Active -->
+    <style name="BottomNavigation.Active" parent="TextAppearance.AppCompat.Caption">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <!-- BottomNavigationView Inactive -->
+    <style name="BottomNavigation" parent="TextAppearance.AppCompat.Caption">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+</resources>
