@@ -25,7 +25,7 @@ class SmsActivity : AppCompatActivity() {
 
     private val TAG = "SmsActivity"
     lateinit var mAuth: FirebaseAuth
-    lateinit var codeSent : String
+    var codeSent : String = ""
     var phone=""
     private val db = FirebaseFirestore.getInstance()
 
