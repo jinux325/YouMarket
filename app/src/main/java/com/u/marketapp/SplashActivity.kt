@@ -32,9 +32,10 @@ class SplashActivity : AppCompatActivity() {
 
         val hd = Handler()
         hd.postDelayed({
-            if(FirebaseAuth.getInstance().currentUser!!.phoneNumber!! != null) {
+           /* if(FirebaseAuth.getInstance().currentUser!!.phoneNumber!! != null) {
                 number = FirebaseAuth.getInstance().currentUser!!.phoneNumber!!
-            }
+            }*/
+            number = ""
             if (log == "IN") {
                 Log.e(TAG, "상태 :$log")
                 val intent = Intent(this@SplashActivity, MainActivity::class.java)
