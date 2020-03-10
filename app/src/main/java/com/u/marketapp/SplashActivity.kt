@@ -31,10 +31,16 @@ class SplashActivity : AppCompatActivity() {
         Log.e("log $TAG", log)
 
         val hd = Handler()
+        val intent = Intent(this@SplashActivity, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        
+
+        startActivity(intent)
+        /*
         hd.postDelayed({
-           /* if(FirebaseAuth.getInstance().currentUser!!.phoneNumber!! != null) {
+           *//* if(FirebaseAuth.getInstance().currentUser!!.phoneNumber!! != null) {
                 number = FirebaseAuth.getInstance().currentUser!!.phoneNumber!!
-            }*/
+            }*//*
             number = ""
             if (log == "IN") {
                 Log.e(TAG, "상태 :$log")
@@ -60,6 +66,6 @@ class SplashActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }, 1000) // 1초 후 이미지를 닫습니다
-
+*/
     }
 }
