@@ -4,212 +4,230 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable
-            name="product"
-            type="com.wk.umarket.entity.ProductEntity" />
+        <variable name="item" type="com.u.marketapp.entity.ProductEntity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:stateListAnimator="@animator/elevation_state"
-        android:layout_marginTop="1dp">
+        android:layout_marginTop="1dp"
+        android:background="@android:color/background_light"
+        android:stateListAnimator="@animator/elevation_state">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusable="true"
+            android:clickable="true"
             android:background="?attr/selectableItemBackground"
-            android:padding="10dp"
-            app:layout_constraintLeft_toLeftOf="parent"
+            android:padding="5dp"
+            android:elevation="1dp"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
+            <!-- 이미지 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_view_thumnail"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:cardCornerRadius="8dp"
+                app:cardUseCompatPadding="true"
+                app:cardBackgroundColor="@color/cardview_light_background"
+                tools:ignore="PrivateResource">
 
-                <!-- 썸네일 이미지 -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/card_view"
-                    android:layout_width="110dp"
-                    android:layout_height="110dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="8dp"
-                    app:cardUseCompatPadding="false"
-                    app:cardElevation="1dp">
+                <ImageView
+                    android:id="@+id/image_view_thumnail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    bindUrl="@{item.imageArray}"
+                    tools:src="@drawable/ic_launcher_background"
+                    tools:ignore="ContentDescription" />
 
-                    <ImageView
-                        android:id="@+id/image_view_thumnail"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:adjustViewBounds="true"
-                        android:background="@color/cardview_light_background"
-                        tools:src="@drawable/ic_launcher_background"
-                        tools:ignore="ContentDescription,PrivateResource" />
+            </androidx.cardview.widget.CardView>
 
-                </com.google.android.material.card.MaterialCardView>
+            <!-- 제목 & 주소 & 시간 & 가격 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_root"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="5dp"
+                android:layout_marginStart="5dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/card_view_thumnail"
+                app:layout_constraintRight_toRightOf="parent">
 
-                <!-- 제목 & 등록 장소 & 등록일 & 가격 -->
-                <LinearLayout
+                <!-- 제목 -->
+                <TextView
+                    android:id="@+id/text_view_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="10dp"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:hint="제목이 없습니다."
+                    android:text="@{item.title}"
+                    app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/card_view">
+                    tools:text="제목입니다."
+                    tools:ignore="HardcodedText" />
 
-                    <TextView
-                        android:id="@+id/text_view_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:maxLines="2"
-                        android:ellipsize="end"
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:hint="상품 제목"
-                        tools:text="상품 제목"
-                        tools:ignore="HardcodedText" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:orientation="horizontal"
-                        tools:ignore="HardcodedText">
-
-                        <TextView
-                            android:id="@+id/text_view_address"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@android:color/darker_gray"
-                            android:textSize="12sp"
-                            android:hint="등록 장소"
-                            tools:text="등록 장소" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@android:color/darker_gray"
-                            android:textSize="12sp"
-                            tools:text=" · " />
-
-                        <TextView
-                            android:id="@+id/text_view_days"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@android:color/darker_gray"
-                            android:textSize="12sp"
-                            android:hint="등록일"
-                            tools:text="등록일" />
-
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/text_view_price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        android:textSize="14sp"
-                        android:hint="상품 가격"
-                        tools:text="상품 가격"
-                        tools:ignore="HardcodedText" />
-
-                </LinearLayout>
-
-                <!-- 댓글 & 채팅 & 좋아요 -->
+                <!-- 주소 & 시간 -->
                 <LinearLayout
+                    android:id="@+id/layout_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintRight_toRightOf="parent">
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/text_view_title">
 
+                    <TextView
+                        android:id="@+id/text_view_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="@android:color/darker_gray"
+                        android:text="@{item.address}"
+                        tools:text="세류동"
+                        tools:ignore="HardcodedText"/>
+
+                    <TextView
+                        android:id="@+id/text_view_dot"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="@android:color/darker_gray"
+                        android:text=" · "
+                        tools:ignore="HardcodedText"/>
+
+                    <TextView
+                        android:id="@+id/text_view_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="@android:color/darker_gray"
+                        android:text="@{@string/format(item.regDate)}"
+                        tools:text="시간"
+                        tools:ignore="HardcodedText"/>
+
+                </LinearLayout>
+
+                <!-- 가격 -->
+                <TextView
+                    android:id="@+id/text_view_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:text="@{@string/price(item.price)}"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/layout_address"
+                    tools:text="가격입니다."
+                    tools:ignore="HardcodedText" />
+
+                <!-- 댓글 & 채팅 & 좋아요 -->
+                <LinearLayout
+                    android:id="@+id/layout_bottom"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:orientation="horizontal"
+                    android:gravity="end|bottom"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/text_view_price"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <!-- 댓글 -->
                     <LinearLayout
                         android:id="@+id/layout_comment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:gravity="center_vertical"
                         android:visibility="visible"
+                        android:orientation="horizontal"
                         tools:ignore="UseCompoundDrawables">
 
                         <ImageView
                             android:layout_width="15dp"
                             android:layout_height="15dp"
+                            android:layout_marginEnd="5dp"
                             android:src="@drawable/ic_communication"
                             tools:ignore="ContentDescription" />
 
                         <TextView
-                            android:id="@+id/text_view_comment"
+                            android:id="@+id/text_view_comment_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
                             android:textSize="13sp"
-                            tools:text="0"
-                            tools:ignore="HardcodedText" />
+                            android:text="@{Integer.toString(item.commentSize)}"
+                            tools:text="0"/>
 
                     </LinearLayout>
 
+                    <!-- 채팅 -->
                     <LinearLayout
                         android:id="@+id/layout_chatting"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
                         android:layout_marginStart="10dp"
+                        android:gravity="center_vertical"
                         android:visibility="visible"
+                        android:orientation="horizontal"
                         tools:ignore="UseCompoundDrawables">
 
                         <ImageView
                             android:layout_width="15dp"
                             android:layout_height="15dp"
+                            android:layout_marginEnd="5dp"
                             android:src="@drawable/ic_speech_bubble"
                             tools:ignore="ContentDescription" />
 
                         <TextView
-                            android:id="@+id/text_view_chatting"
+                            android:id="@+id/text_view_chatting_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
                             android:textSize="13sp"
-                            tools:text="0"
-                            tools:ignore="HardcodedText" />
+                            android:text="@{Integer.toString(item.chattingRoomSize)}"
+                            tools:text="0"/>
 
                     </LinearLayout>
 
+                    <!-- 좋아요 -->
                     <LinearLayout
                         android:id="@+id/layout_attention"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
                         android:layout_marginStart="10dp"
+                        android:gravity="center_vertical"
                         android:visibility="visible"
+                        android:orientation="horizontal"
                         tools:ignore="UseCompoundDrawables">
 
                         <ImageView
                             android:layout_width="15dp"
                             android:layout_height="15dp"
+                            android:layout_marginEnd="5dp"
                             android:src="@drawable/ic_hart"
                             tools:ignore="ContentDescription" />
 
                         <TextView
-                            android:id="@+id/text_view_attention"
+                            android:id="@+id/text_view_attention_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
                             android:textSize="13sp"
-                            tools:text="0"
-                            tools:ignore="HardcodedText" />
+                            android:text="@{Integer.toString(item.attentionSize)}"
+                            tools:text="0"/>
 
                     </LinearLayout>
 

@@ -27,4 +27,7 @@
         <item>삽니다</item>
     </string-array>
 
+    <string name="price">%,d원</string>
+    <string name="format">%1$tY년 %1$tm월 %1$td일</string>
+
 </resources>

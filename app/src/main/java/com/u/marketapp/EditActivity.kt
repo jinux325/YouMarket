@@ -1,7 +1,6 @@
 package com.u.marketapp
 
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -12,13 +11,15 @@ import android.view.MenuItem
 import android.view.View
 import android.webkit.MimeTypeMap
 import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.u.marketapp.adapter.PreviewRVAdapter
-import com.wk.umarket.entity.ProductEntity
+import com.u.marketapp.entity.ProductEntity
 import gun0912.tedimagepicker.builder.TedImagePicker
 import gun0912.tedimagepicker.builder.type.MediaType
 import kotlinx.android.synthetic.main.activity_edit.*
@@ -90,12 +91,8 @@ class EditActivity : AppCompatActivity() {
     private var pointNumStr = ""
     private fun setEditTextPrice() {
         edit_text_price.addTextChangedListener(object: TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
+            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if(!TextUtils.isEmpty(s.toString()) && s.toString() != pointNumStr) {
                     pointNumStr = makeCommaNumber(s.toString().replace(",","").toLong())
@@ -181,9 +178,11 @@ class EditActivity : AppCompatActivity() {
     // 데이터 수집
     private fun getEditData() : ProductEntity {
         val item = ProductEntity()
+        item.seller = FirebaseFirestore.getInstance().collection("User").document("QdqJ1cFReQ7EHxf4bptP") // 판매자 정보
         item.category = text_view_category.text.toString() // 카테고리
         item.title = edit_text_title.text.toString() // 제목
-        item.price = edit_text_price.text.toString() // 가격
+        item.address = "망포동"
+        item.price = edit_text_price.text.toString().replace(",", "").toInt() // 가격
         item.suggestion = check_box_suggestion.isChecked // 가격 제안 여뷰
         item.contents = edit_text_contents.text.toString() // 내용
         return item
@@ -195,11 +194,11 @@ class EditActivity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         db.collection("Product").add(item).addOnCompleteListener {
             if (it.isSuccessful) {
-                Log.i(TAG, "DocumentSnapshot added with ID : ${it.result?.id}")
+                Log.i(TAG, "추가된 상품 문서 : ${it.result?.id}")
                 if (adapter.itemCount > 0) {
                     saveImage(it.result?.id)
                 }
-                addSellList(null)
+                addSellList(it.result)
                 finish() // 종료
             }
         }
@@ -207,27 +206,46 @@ class EditActivity : AppCompatActivity() {
 
     // 판매내역 등록
     private fun addSellList(document: DocumentReference?) {
-        // TODO 유저 정보의 판매내역에 추가한 상품 정보 등록
         val db = FirebaseFirestore.getInstance()
-
+//        val uid = FirebaseAuth.getInstance().currentUser!!.uid
+        document.let { item ->
+            db.collection("User").document("QdqJ1cFReQ7EHxf4bptP").update("salesHistory", FieldValue.arrayUnion(item)).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.i(TAG, "판매내역 업데이트 성공! : ${item?.id}")
+                }
+            }
+        }
     }
 
     // 이미지 저장
     private fun saveImage(pid: String?) {
         val storage = FirebaseStorage.getInstance()
-        val dir = "${SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(Date())}/${pid}"
-        for (uri in adapter.getAllData()) {
-            val fileName = "${System.currentTimeMillis()}.${getFileExtension(uri)}"
-            val ref = storage.getReference("Product").child(dir).child(fileName)
-            ref.putFile(uri).continueWithTask {
-                if (!it.isSuccessful) {
-                    throw it.exception!!
+        pid.let { item ->
+            val dir = "${SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(Date())}/${item}"
+            for (uri in adapter.getAllData()) {
+                val fileName = "${System.currentTimeMillis()}.${getFileExtension(uri)}"
+                val ref = storage.getReference("Product").child(dir).child(fileName)
+                ref.putFile(uri).continueWithTask {
+                    if (!it.isSuccessful) {
+                        throw it.exception!!
+                    }
+                    return@continueWithTask ref.downloadUrl
+                }.addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.i(TAG, "이미지 추가 성공 : ${it.result.toString()}")
+                        updateImage(item, it.result.toString())
+                    }
                 }
-                return@continueWithTask ref.downloadUrl
-            }.addOnCompleteListener {
-                if (it.isSuccessful) {
-                    Log.i(TAG, "add Image Success!! - ${it.result}")
-                }
+            }
+        }
+    }
+
+    // 이미지 업데이트
+    private fun updateImage(item: String?, path: String?) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("Product").document(item!!).update("imageArray", FieldValue.arrayUnion(path)).addOnCompleteListener {
+            if (it.isSuccessful) {
+                Log.i(TAG, "이미지 업데이트 성공 : ${it.result}")
             }
         }
     }
@@ -236,7 +254,7 @@ class EditActivity : AppCompatActivity() {
     private fun getFileExtension(uri: Uri): String? {
         val cr = contentResolver
         val mime = MimeTypeMap.getSingleton()
-        return mime.getExtensionFromMimeType(cr.getType(uri))
+        return mime.getExtensionFromMimeType(cr.getType(uri)) ?: "jpg"
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

@@ -4,20 +4,20 @@ import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.u.marketapp.R
+import java.util.ArrayList
 
 @BindingAdapter("bindUrl")
-fun bindViewFromUrl(view: ImageView, path: String) {
-    if (!path.isNullOrEmpty()) {
+fun bindViewFromUrl(view: ImageView, imageArray: ArrayList<String>) {
+    if (!imageArray.isNullOrEmpty()) {
         Glide.with(view.context)
-            .load(path)
+            .load(imageArray[0])
             .thumbnail(0.1f)
             .error(R.drawable.ic_no_photo)
             .into(view)
     } else {
         Glide.with(view.context)
-            .load(path)
+            .load(R.drawable.ic_no_photo)
             .thumbnail(0.1f)
-            .error(R.drawable.ic_no_photo)
             .into(view)
     }
 }
