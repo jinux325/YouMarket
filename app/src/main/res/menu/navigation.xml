@@ -2,31 +2,31 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/action_home"
+        android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home"
         android:enabled="true"
         android:title="@string/home" />
 
     <item
-        android:id="@+id/action_category"
+        android:id="@+id/navigation_category"
         android:icon="@drawable/ic_category"
         android:enabled="true"
         android:title="@string/category" />
 
     <item
-        android:id="@+id/action_edit"
+        android:id="@+id/navigation_edit"
         android:icon="@drawable/ic_edit"
         android:enabled="true"
         android:title="@string/edit" />
 
     <item
-        android:id="@+id/action_chatting"
+        android:id="@+id/navigation_chatting"
         android:icon="@drawable/ic_speech_bubble"
         android:enabled="true"
         android:title="@string/chatting" />
 
     <item
-        android:id="@+id/action_info"
+        android:id="@+id/navigation_info"
         android:icon="@drawable/ic_info"
         android:enabled="true"
         android:title="@string/info" />
