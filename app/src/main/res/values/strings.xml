@@ -27,4 +27,6 @@
         <item>삽니다</item>
     </string-array>
 
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

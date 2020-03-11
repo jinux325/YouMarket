@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.u.marketapp.setting.SettingActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
@@ -34,10 +35,13 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 return false
             }
             R.id.navigation_chatting -> {
-
+                val chatFragment = ChatFragment()
+                supportFragmentManager.beginTransaction().replace(R.id.frame_layout, chatFragment).commit()
             }
             R.id.navigation_info -> {
-
+                val intent = Intent(this, SettingActivity::class.java)
+                startActivity(intent)
+                return false
             }
         }
         return true

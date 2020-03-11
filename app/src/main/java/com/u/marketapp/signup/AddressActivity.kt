@@ -9,6 +9,7 @@ import android.widget.AbsListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.u.marketapp.R
 import com.u.marketapp.adapter.AddressAdapter
 import com.u.marketapp.vo.AddressVO
@@ -186,6 +187,15 @@ class AddressActivity : AppCompatActivity() {
         }
     }
 
+ /*   override fun onDestroy() {
+        super.onDestroy()
+        val intent_items = intent
+        Log.d("@@ onDestroy  ", intent_items.getStringExtra("update"))
+        if(intent_items.getStringExtra("update") == null){
+            FirebaseAuth.getInstance().signOut()
+        }
+    }
+*/
 
 
 }

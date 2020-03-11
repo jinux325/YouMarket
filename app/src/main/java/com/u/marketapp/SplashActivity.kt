@@ -1,19 +1,25 @@
 package com.u.marketapp
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.signup.SmsActivity
+import com.u.marketapp.vo.UserEntity
 
 class SplashActivity : AppCompatActivity() {
 
     private val TAG = "SplashActivity"
     private var number = "NoNumber"
 
+    @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
@@ -31,23 +37,70 @@ class SplashActivity : AppCompatActivity() {
         Log.e("log $TAG", log)
 
         val hd = Handler()
-        val intent = Intent(this@SplashActivity, MainActivity::class.java)
+       /* val intent = Intent(this@SplashActivity, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        
-
         startActivity(intent)
-        /*
+*/
+       // FirebaseAuth.getInstance().signOut()
+
+
+        //  3Nlu6jrJ0UcBC4cGjty17mOXoVj1
+   /*     FirebaseFirestore.getInstance().collection("Users").document(
+                "UAFqXo7Ug3VEO53REb8yP2hu4a83").get()
+            .addOnCompleteListener(OnCompleteListener<DocumentSnapshot> { task ->
+                if (task.isSuccessful) {
+                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
+                    Log.d("@@@@@@@@@@@"+TAG, userEntity?.name+"  "+userEntity?.address)
+                    if(userEntity?.address == null){
+
+                    }else{
+
+                    }
+                }
+            })*/
+
+        //FirebaseAuth.getInstance().signOut()
+
+     /*   val intent = Intent(this@SplashActivity, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+*/
         hd.postDelayed({
-           *//* if(FirebaseAuth.getInstance().currentUser!!.phoneNumber!! != null) {
+            val user = FirebaseAuth.getInstance().currentUser
+            if (user != null) {
                 number = FirebaseAuth.getInstance().currentUser!!.phoneNumber!!
-            }*//*
-            number = ""
-            if (log == "IN") {
+                Log.d("유저 확인", number)
+                val intent = Intent(this@SplashActivity, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }else{
+                Log.d("로그 없음", number)
+                val intent = Intent(this@SplashActivity, SmsActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+                intent.putExtra("number",number)
+                startActivity(intent)
+            }
+        }, 1000) // 1초 후 이미지를 닫습니다
+
+            /*if(null == FirebaseAuth.getInstance().currentUser!!.phoneNumber!!) {
+
+                Log.d("@@@@@@@@@@", FirebaseAuth.getInstance().currentUser!!.phoneNumber!!)
+            }*/
+
+            /*if(null != FirebaseAuth.getInstance().currentUser!!.phoneNumber!! ) {
+                number = FirebaseAuth.getInstance().currentUser!!.phoneNumber!!
+                Log.d("@@@@@@@@@@", FirebaseAuth.getInstance().currentUser!!.phoneNumber!!)
+            }*/
+            //number = ""
+            /*if (log == "IN") {
                 Log.e(TAG, "상태 :$log")
+                Log.d("로그 IN", number)
                 val intent = Intent(this@SplashActivity, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
             } else if (log == null || log == "") {
+                Log.d("로그 없음", number)
                 val intent = Intent(this@SplashActivity, SmsActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 if (FirebaseAuth.getInstance().currentUser == null) {
@@ -59,13 +112,15 @@ class SplashActivity : AppCompatActivity() {
                 startActivity(intent)
             } else if (log == "OUT" && number != null) {
                 Log.e(TAG, "상태 :$log")
+                Log.d("로그 아웃", number)
                 val intent = Intent(this@SplashActivity, SmsActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                number = FirebaseAuth.getInstance().currentUser!!.phoneNumber!!
+                //number = FirebaseAuth.getInstance().currentUser!!.phoneNumber!!
                 intent.putExtra("number",number)
                 startActivity(intent)
             }
-        }, 1000) // 1초 후 이미지를 닫습니다
 */
+
+
     }
 }

@@ -37,6 +37,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     // DataBinding
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt "com.android.databinding:compiler:3.1.4"
     // Material Design - URL : https://material.io/develop/android/ - Github : https://github.com/material-components/material-components-android
     implementation 'com.google.android.material:material:1.2.0-alpha05'

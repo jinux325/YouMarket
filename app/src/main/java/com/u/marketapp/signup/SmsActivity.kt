@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.tasks.OnCompleteListener
@@ -61,6 +62,7 @@ class SmsActivity : AppCompatActivity() {
         val code = verifyEditText.text.toString()
         val credential = PhoneAuthProvider.getCredential(codeSent, code)
         signInWithPhoneAuthCredential(credential)
+        Toast.makeText(this,"$code 잠시만 기다려 주세요.", Toast.LENGTH_SHORT).show()
     }
 
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
@@ -69,8 +71,13 @@ class SmsActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val intent_items = getIntent()
                     val firebaseNumber = intent_items.getStringExtra("number")
-                   // var phoneNumber = phone.substring(1, 11)
-                    if(firebaseNumber == "NoNumber"){
+                    // var phoneNumber = phone.substring(1, 11)
+                    var uid = FirebaseAuth.getInstance().currentUser!!.uid
+                    Log.d(" userExist(uid) 유저 확인", uid)
+
+                    userExist(uid)
+
+                    /*if(firebaseNumber == "NoNumber"){
                         // 가입
                         val intent = Intent(this, AddressActivity::class.java)
                         intent.putExtra("phoneNumber", phone)
@@ -81,7 +88,7 @@ class SmsActivity : AppCompatActivity() {
                         intent.putExtra("phoneNumber", phone)
                         userData()
                         startActivity(intent)
-                    }
+                    }*/
                     //Toast.makeText(this, " 이동할 activity",Toast.LENGTH_SHORT).show()
                 } else {
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
@@ -97,9 +104,12 @@ class SmsActivity : AppCompatActivity() {
         if(phone.isEmpty()){
             editTextMobile.setError("번호를 입력해주세요")
         }
-
-        var phoneNumber = phone.substring(1, 11)
-
+        var phoneNumber=""
+        if( phone.length != 11){
+            Toast.makeText(this@SmsActivity, "번호를 - 제외한 11자리를 입력해주세요", Toast.LENGTH_LONG).show()
+        }else {
+            phoneNumber = phone.substring(1, 11)
+        }
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
             "+82$phoneNumber", // Phone number to verify
             60, // Timeout duration
@@ -117,12 +127,14 @@ class SmsActivity : AppCompatActivity() {
 
             if (code != null) {
                 verifyEditText.setText(code)
+                verifyEditText.setVisibility(View.VISIBLE)
+                verifyButton.setVisibility(View.VISIBLE)
             }
         }
 
         override fun onVerificationFailed(p0: FirebaseException) {
-            Toast.makeText(this@SmsActivity, p0.message, Toast.LENGTH_LONG).show()
-            Toast.makeText(this@SmsActivity, "잠시후에 다시 시도해주세요.", Toast.LENGTH_LONG).show()
+            //Toast.makeText(this@SmsActivity, p0.message, Toast.LENGTH_LONG).show()
+            Toast.makeText(this@SmsActivity, "요청이 너무 많습니다. 잠시후에 다시 시도해주세요.", Toast.LENGTH_LONG).show()
         }
 
         override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
@@ -156,5 +168,70 @@ class SmsActivity : AppCompatActivity() {
             })
     }
 
+    fun userExist(uid:String){
+       /* FirebaseFirestore.getInstance().collection("Users").document(uid).get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
+                    Log.d("@@@@@@@@@@@  userExist "  , userEntity?.name+"  "+userEntity?.address+"  "+userEntity?.token)
+                    if(userEntity?.token == "") exist = false
+                    else exist =  true
+                }
+            }*/
+       /* var count =0
+        FirebaseFirestore.getInstance().collection("Users").get().addOnSuccessListener { result ->
+            for(document in result){
+                count++
+                Log.d("@@@@@@@@@@@@@@@ ", document.id+"   "+uid)
+                Log.d("@@@@@@@@@@@@@@@ ", count.toString()+"   "+result.size())
+                if(document.id.equals(uid)){
+                    Log.d("@@@@@@@@@@@@@@@ ", "if문 ")
+                    // 로그인
+                    Log.d("유저 확인", "true  로그인")
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("phoneNumber", phone)
+                    userData()
+                    startActivity(intent)
+                    break
+                }else if(count ==  result.size()){
+                    Log.d("유저 확인", "false  가입")
+                    val intent = Intent(this, AddressActivity::class.java)
+                    intent.putExtra("phoneNumber", phone)
+                    startActivity(intent)
+                }
+
+            }
+
+        }*/
+
+        FirebaseFirestore.getInstance().collection("Users").whereEqualTo("uid", uid).get().addOnSuccessListener { result ->
+            for(document in result){
+                Log.d("@@@@@@@@@@@@@@@ ", document.id+"   "+uid)
+                if(document.id.equals(uid)){
+                    Log.d("@@@@@@@@@@@@@@@ ", "if문 ")
+                    // 로그인
+                    Log.d("유저 확인", "true  로그인")
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("phoneNumber", phone)
+                    userData()
+                    startActivity(intent)
+                    break
+                }else{
+                    Log.d("유저 확인", "false  가입")
+                    val intent = Intent(this, AddressActivity::class.java)
+                    intent.putExtra("phoneNumber", phone)
+                    startActivity(intent)
+                }
+
+            }
+
+        }
+
+    }
+
+  /*  override fun onDestroy() {
+        super.onDestroy()
+        FirebaseAuth.getInstance().signOut()
+    }*/
 
 }

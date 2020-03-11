@@ -9,10 +9,12 @@
 
     <color name="colorGray">#CCCACA</color>
     <color name="colorwhite">#FAF8F8</color>
+    <color name="colorLightGyay">#DBDBDB</color>
 
     <color name="colorRed">#f44336</color>
     <color name="hintcolor">#ef7e49</color>
     <color name="editcolor">#f96621</color>
 
-
+    <color name="Setting">#FD9119</color>
+    <color name="SettingText">#F89E38</color>
 </resources>
