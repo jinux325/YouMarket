@@ -45,7 +45,7 @@ class ProductRVAdapter : RecyclerView.Adapter<ProductRVAdapter.ViewHolder>() {
 
     // 단일 데이터 추가
     fun addItem(newItem: ProductEntity) {
-        items.add(0, newItem)
+        items.add(newItem)
         notifyDataSetChanged()
     }
 
