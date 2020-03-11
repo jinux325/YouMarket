@@ -6,10 +6,10 @@
     <data>
         <variable
             name="user"
-            type="com.wk.umarket.entity.UserEntity" />
+            type="com.u.marketapp.entity.UserEntity" />
         <variable
             name="product"
-            type="com.wk.umarket.entity.ProductEntity" />
+            type="com.u.marketapp.entity.ProductEntity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

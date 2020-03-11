@@ -160,7 +160,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="￦"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     tools:ignore="HardcodedText" />
 
@@ -174,9 +174,9 @@
                     android:background="@android:color/transparent"
                     android:hint="가격 입력(선택사항)"
                     android:inputType="number|textNoSuggestions"
-                    android:maxLength="16"
+                    android:maxLength="11"
                     android:textColor="@color/black"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     tools:ignore="HardcodedText" />
 
                 <!-- 가격 제안 -->
@@ -186,6 +186,7 @@
                     android:layout_height="wrap_content"
                     android:buttonTint="@color/navigation_state"
                     android:checked="false"
+                    android:textSize="15sp"
                     android:text="가격 제안 받기"
                     android:textColor="@color/navigation_state"
                     tools:ignore="HardcodedText" />
@@ -194,14 +195,14 @@
 
             <View style="@style/Divider"
                 android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"/>
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"/>
 
             <!-- 이미지 -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
@@ -218,7 +219,6 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
-                android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:background="@android:color/transparent"
                 android:textSize="18sp"

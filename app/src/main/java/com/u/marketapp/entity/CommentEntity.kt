@@ -1,4 +1,4 @@
-package com.wk.umarket.entity
+package com.u.marketapp.entity
 
 import com.google.firebase.firestore.DocumentReference
 import java.io.Serializable

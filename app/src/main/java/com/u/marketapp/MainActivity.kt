@@ -18,6 +18,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         bottom_navigation.setOnNavigationItemSelectedListener(this)
+
+        val homeFragment = HomeFragment()
+        supportFragmentManager.beginTransaction().replace(R.id.frame_layout, homeFragment).commit()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
