@@ -22,14 +22,15 @@
             android:theme="@style/MaterialTheme"/>
         <activity android:name=".MainActivity"
             android:theme="@style/MaterialTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
+            android:name=".chat.ChatActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".setting.LocationSettingActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".setting.SettingActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".signup.ProfileActivity"
@@ -39,7 +40,11 @@
         <activity
             android:name=".SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

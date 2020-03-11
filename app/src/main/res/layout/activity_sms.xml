@@ -60,7 +60,7 @@
         android:digits="0123456789"
 
         android:drawablePadding="10dp"
-        android:hint="번호입력 "
+        android:hint="번호입력(- 를 제거한 11자리) "
         android:inputType="phone"
         android:maxLength="11" />
 
@@ -77,7 +77,7 @@
         android:text="인증문자 받기"
         android:textAllCaps="false"
         android:textSize="18dp"
-        android:textColor="@color/colorPrimary" />
+        android:textColor="@color/colorwhite" />
 
 
 
@@ -98,7 +98,7 @@
         android:layout_marginRight="40dp"
         android:layout_marginLeft="40dp"
         android:digits="0123456789"
-
+        android:visibility="gone"
         android:drawablePadding="10dp"
         android:hint="인증번호 "
         android:inputType="phone"
@@ -115,9 +115,10 @@
         android:layout_marginLeft="40dp"
         android:background="@color/colorPrimaryDark"
         android:text="인증"
+        android:visibility="gone"
         android:textAllCaps="false"
         android:textSize="18dp"
-        android:textColor="@color/colorPrimary" />
+        android:textColor="@color/colorwhite" />
 
    <!-- <Button
         android:id="@+id/button"

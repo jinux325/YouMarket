@@ -1,8 +1,8 @@
 package com.u.marketapp.vo
 
 data class AddressVO (
-    var zipNo: String,
-    var rAddr: String,
-    var lAddr: String
+    val zipNo: String,
+    val rAddr: String,
+    val lAddr: String
 )
 

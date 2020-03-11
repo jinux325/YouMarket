@@ -165,7 +165,7 @@ class ProfileActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("User", Context.MODE_PRIVATE)
         val edit = prefs.edit()
 
-        uid = FirebaseAuth.getInstance().currentUser!!.uid
+        uid = FirebaseAuth.getInstance().currentUser?.uid
         val fileReference: StorageReference = mStorageRef!!.child(uid!!)
             .child(System.currentTimeMillis().toString() + "." + getFileExtension(profileImage.toString()))
         fileReference.putFile(profileImage!!).continueWithTask { task ->
@@ -178,6 +178,7 @@ class ProfileActivity : AppCompatActivity() {
                 val downloadUri = task.result
 
                 val user = hashMapOf(
+                    "uid" to uid,
                     "name" to name,
                     "address" to address,
                     "registDate" to Date(System.currentTimeMillis()),
