@@ -108,16 +108,18 @@
                             android:scaleType="centerCrop"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            tools:src="@drawable/ic_launcher_background"/>
+                            tools:src="@drawable/ic_launcher_background"
+                            tools:ignore="ContentDescription" />
 
                         <TextView
                             android:id="@+id/text_view_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
+                            android:layout_marginStart="10dp"
                             android:textColor="@color/black"
                             android:textSize="15sp"
                             android:textStyle="bold"
+                            android:text="@{user.name}"
                             app:layout_constraintLeft_toRightOf="@id/image_view_profile"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:text="닉네임"/>
@@ -126,9 +128,10 @@
                             android:id="@+id/text_view_address"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
+                            android:layout_marginStart="10dp"
                             android:textColor="@color/black"
                             android:textSize="13sp"
+                            android:text="@{user.address}"
                             app:layout_constraintLeft_toRightOf="@id/image_view_profile"
                             app:layout_constraintTop_toBottomOf="@id/text_view_name"
                             tools:text="주소"/>
@@ -153,6 +156,7 @@
                             android:textColor="@color/black"
                             android:textStyle="bold"
                             android:textSize="19sp"
+                            android:text="@{product.title}"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:text="상품 제목"/>
@@ -170,17 +174,20 @@
                                 android:id="@+id/text_view_category"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:text="@{product.category}"
                                 tools:text="카테고리"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text=" · "/>
+                                android:text=" · "
+                                tools:ignore="HardcodedText" />
 
                             <TextView
                                 android:id="@+id/text_view_date"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:text="@{@string/format(product.regDate)}"
                                 tools:text="등록일"/>
 
                         </LinearLayout>
@@ -192,6 +199,7 @@
                             android:layout_marginTop="12dp"
                             android:textSize="15sp"
                             android:textColor="@color/black"
+                            android:text="@{product.contents}"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/layout_category_date"
                             tools:text="상품 내용..."/>
@@ -219,6 +227,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="5dp"
                                 android:textSize="13sp"
+                                android:text="@{Integer.toString(product.chattingRoomSize)}"
                                 app:layout_constraintLeft_toRightOf="@id/text_view_chatting"
                                 app:layout_constraintTop_toTopOf="parent"
                                 tools:text="0"/>
@@ -238,6 +247,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="13sp"
+                                android:text="@{Integer.toString(product.attentionSize)}"
                                 app:layout_constraintLeft_toRightOf="@id/text_view_attention"
                                 app:layout_constraintTop_toTopOf="parent"
                                 tools:text="0"/>
@@ -257,6 +267,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="13sp"
+                                android:text="@{Integer.toString(product.lookUpSize)}"
                                 app:layout_constraintLeft_toRightOf="@id/text_view_lookup"
                                 app:layout_constraintTop_toTopOf="parent"
                                 tools:text="0"/>

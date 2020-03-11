@@ -1,7 +1,7 @@
 package com.u.marketapp
 
+import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +15,6 @@ import com.google.firebase.firestore.Query
 import com.u.marketapp.adapter.ProductRVAdapter
 import com.u.marketapp.databinding.FragmentHomeBinding
 import com.u.marketapp.entity.ProductEntity
-import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
@@ -26,6 +25,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private lateinit var adapter : ProductRVAdapter
     private lateinit var binding : FragmentHomeBinding
 
+    // 새로고침
     override fun onRefresh() {
         adapter.clear()
         setItemsData()
@@ -56,6 +56,11 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private fun setRVAdapter() {
         adapter = ProductRVAdapter()
         binding.recyclerView.adapter = adapter
+        adapter.itemClick = object: ProductRVAdapter.ItemClick {
+            override fun onClick(view: View, position: Int) {
+                moveActivity(position)
+            }
+        }
     }
 
     // 데이터 설정
@@ -70,6 +75,13 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 }
             }
         }
+    }
+
+    // 상품 상세 정보 페이지 이동
+    private fun moveActivity(position: Int) {
+        val intent = Intent(context, ProductActivity::class.java)
+        intent.putExtra("item", adapter.getItem(position))
+        startActivity(intent)
     }
 
 }

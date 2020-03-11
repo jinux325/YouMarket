@@ -61,6 +61,11 @@ class ProductRVAdapter : RecyclerView.Adapter<ProductRVAdapter.ViewHolder>() {
         notifyDataSetChanged()
     }
 
+    // 단일 조회
+    fun getItem(position: Int): ProductEntity {
+        return items[position]
+    }
+
     // 데이터 초기화
     fun clear() {
         items.clear()

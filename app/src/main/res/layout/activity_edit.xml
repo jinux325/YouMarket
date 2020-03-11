@@ -219,7 +219,7 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
-                android:paddingBottom="10dp"
+                android:paddingBottom="20dp"
                 android:background="@android:color/transparent"
                 android:textSize="18sp"
                 android:hint="내용을 작성해주세요."
