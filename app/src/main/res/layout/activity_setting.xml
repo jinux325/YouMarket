@@ -376,6 +376,7 @@
                     android:textStyle="bold" />
             </RelativeLayout>
             <RelativeLayout
+                android:id="@+id/version"
                 android:layout_width="match_parent"
                 android:layout_height="65dp"
                 android:background="@drawable/background_bottomline_thin"
@@ -393,6 +394,7 @@
                     android:textStyle="bold" />
             </RelativeLayout>
             <RelativeLayout
+                android:id="@+id/logout"
                 android:layout_width="match_parent"
                 android:layout_height="65dp"
                 android:background="@drawable/background_bottomline_thin"
@@ -400,7 +402,6 @@
                 >
 
                 <TextView
-                    android:id="@+id/logout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_alignParentLeft="true"
@@ -411,6 +412,7 @@
                     android:textStyle="bold" />
             </RelativeLayout>
             <RelativeLayout
+                android:id="@+id/withdrawal"
                 android:layout_width="match_parent"
                 android:layout_height="65dp"
                 android:background="@drawable/background_setting"

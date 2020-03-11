@@ -7,12 +7,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.signup.SmsActivity
-import com.u.marketapp.vo.UserEntity
 
 class SplashActivity : AppCompatActivity() {
 
@@ -65,6 +61,10 @@ class SplashActivity : AppCompatActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
 */
+     /*   val intent = Intent(this@SplashActivity, ProfileActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)*/
+
         hd.postDelayed({
             val user = FirebaseAuth.getInstance().currentUser
             if (user != null) {
@@ -82,6 +82,7 @@ class SplashActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }, 1000) // 1초 후 이미지를 닫습니다
+
 
             /*if(null == FirebaseAuth.getInstance().currentUser!!.phoneNumber!!) {
 

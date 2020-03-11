@@ -37,9 +37,11 @@ class SmsActivity : AppCompatActivity() {
         mAuth= FirebaseAuth.getInstance()
 
         buttonContinue.setOnClickListener {
+            Toast.makeText(this,"잠시만 기다려 주세요.", Toast.LENGTH_SHORT).show()
             sendVerification()
         }
         verifyButton.setOnClickListener {
+            Toast.makeText(this,"잠시만 기다려 주세요.", Toast.LENGTH_SHORT).show()
             verifySignIn()
         }
        /*
@@ -62,7 +64,6 @@ class SmsActivity : AppCompatActivity() {
         val code = verifyEditText.text.toString()
         val credential = PhoneAuthProvider.getCredential(codeSent, code)
         signInWithPhoneAuthCredential(credential)
-        Toast.makeText(this,"$code 잠시만 기다려 주세요.", Toast.LENGTH_SHORT).show()
     }
 
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
@@ -134,7 +135,7 @@ class SmsActivity : AppCompatActivity() {
 
         override fun onVerificationFailed(p0: FirebaseException) {
             //Toast.makeText(this@SmsActivity, p0.message, Toast.LENGTH_LONG).show()
-            Toast.makeText(this@SmsActivity, "요청이 너무 많습니다. 잠시후에 다시 시도해주세요.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this@SmsActivity, "요청을 너무 많이 하셨습니다. 잠시후에 다시 시도해주세요.", Toast.LENGTH_LONG).show()
         }
 
         override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
@@ -178,7 +179,7 @@ class SmsActivity : AppCompatActivity() {
                     else exist =  true
                 }
             }*/
-       /* var count =0
+        var count =0
         FirebaseFirestore.getInstance().collection("Users").get().addOnSuccessListener { result ->
             for(document in result){
                 count++
@@ -202,9 +203,9 @@ class SmsActivity : AppCompatActivity() {
 
             }
 
-        }*/
+        }
 
-        FirebaseFirestore.getInstance().collection("Users").whereEqualTo("uid", uid).get().addOnSuccessListener { result ->
+       /* FirebaseFirestore.getInstance().collection("Users").whereEqualTo("uid", uid).get().addOnSuccessListener { result ->
             for(document in result){
                 Log.d("@@@@@@@@@@@@@@@ ", document.id+"   "+uid)
                 if(document.id.equals(uid)){
@@ -225,7 +226,7 @@ class SmsActivity : AppCompatActivity() {
 
             }
 
-        }
+        }*/
 
     }
 

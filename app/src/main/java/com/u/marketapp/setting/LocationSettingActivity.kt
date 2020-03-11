@@ -36,22 +36,22 @@ class LocationSettingActivity : AppCompatActivity() {
 
 
         db.collection("Users").document(uid).get()
-            .addOnCompleteListener(OnCompleteListener<DocumentSnapshot> { task ->
+            .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
                     val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
                     if (userEntity?.address2 == "") {
                         addr2.visibility = View.GONE
                         addr2_add.visibility = View.VISIBLE
                     } else {
-                        tv_addr2.setText(userEntity?.address2)
+                        tv_addr2.text = userEntity?.address2
                         addr2.visibility = View.VISIBLE
                         addr2_add.visibility = View.GONE
                     }
-                    tv_addr1.setText(userEntity?.address)
+                    tv_addr1.text = userEntity?.address
                 } else {
                     Log.d(TAG, "Error getting LocationSetting", task.exception)
                 }
-            })
+            }
 
         addr1_delete.setOnClickListener {
             val builder =
