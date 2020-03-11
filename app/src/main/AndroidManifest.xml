@@ -14,14 +14,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".chat.ChatActivity"></activity>
-        <activity
-            android:name=".setting.SettingActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".HomeFragment" />
+        <activity android:name=".HomeFragment"/>
         <activity android:name=".EditActivity" />
         <activity android:name=".ProductActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".setting.LocationSettingActivity"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -33,11 +35,7 @@
         <activity
             android:name=".SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 
