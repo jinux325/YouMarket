@@ -137,9 +137,9 @@ class SmsActivity : AppCompatActivity() {
         override fun onVerificationFailed(p0: FirebaseException) {
             //Toast.makeText(this@SmsActivity, p0.message, Toast.LENGTH_LONG).show()
             if (p0 is FirebaseAuthInvalidCredentialsException) {
-                Toast.makeText(this@SmsActivity, "msg 1111 ", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@SmsActivity, " 다른 이유 ", Toast.LENGTH_LONG).show()
             } else if (p0 is FirebaseTooManyRequestsException) {
-                Toast.makeText(this@SmsActivity, "msg 22222 ", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@SmsActivity, " 인증 많이함 ", Toast.LENGTH_LONG).show()
             }
         }
 
