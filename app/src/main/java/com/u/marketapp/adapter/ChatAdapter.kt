@@ -1,6 +1,8 @@
 package com.u.marketapp.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,17 +11,20 @@ import com.u.marketapp.R
 import com.u.marketapp.vo.ChatRoomVO
 import kotlinx.android.synthetic.main.item_chatroom.view.*
 
-class ChatAdapter(val context: Context?, val chatList:List<ChatRoomVO> ):
+class ChatAdapter(val context: Context?, val chatList:MutableList<ChatRoomVO> ):
     RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(parent)
 
     override fun getItemCount(): Int = chatList.size
 
+    @SuppressLint("LongLogTag")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
+        Log.d("!#@!@#!@# !@# ! #!@ #!  ", chatList[position].buyer)
         chatList[position].let { item ->
             with(holder) {
-                nickname.text = item.seller
+                nickname.text = item.buyer
             }
         }
 

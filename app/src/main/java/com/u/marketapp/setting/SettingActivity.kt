@@ -38,8 +38,10 @@ class SettingActivity : AppCompatActivity() {
 
         version.setOnClickListener {
             val intent = Intent(this, ChatActivity::class.java)
+            intent.putExtra("Chatting", "ROOM")
             startActivity(intent)
         }
+/*
 
         withdrawal.setOnClickListener{
             // kLIDekdZbCP0h99ZN8tIP3NhRct1
@@ -76,7 +78,10 @@ class SettingActivity : AppCompatActivity() {
                             }
                         }
                 }
-            /*val chat = hashMapOf(
+            */
+
+
+/*val chat = hashMapOf(
                                    "image" to "https://firebasestorage.googleapis.com/v0/b/umarket-d3048.appspot.com/o/Profile%2FkLIDekdZbCP0h99ZN8tIP3NhRct1%2F1567085889874.jpg?alt=media&token=dd4e7132-2285-45e0-8912-9478142e1074",
                                    "name" to "이름",
                                    "uid" to "kLIDekdZbCP0h99ZN8tIP3NhRct1",
@@ -86,7 +91,13 @@ class SettingActivity : AppCompatActivity() {
 
                                FirebaseFirestore.getInstance().collection("Users").document("3Nlu6jrJ0UcBC4cGjty17mOXoVj1").collection("Chatting").document()
                                    .collection("comment").document().set(chat)*/
+
+
+
+        /*
+
         }
+*/
 
     }
 }

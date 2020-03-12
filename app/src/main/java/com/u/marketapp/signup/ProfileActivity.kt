@@ -178,7 +178,7 @@ class ProfileActivity : AppCompatActivity() {
                 val downloadUri = task.result
 
                 val user = hashMapOf(
-                    "uid" to uid,
+                   // "uid" to uid,
                     "name" to name,
                     "address" to address,
                     "registDate" to Date(System.currentTimeMillis()),

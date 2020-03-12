@@ -8,6 +8,9 @@ import android.os.Handler
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.u.marketapp.chat.ChatActivity
+import com.u.marketapp.signup.AddressActivity
+import com.u.marketapp.signup.ProfileActivity
 import com.u.marketapp.signup.SmsActivity
 
 class SplashActivity : AppCompatActivity() {
@@ -61,7 +64,7 @@ class SplashActivity : AppCompatActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
 */
-     /*   val intent = Intent(this@SplashActivity, ProfileActivity::class.java)
+  /*     val intent = Intent(this@SplashActivity, ChatActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)*/
 

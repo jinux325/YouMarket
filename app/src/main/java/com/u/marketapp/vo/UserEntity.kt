@@ -16,5 +16,6 @@ data class UserEntity (
     val attentionHistory: ArrayList<DocumentReference>?=null, // 관심 목록
     val chattingRoomHistory: ArrayList<DocumentReference>?=null, // 채팅방 목록
     val registDate: Date?=null, // 등록일
-    val state: String="" // 상태( 0 : 탈퇴, 1 : 활성화, 2 : 비활성화, 3 : 휴면)
+    val state: String="" ,// 상태( 0 : 탈퇴, 1 : 활성화, 2 : 비활성화, 3 : 휴면)
+    val chatting:ArrayList<String>?=null
 ) : Serializable

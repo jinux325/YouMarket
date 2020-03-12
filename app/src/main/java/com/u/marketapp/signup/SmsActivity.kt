@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
@@ -24,8 +25,8 @@ import java.util.concurrent.TimeUnit
 
 class SmsActivity : AppCompatActivity() {
 
-    private val TAG = "SmsActivity"
-    lateinit var mAuth: FirebaseAuth
+    val TAG = "SmsActivity"
+    private val mAuth= FirebaseAuth.getInstance()
     var codeSent : String = ""
     var phone=""
     private val db = FirebaseFirestore.getInstance()
@@ -34,7 +35,7 @@ class SmsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sms)
 
-        mAuth= FirebaseAuth.getInstance()
+        // mAuth= FirebaseAuth.getInstance()
 
         buttonContinue.setOnClickListener {
             Toast.makeText(this,"잠시만 기다려 주세요.", Toast.LENGTH_SHORT).show()
@@ -107,7 +108,7 @@ class SmsActivity : AppCompatActivity() {
         }
         var phoneNumber=""
         if( phone.length != 11){
-            Toast.makeText(this@SmsActivity, "번호를 - 제외한 11자리를 입력해주세요", Toast.LENGTH_LONG).show()
+            Toast.makeText(this@SmsActivity, " - 를 제외한 11자리를 입력해주세요", Toast.LENGTH_LONG).show()
         }else {
             phoneNumber = phone.substring(1, 11)
         }
@@ -135,7 +136,11 @@ class SmsActivity : AppCompatActivity() {
 
         override fun onVerificationFailed(p0: FirebaseException) {
             //Toast.makeText(this@SmsActivity, p0.message, Toast.LENGTH_LONG).show()
-            Toast.makeText(this@SmsActivity, "요청을 너무 많이 하셨습니다. 잠시후에 다시 시도해주세요.", Toast.LENGTH_LONG).show()
+            if (p0 is FirebaseAuthInvalidCredentialsException) {
+                Toast.makeText(this@SmsActivity, "msg 1111 ", Toast.LENGTH_LONG).show()
+            } else if (p0 is FirebaseTooManyRequestsException) {
+                Toast.makeText(this@SmsActivity, "msg 22222 ", Toast.LENGTH_LONG).show()
+            }
         }
 
         override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
