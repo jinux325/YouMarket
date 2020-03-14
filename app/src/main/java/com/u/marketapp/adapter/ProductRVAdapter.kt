@@ -13,8 +13,12 @@ class ProductRVAdapter : RecyclerView.Adapter<ProductRVAdapter.ViewHolder>() {
 
     private val items : ArrayList<ProductEntity> = ArrayList()
 
-    interface ItemClick { fun onClick(view: View, position: Int) }
-    var itemClick: ItemClick? = null
+    interface ItemClickListener { fun onClick(view: View, position: Int) }
+    private lateinit var itemClickListener: ItemClickListener
+
+    fun setItemClickListener(itemClickListener: ItemClickListener) {
+        this.itemClickListener = itemClickListener
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -27,37 +31,15 @@ class ProductRVAdapter : RecyclerView.Adapter<ProductRVAdapter.ViewHolder>() {
         holder.apply {
             bind(item)
             itemView.tag = item
-            if (itemClick != null) {
-                itemView.setOnClickListener {
-                        v -> itemClick?.onClick(v, position)
-                }
-            }
+            itemView.setOnClickListener { itemClickListener.onClick(it, position) }
         }
     }
 
     override fun getItemCount(): Int = items.size
 
-    // 리스트 데이터 추가
-    fun addList(newList: List<ProductEntity>) {
-        items.addAll(newList)
-        notifyDataSetChanged()
-    }
-
     // 단일 데이터 추가
     fun addItem(newItem: ProductEntity) {
         items.add(newItem)
-        notifyDataSetChanged()
-    }
-
-    // 단일 데이터 제거
-    fun removeItem(position: Int) {
-        items.removeAt(position)
-        notifyDataSetChanged()
-    }
-
-    // 단일 데이터 수정
-    fun updateItem(position: Int, newItem: ProductEntity) {
-        items[position] = newItem
         notifyDataSetChanged()
     }
 
