@@ -1,5 +1,6 @@
 package com.u.marketapp
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -23,8 +24,8 @@ import kotlinx.android.synthetic.main.fragment_chat.*
 
 class ChatFragment : Fragment() {
 
-    var chattingRoomList: MutableList<ChatRoomVO> = mutableListOf()
-    var chattingRoomUidList: MutableList<String> = mutableListOf()
+    private var chattingRoomList: MutableList<ChatRoomVO> = mutableListOf()
+    private var chattingRoomUidList: MutableList<String> = mutableListOf()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_chat, container, false)
@@ -35,10 +36,14 @@ class ChatFragment : Fragment() {
         val chat_recyclerView = view.findViewById(R.id.chat_recyclerView) as RecyclerView
        // chattingRoomList = mutableListOf<ChatRoomVO>(ChatRoomVO("1","1", "","1","1","1","1","1"),ChatRoomVO("1","1", "","1","1","1","1","1"),ChatRoomVO("1","1", "","1","1","1","1","1"))
 
-       // userData()
+        userData()
 
-        chat_recyclerView.layoutManager = LinearLayoutManager(getContext())
-        chat_recyclerView.adapter = ChatAdapter(getContext(), chattingRoomList)
+
+//        Log.d("chattingRoomList ", chattingRoomList[0].buyer)
+        /*chat_recyclerView.layoutManager = LinearLayoutManager(getContext())
+        chat_recyclerView.adapter = ChatAdapter(getContext(), chattingRoomList)*/
+
+
 
 
         return view
@@ -60,6 +65,7 @@ class ChatFragment : Fragment() {
             }
     }
 
+    @SuppressLint("LongLogTag")
     fun chattingRoomList(list:MutableList<String>){
         for(i in list){
             FirebaseFirestore.getInstance().collection("Chatting").document(i).get()
@@ -72,12 +78,22 @@ class ChatFragment : Fragment() {
                         Log.d(chatRoomVO?.registDate.toString(), chatRoomVO?.registDate.toString())
                         Log.d(chatRoomVO?.comment, chatRoomVO?.comment)
 
+                        Log.d("chattingRoomList ", chatRoomVO!!.buyer)
+
                         chattingRoomList.add(chatRoomVO!!)
+                        Log.d("chattingRoomList 11111 ", chattingRoomList[0].buyer)
+
+                    }
+                    Log.d("chattingRoomList 4444444 ", chattingRoomList[0].buyer)
+
+                    if(list.size == chattingRoomUidList.size){
+                        chat_recyclerView.layoutManager = LinearLayoutManager(getContext())
+                        chat_recyclerView.adapter = ChatAdapter(getContext(), chattingRoomList, chattingRoomUidList)
                     }
                 }
-
         }
     }
+
 
 /*
 

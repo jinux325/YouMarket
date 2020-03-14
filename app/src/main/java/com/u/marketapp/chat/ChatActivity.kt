@@ -1,25 +1,55 @@
 package com.u.marketapp.chat
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import com.google.common.collect.HashMultimap
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.R
+import com.u.marketapp.adapter.ChatAdapter
+import com.u.marketapp.adapter.ChattingAdapter
+import com.u.marketapp.vo.ChattingVO
 import kotlinx.android.synthetic.main.activity_chat.*
+import kotlinx.android.synthetic.main.fragment_chat.*
 import java.util.*
-import kotlin.collections.HashMap
 
 class ChatActivity : AppCompatActivity() {
 
+    private val db = FirebaseFirestore.getInstance()
+    private val myUid = FirebaseAuth.getInstance().currentUser!!.phoneNumber!!
     lateinit var chatRoom : HashMap<String,Any>
+    lateinit var chatRoomUid : String
+    private var chattingList : MutableList<ChattingVO> = mutableListOf<ChattingVO>()
+
     @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
+
+        val intent_items = getIntent()
+        chatRoomUid = intent_items.getStringExtra("chatRoomUid")
+
+        tv_partner_nickname.text = intent_items.getStringExtra("name")
+
+        db.collection("Chatting").document(chatRoomUid).collection("comment").orderBy("registDate")
+            .addSnapshotListener{ snapshot, e ->
+
+            }
+
+
+        db.collection("Chatting").document(chatRoomUid).collection("comment").orderBy("registDate").get()
+            .addOnSuccessListener{ document ->
+                for(doc in document){
+                    val chattingVO: ChattingVO = doc.toObject(ChattingVO::class.java)
+                    chattingList.add(chattingVO)
+                }
+                //Log.d("@@@@@@@@@@@@@@@@@@@@@@@@ ", chattingList[0].message)
+                recyclerView.layoutManager = LinearLayoutManager(this)
+                recyclerView.adapter = ChattingAdapter(this, chattingList)
+            }
 
         iv_send.setOnClickListener {
             // kLIDekdZbCP0h99ZN8tIP3NhRct1
@@ -47,7 +77,7 @@ class ChatActivity : AppCompatActivity() {
             if(intent_items.getStringExtra("Chatting") != null){
                 addChatRoom(uid, pid, seller)
             }else{
-                addChatComment(uid, et_message.text.toString(), "TkSAzn0aqk682yhSFfnf")
+                addChatComment(uid, et_message.text.toString(), chatRoomUid)
             }
 
 
