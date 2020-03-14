@@ -14,7 +14,7 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -178,7 +178,8 @@ class EditActivity : AppCompatActivity() {
     // 데이터 수집
     private fun getEditData() : ProductEntity {
         val item = ProductEntity()
-        item.seller = FirebaseFirestore.getInstance().collection("User").document("QdqJ1cFReQ7EHxf4bptP") // 판매자 정보
+//        item.seller = FirebaseAuth.getInstance().currentUser!!.uid // 판매자 정보
+        item.seller = "QdqJ1cFReQ7EHxf4bptP"
         item.category = text_view_category.text.toString() // 카테고리
         item.title = edit_text_title.text.toString() // 제목
         item.address = "망포동"
@@ -194,24 +195,27 @@ class EditActivity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         db.collection("Product").add(item).addOnCompleteListener {
             if (it.isSuccessful) {
-                Log.i(TAG, "추가된 상품 문서 : ${it.result?.id}")
+                Log.i(TAG, "추가된 상품 문서 : ${it.result!!.id}")
                 if (adapter.itemCount > 0) {
-                    saveImage(it.result?.id)
+                    saveImage(it.result!!.id)
                 }
-                addSellList(it.result)
+                addSellList(it.result!!.id)
                 finish() // 종료
             }
         }
     }
 
     // 판매내역 등록
-    private fun addSellList(document: DocumentReference?) {
+    private fun addSellList(documentId: String?) {
         val db = FirebaseFirestore.getInstance()
 //        val uid = FirebaseAuth.getInstance().currentUser!!.uid
-        document.let { item ->
-            db.collection("User").document("QdqJ1cFReQ7EHxf4bptP").update("salesHistory", FieldValue.arrayUnion(item)).addOnCompleteListener {
-                if (it.isSuccessful) {
-                    Log.i(TAG, "판매내역 업데이트 성공! : ${item?.id}")
+        val uid = "QdqJ1cFReQ7EHxf4bptP"
+        uid.let {
+            documentId.let { item ->
+                db.collection("User").document(it).update("salesHistory", FieldValue.arrayUnion(item)).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.i(TAG, "판매내역 업데이트 성공! : $item")
+                    }
                 }
             }
         }

@@ -35,8 +35,8 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // 데이터 바인딩
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
-        setRVLayoutManager()
         setRVAdapter()
+        setRVLayoutManager()
         setItemsData()
         return binding.root
     }
@@ -56,11 +56,11 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private fun setRVAdapter() {
         adapter = ProductRVAdapter()
         binding.recyclerView.adapter = adapter
-        adapter.itemClick = object: ProductRVAdapter.ItemClick {
+        adapter.setItemClickListener(object : ProductRVAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int) {
-                moveActivity(position)
+                moveActivity(adapter.getItem(position))
             }
-        }
+        })
     }
 
     // 데이터 설정
@@ -78,9 +78,10 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     // 상품 상세 정보 페이지 이동
-    private fun moveActivity(position: Int) {
+    private fun moveActivity(item: ProductEntity) {
+        Log.i(TAG, item.toString())
         val intent = Intent(context, ProductActivity::class.java)
-        intent.putExtra("item", adapter.getItem(position))
+        intent.putExtra("item", item)
         startActivity(intent)
     }
 

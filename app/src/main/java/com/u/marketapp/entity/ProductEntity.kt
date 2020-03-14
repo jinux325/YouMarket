@@ -1,13 +1,10 @@
 package com.u.marketapp.entity
 
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
 import java.io.Serializable
-import java.text.SimpleDateFormat
 import java.util.*
 
 data class ProductEntity (
-    var seller: DocumentReference?, // 판매자
+    var seller: String?, // 판매자
     var category: String?, // 카테고리
     var title: String?, // 제목
     var contents: String?, // 내용

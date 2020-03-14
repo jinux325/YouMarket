@@ -11,6 +11,8 @@
     <color name="colorwhite">#FAF8F8</color>
     <color name="colorLightGyay">#DBDBDB</color>
 
+    <color name="colorFilter">#D8D8D8</color>
+
     <color name="colorRed">#f44336</color>
     <color name="hintcolor">#ef7e49</color>
     <color name="editcolor">#f96621</color>
