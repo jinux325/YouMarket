@@ -5,13 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.DocumentSnapshot
 import com.u.marketapp.R
 import com.u.marketapp.databinding.LayoutProductBinding
 import com.u.marketapp.entity.ProductEntity
 
 class ProductRVAdapter : RecyclerView.Adapter<ProductRVAdapter.ViewHolder>() {
 
-    private val items : ArrayList<ProductEntity> = ArrayList()
+    private val items : ArrayList<DocumentSnapshot> = ArrayList()
 
     interface ItemClickListener { fun onClick(view: View, position: Int) }
     private lateinit var itemClickListener: ItemClickListener
@@ -38,13 +39,13 @@ class ProductRVAdapter : RecyclerView.Adapter<ProductRVAdapter.ViewHolder>() {
     override fun getItemCount(): Int = items.size
 
     // 단일 데이터 추가
-    fun addItem(newItem: ProductEntity) {
+    fun addItem(newItem: DocumentSnapshot) {
         items.add(newItem)
         notifyDataSetChanged()
     }
 
     // 단일 조회
-    fun getItem(position: Int): ProductEntity {
+    fun getItem(position: Int): DocumentSnapshot {
         return items[position]
     }
 
@@ -55,9 +56,9 @@ class ProductRVAdapter : RecyclerView.Adapter<ProductRVAdapter.ViewHolder>() {
     }
 
     class ViewHolder(private val binding: LayoutProductBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(temp: ProductEntity) {
+        fun bind(temp: DocumentSnapshot) {
             binding.apply {
-                item = temp
+                item = temp.toObject(ProductEntity::class.java)
             }
         }
 

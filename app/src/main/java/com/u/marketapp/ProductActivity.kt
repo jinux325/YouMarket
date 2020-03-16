@@ -14,7 +14,7 @@ import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
 import kotlinx.android.synthetic.main.activity_product.*
 
-class ProductActivity : AppCompatActivity() {
+class ProductActivity : AppCompatActivity(), View.OnClickListener {
 
     companion object {
         private val TAG = ProductActivity::class.java.simpleName
@@ -28,12 +28,11 @@ class ProductActivity : AppCompatActivity() {
 
         setActionBar()
 
-        if (intent.hasExtra("item")) {
-            val item = intent.getSerializableExtra("item") as ProductEntity
-            Log.i(TAG, item.toString())
-            binding.setVariable(BR.product, item)
-            getUserData(item.seller)
-            setPagerAdater(item.imageArray)
+        if (intent.hasExtra("itemId")) {
+            val itemId = intent.getStringExtra("itemId")
+            Log.i(TAG, itemId.toString())
+            getProductData(itemId)
+            button_chatting.setOnClickListener(this)
         } else {
             Log.i(TAG, "Intent Not Signal!!")
         }
@@ -46,6 +45,7 @@ class ProductActivity : AppCompatActivity() {
         val actionbar = supportActionBar!!
         // set back button
         actionbar.setDisplayHomeAsUpEnabled(true)
+        actionbar.setDisplayShowTitleEnabled(false)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -69,6 +69,30 @@ class ProductActivity : AppCompatActivity() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.button_chatting -> { // 거래하기 버튼
+                
+            }
+        }
+    }
+
+    // 상품 데이터 가져오기
+    private fun getProductData(pid: String?) {
+        val db = FirebaseFirestore.getInstance()
+        pid?.let {
+            db.collection(resources.getString(R.string.db_product)).document(it).get().addOnCompleteListener { document ->
+                if (document.isSuccessful) {
+                    Log.i(TAG, "Successful! ${document.result!!.id}")
+                    val item = document.result!!.toObject(ProductEntity::class.java)!!
+                    binding.setVariable(BR.product, item)
+                    getUserData(item.seller)
+                    setPagerAdater(item.imageArray)
+                }
+            }
         }
     }
 

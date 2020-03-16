@@ -10,11 +10,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.u.marketapp.adapter.ProductRVAdapter
 import com.u.marketapp.databinding.FragmentHomeBinding
-import com.u.marketapp.entity.ProductEntity
+import java.io.Serializable
 
 class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
@@ -69,19 +70,17 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         db.collection(resources.getString(R.string.db_product)).whereEqualTo("status", "active").orderBy("regDate", Query.Direction.DESCENDING).limit(30).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 for(document in it.result?.documents!!) {
-                    val item = document.toObject(ProductEntity::class.java)
-                    Log.i(TAG, item.toString())
-                    item?.let { a -> adapter.addItem(a) }
+                    adapter.addItem(document)
                 }
             }
         }
     }
 
     // 상품 상세 정보 페이지 이동
-    private fun moveActivity(item: ProductEntity) {
+    private fun moveActivity(item: DocumentSnapshot) {
         Log.i(TAG, item.toString())
         val intent = Intent(context, ProductActivity::class.java)
-        intent.putExtra("item", item)
+        intent.putExtra("itemId", item.id)
         startActivity(intent)
     }
 

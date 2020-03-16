@@ -5,32 +5,27 @@
 
     <item
         android:id="@+id/action_share"
-        android:enabled="true"
-        android:icon="@drawable/ic_share"
-        android:iconTint="@color/white"
+        android:icon="@drawable/ic_share_24px"
         android:title="공유"
         app:showAsAction="always"
         tools:ignore="HardcodedText,UnusedAttribute" />
 
     <item
         android:id="@+id/action_refresh"
-        android:enabled="true"
         android:title="새로고침"
-        app:showAsAction="ifRoom"
+        app:showAsAction="never"
         tools:ignore="HardcodedText" />
 
     <item
         android:id="@+id/action_declaration"
-        android:enabled="true"
         android:title="신고하기"
-        app:showAsAction="ifRoom"
+        app:showAsAction="never"
         tools:ignore="HardcodedText" />
 
     <item
         android:id="@+id/action_do_not_see"
-        android:enabled="true"
         android:title="이 사용자의 글 보지 않기"
-        app:showAsAction="ifRoom"
+        app:showAsAction="never"
         tools:ignore="HardcodedText" />
 
 </menu>

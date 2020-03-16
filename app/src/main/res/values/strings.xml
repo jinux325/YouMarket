@@ -31,7 +31,11 @@
         <item>삽니다</item>
     </string-array>
 
-    <string name="price">%,d원</string>
-    <string name="format">%1$tY년 %1$tm월 %1$td일</string>
+    <string name="trade_chatting">채팅으로 거래하기</string>
+    <string name="price_proposal">가격제안 불가</string>
 
+    <string name="format">%1$tY년 %1$tm월 %1$td일</string>
+    <string name="price">%,d원</string>
+    <string name="address">%s</string>
+    <string name="chat_attention_lookup">채팅 %d · 관심 %d · 조회 %d</string>
 </resources>

@@ -96,18 +96,16 @@
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
                         android:textColor="@android:color/darker_gray"
-                        android:text="@{item.address}"
-                        tools:text="세류동"
-                        tools:ignore="HardcodedText"/>
+                        android:text="@{@string/address(item.address)}"
+                        tools:text="세류동" />
 
                     <TextView
-                        android:id="@+id/text_view_dot"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
                         android:textColor="@android:color/darker_gray"
                         android:text=" · "
-                        tools:ignore="HardcodedText"/>
+                        tools:ignore="HardcodedText" />
 
                     <TextView
                         android:id="@+id/text_view_date"
@@ -116,7 +114,6 @@
                         android:text="@{@string/format(item.regDate)}"
                         android:textColor="@android:color/darker_gray"
                         android:textSize="12sp"
-                        tools:ignore="HardcodedText"
                         tools:text="시간" />
 
                 </LinearLayout>
@@ -133,8 +130,7 @@
                     android:text="@{@string/price(item.price)}"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/layout_address"
-                    tools:text="가격입니다."
-                    tools:ignore="HardcodedText" />
+                    tools:text="가격입니다." />
 
                 <!-- 댓글 & 채팅 & 좋아요 -->
                 <LinearLayout
@@ -156,6 +152,7 @@
                         android:gravity="center_vertical"
                         android:visibility="visible"
                         android:orientation="horizontal"
+                        bindSize="@{item.commentArray.size()}"
                         tools:ignore="UseCompoundDrawables">
 
                         <ImageView
@@ -170,7 +167,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="13sp"
-                            android:text="@{Integer.toString(item.commentSize)}"
+                            android:text="@{Integer.toString(item.commentArray.size())}"
                             tools:text="0"/>
 
                     </LinearLayout>
@@ -184,6 +181,7 @@
                         android:gravity="center_vertical"
                         android:visibility="visible"
                         android:orientation="horizontal"
+                        bindSize="@{item.chattingRoomArray.size()}"
                         tools:ignore="UseCompoundDrawables">
 
                         <ImageView
@@ -198,7 +196,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="13sp"
-                            android:text="@{Integer.toString(item.chattingRoomSize)}"
+                            android:text="@{Integer.toString(item.chattingRoomArray.size())}"
                             tools:text="0"/>
 
                     </LinearLayout>
@@ -212,6 +210,7 @@
                         android:gravity="center_vertical"
                         android:visibility="visible"
                         android:orientation="horizontal"
+                        bindSize="@{item.attentionSize}"
                         tools:ignore="UseCompoundDrawables">
 
                         <ImageView

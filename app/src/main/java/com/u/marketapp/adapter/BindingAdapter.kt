@@ -1,6 +1,8 @@
 package com.u.marketapp.adapter
 
+import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.u.marketapp.R
@@ -30,5 +32,14 @@ fun bindViewFromUrl(view: ImageView, image: String?) {
             .thumbnail(0.1f)
             .error(R.drawable.ic_no_photo)
             .into(view)
+    }
+}
+
+@BindingAdapter("bindSize")
+fun bindViewFromSize(view: LinearLayout, size: Int?) {
+    if (size != null && size > 0) {
+        view.visibility = View.VISIBLE
+    } else {
+        view.visibility = View.GONE
     }
 }
