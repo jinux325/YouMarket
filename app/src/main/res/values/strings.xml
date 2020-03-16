@@ -10,6 +10,10 @@
     <string name="chatting">채팅</string>
     <string name="info">나의 정보</string>
 
+    <string name="db_user">User</string>
+    <string name="db_product">Product</string>
+    <string name="db_chatting">Chatting</string>
+
     <string-array name="array_category">
         <item>디지털/가전</item>
         <item>가구/인테리어</item>

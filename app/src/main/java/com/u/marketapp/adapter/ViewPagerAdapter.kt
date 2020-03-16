@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.u.marketapp.R
 import kotlinx.android.synthetic.main.layout_image.view.*
 
-class ViewPagerAdapter() : PagerAdapter() {
+class ViewPagerAdapter : PagerAdapter() {
 
     private val images: ArrayList<String> = ArrayList()
 
@@ -23,16 +23,16 @@ class ViewPagerAdapter() : PagerAdapter() {
     }
 
     // 단일 데이터 추가
-    fun addImage(newImage: String) {
-        images.add(newImage)
-        notifyDataSetChanged()
-    }
+//    fun addImage(newImage: String) {
+//        images.add(newImage)
+//        notifyDataSetChanged()
+//    }
 
     // 단일 데이터 제거
-    fun removeImage(position: Int) {
-        images.removeAt(position)
-        notifyDataSetChanged()
-    }
+//    fun removeImage(position: Int) {
+//        images.removeAt(position)
+//        notifyDataSetChanged()
+//    }
 
     // 조회
     fun getImage(position: Int): String {
@@ -43,6 +43,7 @@ class ViewPagerAdapter() : PagerAdapter() {
         val inflater = LayoutInflater.from(container.context)
         val view = inflater.inflate(R.layout.layout_image, container, false)
 
+        @Suppress("DEPRECATION")
         view.image_view_thumnail.setColorFilter(view.resources.getColor(R.color.colorFilter), PorterDuff.Mode.MULTIPLY)
         Glide.with(view.context)
             .load(images[position])

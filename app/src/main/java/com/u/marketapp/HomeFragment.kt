@@ -66,7 +66,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     // 데이터 설정
     private fun setItemsData() {
         val db = FirebaseFirestore.getInstance()
-        db.collection("Product").whereEqualTo("status", "active").orderBy("regDate", Query.Direction.DESCENDING).limit(30).get().addOnCompleteListener {
+        db.collection(resources.getString(R.string.db_product)).whereEqualTo("status", "active").orderBy("regDate", Query.Direction.DESCENDING).limit(30).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 for(document in it.result?.documents!!) {
                     val item = document.toObject(ProductEntity::class.java)
