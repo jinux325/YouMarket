@@ -20,7 +20,7 @@
             android:layout_height="?attr/actionBarSize"
             android:elevation="1dp"
             android:background="@color/white"
-            app:menu="@menu/menu_edit"
+            app:menu="@menu/toolbar_edit"
             app:titleTextColor="@color/black"
             app:title="중고거래 글쓰기"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents.ActionBar"/>

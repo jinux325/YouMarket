@@ -6,7 +6,6 @@
     <item
         android:id="@+id/action_done"
         android:enabled="true"
-        android:icon="@drawable/ic_done_24px"
         android:title="완료"
         app:showAsAction="always"
         tools:ignore="HardcodedText" />

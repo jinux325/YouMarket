@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_share"
+        android:enabled="true"
+        android:icon="@drawable/ic_share"
+        android:iconTint="@color/white"
+        android:title="공유"
+        app:showAsAction="always"
+        tools:ignore="HardcodedText,UnusedAttribute" />
+
+    <item
+        android:id="@+id/action_refresh"
+        android:enabled="true"
+        android:title="새로고침"
+        app:showAsAction="ifRoom"
+        tools:ignore="HardcodedText" />
+
+    <item
+        android:id="@+id/action_declaration"
+        android:enabled="true"
+        android:title="신고하기"
+        app:showAsAction="ifRoom"
+        tools:ignore="HardcodedText" />
+
+    <item
+        android:id="@+id/action_do_not_see"
+        android:enabled="true"
+        android:title="이 사용자의 글 보지 않기"
+        app:showAsAction="ifRoom"
+        tools:ignore="HardcodedText" />
+
+</menu>

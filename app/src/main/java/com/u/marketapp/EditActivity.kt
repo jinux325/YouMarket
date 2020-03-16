@@ -178,12 +178,14 @@ class EditActivity : AppCompatActivity() {
     // 데이터 수집
     private fun getEditData() : ProductEntity {
         val item = ProductEntity()
-//        item.seller = FirebaseAuth.getInstance().currentUser!!.uid // 판매자 정보
-        item.seller = "QdqJ1cFReQ7EHxf4bptP"
+        item.seller = FirebaseAuth.getInstance().currentUser!!.uid // 판매자 정보
+//        item.seller = "QdqJ1cFReQ7EHxf4bptP"
         item.category = text_view_category.text.toString() // 카테고리
         item.title = edit_text_title.text.toString() // 제목
         item.address = "망포동"
-        item.price = edit_text_price.text.toString().replace(",", "").toInt() // 가격
+        if (edit_text_price.text.toString().isNotEmpty()) {
+            item.price = edit_text_price.text.toString().replace(",", "").toInt() // 가격
+        }
         item.suggestion = check_box_suggestion.isChecked // 가격 제안 여뷰
         item.contents = edit_text_contents.text.toString() // 내용
         return item
@@ -193,7 +195,7 @@ class EditActivity : AppCompatActivity() {
     private fun saveProduct() {
         val item = getEditData()
         val db = FirebaseFirestore.getInstance()
-        db.collection("Product").add(item).addOnCompleteListener {
+        db.collection(resources.getString(R.string.db_product)).add(item).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "추가된 상품 문서 : ${it.result!!.id}")
                 if (adapter.itemCount > 0) {
@@ -208,11 +210,11 @@ class EditActivity : AppCompatActivity() {
     // 판매내역 등록
     private fun addSellList(documentId: String?) {
         val db = FirebaseFirestore.getInstance()
-//        val uid = FirebaseAuth.getInstance().currentUser!!.uid
-        val uid = "QdqJ1cFReQ7EHxf4bptP"
+        val uid = FirebaseAuth.getInstance().currentUser!!.uid
+//        val uid = "QdqJ1cFReQ7EHxf4bptP"
         uid.let {
             documentId.let { item ->
-                db.collection("User").document(it).update("salesHistory", FieldValue.arrayUnion(item)).addOnCompleteListener { task ->
+                db.collection(resources.getString(R.string.db_user)).document(it).update("salesHistory", FieldValue.arrayUnion(item)).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.i(TAG, "판매내역 업데이트 성공! : $item")
                     }
@@ -228,7 +230,7 @@ class EditActivity : AppCompatActivity() {
             val dir = "${SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(Date())}/${item}"
             for (uri in adapter.getAllData()) {
                 val fileName = "${System.currentTimeMillis()}.${getFileExtension(uri)}"
-                val ref = storage.getReference("Product").child(dir).child(fileName)
+                val ref = storage.getReference(resources.getString(R.string.db_product)).child(dir).child(fileName)
                 ref.putFile(uri).continueWithTask {
                     if (!it.isSuccessful) {
                         throw it.exception!!
@@ -247,7 +249,7 @@ class EditActivity : AppCompatActivity() {
     // 이미지 업데이트
     private fun updateImage(item: String?, path: String?) {
         val db = FirebaseFirestore.getInstance()
-        db.collection("Product").document(item!!).update("imageArray", FieldValue.arrayUnion(path)).addOnCompleteListener {
+        db.collection(resources.getString(R.string.db_product)).document(item!!).update("imageArray", FieldValue.arrayUnion(path)).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "이미지 업데이트 성공 : ${it.result}")
             }
@@ -262,7 +264,7 @@ class EditActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_edit, menu)
+        menuInflater.inflate(R.menu.toolbar_edit, menu)
         return true
     }
 

@@ -75,6 +75,107 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
+        <!-- 가격 & 채팅 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@android:color/background_light"
+            android:translationZ="1dp">
+
+            <View
+                android:id="@+id/view_divider"
+                style="@style/Divider"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/view_divider">
+
+                <!-- 관심 여부 -->
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/check_box_suggestion"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="5dp"
+                    android:button="@drawable/item_checkbox_hart"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <View
+                    android:id="@+id/view_divider2"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:background="@color/black_30"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginStart="10dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/check_box_suggestion"/>
+
+                <!-- 가격 & 제시여부 -->
+                <LinearLayout
+                    android:id="@+id/layout_price_suggestion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="10dp"
+                    app:layout_constraintLeft_toRightOf="@id/view_divider2"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/text_view_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:text="@{@string/price(product.price)}"
+                        tools:text="40,000원"/>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/text_view_suggestion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="가격제안 불가"
+                        tools:text="가격제안 불가"
+                        tools:ignore="HardcodedText,SmallSp" />
+
+                </LinearLayout>
+
+                <!-- 채팅 버튼 -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_chatting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:background="@drawable/background_chatting_button"
+                    android:backgroundTint="@color/hintcolor"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:text="채팅으로 거래하기"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:ignore="HardcodedText" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <!-- 내용 -->
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -105,13 +206,13 @@
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:scaleType="centerCrop"
-                            bindImage="@{user.profilePath}"
+                            bindUrl="@{user.profilePath}"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:src="@drawable/ic_launcher_background"
                             tools:ignore="ContentDescription" />
 
-                        <TextView
+                        <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/text_view_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -124,7 +225,7 @@
                             app:layout_constraintTop_toTopOf="parent"
                             tools:text="닉네임"/>
 
-                        <TextView
+                        <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/text_view_address"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -149,7 +250,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <TextView
+                        <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/text_view_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -170,20 +271,20 @@
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/text_view_title">
 
-                            <TextView
+                            <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/text_view_category"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@{product.category}"
                                 tools:text="카테고리"/>
 
-                            <TextView
+                            <com.google.android.material.textview.MaterialTextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text=" · "
                                 tools:ignore="HardcodedText" />
 
-                            <TextView
+                            <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/text_view_date"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -192,7 +293,7 @@
 
                         </LinearLayout>
 
-                        <TextView
+                        <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/text_view_contents"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -202,7 +303,7 @@
                             android:text="@{product.contents}"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/layout_category_date"
-                            tools:text="상품 내용..."/>
+                            tools:text="상품 내용...\n\n\n\n\n\n...상담내용..."/>
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="wrap_content"
@@ -211,7 +312,7 @@
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/text_view_contents">
 
-                            <TextView
+                            <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/text_view_chatting"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -221,7 +322,7 @@
                                 app:layout_constraintTop_toTopOf="parent"
                                 tools:ignore="HardcodedText" />
 
-                            <TextView
+                            <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/text_view_chatting_count"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -232,7 +333,7 @@
                                 app:layout_constraintTop_toTopOf="parent"
                                 tools:text="0"/>
 
-                            <TextView
+                            <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/text_view_attention"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -242,7 +343,7 @@
                                 app:layout_constraintTop_toTopOf="parent"
                                 tools:ignore="HardcodedText" />
 
-                            <TextView
+                            <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/text_view_attention_count"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -252,7 +353,7 @@
                                 app:layout_constraintTop_toTopOf="parent"
                                 tools:text="0"/>
 
-                            <TextView
+                            <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/text_view_lookup"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -262,7 +363,7 @@
                                 app:layout_constraintTop_toTopOf="parent"
                                 tools:ignore="HardcodedText" />
 
-                            <TextView
+                            <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/text_view_lookup_count"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"

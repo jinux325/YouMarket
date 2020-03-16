@@ -6,9 +6,9 @@ import com.bumptech.glide.Glide
 import com.u.marketapp.R
 import java.util.*
 
-@BindingAdapter("bindUrl")
-fun bindViewFromUrlArray(view: ImageView, imageArray: ArrayList<String>) {
-    if (!imageArray.isNullOrEmpty()) {
+@BindingAdapter("bindUrlArray")
+fun bindViewFromUrlArray(view: ImageView, imageArray: ArrayList<String>?) {
+    if (imageArray != null && imageArray.size > 0) {
         Glide.with(view.context)
             .load(imageArray[0])
             .thumbnail(0.1f)
@@ -22,7 +22,7 @@ fun bindViewFromUrlArray(view: ImageView, imageArray: ArrayList<String>) {
     }
 }
 
-@BindingAdapter("bindImage")
+@BindingAdapter("bindUrl")
 fun bindViewFromUrl(view: ImageView, image: String?) {
     if (image != null) {
         Glide.with(view.context)

@@ -46,7 +46,7 @@
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
-                    bindUrl="@{item.imageArray}"
+                    bindUrlArray="@{item.imageArray}"
                     tools:src="@drawable/ic_launcher_background"
                     tools:ignore="ContentDescription" />
 
