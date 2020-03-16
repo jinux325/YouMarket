@@ -12,8 +12,9 @@ data class UserEntity (
     var purchaseHistory: ArrayList<String>?, // 구매 내역
     var attentionHistory: ArrayList<String>?, // 관심 목록
     var chattingRoomHistory: ArrayList<String>?, // 채팅방 목록
+    var token: String?, // 토큰
     var regDate: Date, // 등록일
     var state: String // 상태( leave : 탈퇴, active : 활성화, unactive : 비활성화, dormant : 휴면)
 ) : Serializable {
-    constructor() : this (null, null, null, null, null, null, null, null, Date(), "active")
+    constructor() : this (null, null, null, null, null, null, null, null, null, Date(), "active")
 }
