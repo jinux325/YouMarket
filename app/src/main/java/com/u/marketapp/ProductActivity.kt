@@ -20,6 +20,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         private val TAG = ProductActivity::class.java.simpleName
     }
 
+    private lateinit var pid: String // 상품 문서 ID
     private lateinit var binding: ActivityProductBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,9 +30,9 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         setActionBar()
 
         if (intent.hasExtra("itemId")) {
-            val itemId = intent.getStringExtra("itemId")
-            Log.i(TAG, itemId.toString())
-            getProductData(itemId)
+            pid = intent.getStringExtra("itemId")
+            Log.i(TAG, pid)
+            getProductData(pid)
             button_chatting.setOnClickListener(this)
         } else {
             Log.i(TAG, "Intent Not Signal!!")
@@ -59,6 +60,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 true
             }
             R.id.action_refresh -> { // 새로고침
+                getProductData(pid)
                 true
             }
             R.id.action_do_not_see -> { // 이 사용자의 글 보지 않기
@@ -75,7 +77,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_chatting -> { // 거래하기 버튼
-                
+
             }
         }
     }
