@@ -36,7 +36,7 @@ class ChatFragment : Fragment() {
         val chat_recyclerView = view.findViewById(R.id.chat_recyclerView) as RecyclerView
        // chattingRoomList = mutableListOf<ChatRoomVO>(ChatRoomVO("1","1", "","1","1","1","1","1"),ChatRoomVO("1","1", "","1","1","1","1","1"),ChatRoomVO("1","1", "","1","1","1","1","1"))
 
-        userData()
+
 
 
 //        Log.d("chattingRoomList ", chattingRoomList[0].buyer)
@@ -49,6 +49,12 @@ class ChatFragment : Fragment() {
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+        chattingRoomList.clear()
+        chattingRoomUidList.clear()
+        userData()
+    }
     fun userData(){
         var uid = FirebaseAuth.getInstance().currentUser!!.uid
         FirebaseFirestore.getInstance().collection("Users").document(uid).get()
