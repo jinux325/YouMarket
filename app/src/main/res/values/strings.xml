@@ -1,19 +1,19 @@
 <resources>
     <string name="app_name">MarketApp</string>
 
-    <string name="option_setting">설정</string>
-    <string name="option_complete">완료</string>
-
+    <!-- Bottom Navigation Menu -->
     <string name="home">홈</string>
     <string name="category">카테고리</string>
     <string name="edit">글쓰기</string>
     <string name="chatting">채팅</string>
     <string name="info">나의 정보</string>
 
+    <!-- DB Collection -->
     <string name="db_user">User</string>
     <string name="db_product">Product</string>
     <string name="db_chatting">Chatting</string>
 
+    <!-- Category -->
     <string-array name="array_category">
         <item>디지털/가전</item>
         <item>가구/인테리어</item>
@@ -31,9 +31,23 @@
         <item>삽니다</item>
     </string-array>
 
+    <!-- Menu -->
+    <string name="share">공유</string>
+    <string name="refresh">새로고침</string>
+    <string name="update">수정</string>
+    <string name="declaration">신고하기</string>
+    <string name="do_not_see">이 사용자의 글 보지 않기</string>
+    <string name="hide">숨기기</string>
+    <string name="delete">삭제</string>
+
+    <string name="option_setting">설정</string>
+    <string name="option_complete">완료</string>
+
+    <!-- Product -->
     <string name="trade_chatting">채팅으로 거래하기</string>
     <string name="price_proposal">가격제안 불가</string>
 
+    <!-- Format -->
     <string name="format">%1$tY년 %1$tm월 %1$td일</string>
     <string name="price">%,d원</string>
     <string name="address">%s</string>

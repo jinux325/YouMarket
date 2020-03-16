@@ -34,7 +34,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         if (intent.hasExtra("itemId")) {
             pid = intent.getStringExtra("itemId")
             Log.i(TAG, pid)
-            getProductData(pid)
+            getProductData()
             button_chatting.setOnClickListener(this)
         } else {
             Log.i(TAG, "Intent Not Signal!!")
@@ -62,10 +62,21 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 true
             }
             R.id.action_refresh -> { // 새로고침
-                getProductData(pid)
+                getProductData()
+                true
+            }
+            R.id.action_declaration -> { // 신고하기
                 true
             }
             R.id.action_do_not_see -> { // 이 사용자의 글 보지 않기
+                true
+            }
+            R.id.action_hide -> { // 숨기기
+                unActiveProduct()
+                true
+            }
+            R.id.action_delete -> { // 삭제
+                deleteProduct()
                 true
             }
             android.R.id.home -> { // 뒤로가기
@@ -84,34 +95,50 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    // 상품 데이터 가져오기
-    private fun getProductData(pid: String?) {
+    // 상품 비활성화
+    private fun unActiveProduct() {
         val db = FirebaseFirestore.getInstance()
-        pid?.let {
-            db.collection(resources.getString(R.string.db_product)).document(it).get().addOnCompleteListener { document ->
-                if (document.isSuccessful) {
-                    Log.i(TAG, "Successful! ${document.result!!.id}")
-                    val item = document.result!!.toObject(ProductEntity::class.java)!!
-                    binding.setVariable(BR.product, item)
-                    uid = item.seller.toString()
-                    getUserData(item.seller)
-                    setPagerAdater(item.imageArray)
-                }
+        db.collection(resources.getString(R.string.db_product)).document(pid).update("status", "unactive").addOnCompleteListener { document ->
+            if (document.isSuccessful) {
+                Log.i(TAG, "상품 비활성화! ${document.result!!}")
+            }
+        }
+    }
+
+    // 상품 삭제
+    private fun deleteProduct() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid).delete().addOnCompleteListener { document ->
+            if (document.isSuccessful) {
+                Log.i(TAG, "상품 삭제! ${document.result!!}")
+            }
+        }
+    }
+
+    // 상품 데이터 가져오기
+    private fun getProductData() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener { document ->
+            if (document.isSuccessful) {
+                Log.i(TAG, "Successful! ${document.result!!.id}")
+                val item = document.result!!.toObject(ProductEntity::class.java)!!
+                binding.setVariable(BR.product, item)
+                uid = item.seller.toString()
+                getUserData()
+                setPagerAdater(item.imageArray)
             }
         }
     }
 
     // 유저 정보 가져오기
-    private fun getUserData(uid: String?) {
+    private fun getUserData() {
         val db = FirebaseFirestore.getInstance()
-        uid?.let {
-            db.collection(resources.getString(R.string.db_user)).document(it).get().addOnCompleteListener { document ->
-                if (document.isSuccessful) {
-                    Log.i(TAG, "Successful! ${document.result!!.id}")
-                    val user = document.result!!.toObject(UserEntity::class.java)
-                    userName = user!!.name.toString()
-                    binding.setVariable(BR.user, user)
-                }
+        db.collection(resources.getString(R.string.db_user)).document(uid).get().addOnCompleteListener { document ->
+            if (document.isSuccessful) {
+                Log.i(TAG, "Successful! ${document.result!!.id}")
+                val user = document.result!!.toObject(UserEntity::class.java)
+                userName = user!!.name.toString()
+                binding.setVariable(BR.user, user)
             }
         }
     }

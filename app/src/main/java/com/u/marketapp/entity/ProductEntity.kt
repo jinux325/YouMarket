@@ -20,5 +20,5 @@ data class ProductEntity (
     var regDate: Date, // 등록일
     var status: String // 상태( unactive : 비활성화, active : 활성화, done : 거래완료)
 ) : Serializable {
-    constructor() : this(null, null, null, null, 0, false, null, null, null, null, null, 0, Date(), "active")
+    constructor() : this(null, null, null, null, 0, false, null, null, null, null, null, 0, Date(), "unactive")
 }

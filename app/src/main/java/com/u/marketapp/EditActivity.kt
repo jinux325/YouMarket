@@ -88,7 +88,7 @@ class EditActivity : AppCompatActivity() {
     }
 
     // 가격 콤마 처리
-    private var pointNumStr = ""
+    private lateinit var pointNumStr: String
     private fun setEditTextPrice() {
         edit_text_price.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
@@ -144,7 +144,6 @@ class EditActivity : AppCompatActivity() {
         adapter.addAllData(uriList)
         if (adapter.itemCount > 0) recycler_view.visibility = View.VISIBLE
         text_view_picker_count.text = adapter.itemCount.toString()
-        //recycler_view.smoothScrollToPosition(adapter.itemCount-1)
     }
 
     // 이미지 제거
@@ -161,7 +160,7 @@ class EditActivity : AppCompatActivity() {
     private fun showPopupForSave() {
         MaterialAlertDialogBuilder(this)
             .setTitle("저장하시겠습니까?")
-            .setPositiveButton("확인") { _, _ -> saveProduct() }
+            .setPositiveButton("확인") { _, _ -> saveProduct(getEditData()) }
             .setNegativeButton("취소", null)
             .show()
     }
@@ -179,7 +178,6 @@ class EditActivity : AppCompatActivity() {
     private fun getEditData() : ProductEntity {
         val item = ProductEntity()
         item.seller = FirebaseAuth.getInstance().currentUser!!.uid // 판매자 정보
-//        item.seller = "QdqJ1cFReQ7EHxf4bptP"
         item.category = text_view_category.text.toString() // 카테고리
         item.title = edit_text_title.text.toString() // 제목
         item.address = "망포동"
@@ -192,8 +190,7 @@ class EditActivity : AppCompatActivity() {
     }
 
     // 상품 저장
-    private fun saveProduct() {
-        val item = getEditData()
+    private fun saveProduct(item: ProductEntity) {
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).add(item).addOnCompleteListener {
             if (it.isSuccessful) {
@@ -207,11 +204,20 @@ class EditActivity : AppCompatActivity() {
         }
     }
 
+    // 상품 수정
+    private fun updateProduct(pid: String, data: Map<String, Any>) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid).update(data).addOnCompleteListener {
+            if (it.isSuccessful) {
+                Log.i(TAG, "상품 수정 완료!")
+            }
+        }
+    }
+
     // 판매내역 등록
     private fun addSellList(documentId: String?) {
         val db = FirebaseFirestore.getInstance()
         val uid = FirebaseAuth.getInstance().currentUser!!.uid
-//        val uid = "QdqJ1cFReQ7EHxf4bptP"
         uid.let {
             documentId.let { item ->
                 db.collection(resources.getString(R.string.db_user)).document(it).update("salesHistory", FieldValue.arrayUnion(item)).addOnCompleteListener { task ->
@@ -228,6 +234,7 @@ class EditActivity : AppCompatActivity() {
         val storage = FirebaseStorage.getInstance()
         pid.let { item ->
             val dir = "${SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(Date())}/${item}"
+            var isActive = true
             for (uri in adapter.getAllData()) {
                 val fileName = "${System.currentTimeMillis()}.${getFileExtension(uri)}"
                 val ref = storage.getReference(resources.getString(R.string.db_product)).child(dir).child(fileName)
@@ -240,6 +247,10 @@ class EditActivity : AppCompatActivity() {
                     if (it.isSuccessful) {
                         Log.i(TAG, "이미지 추가 성공 : ${it.result.toString()}")
                         updateImage(item, it.result.toString())
+                        if (isActive) {
+                            isActive = !isActive
+                            updateActiveProduct(item)
+                        }
                     }
                 }
             }
@@ -252,6 +263,16 @@ class EditActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_product)).document(item!!).update("imageArray", FieldValue.arrayUnion(path)).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "이미지 업데이트 성공 : ${it.result}")
+            }
+        }
+    }
+
+    // 상품 활성화
+    private fun updateActiveProduct(item: String?) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(item!!).update("status", "active").addOnCompleteListener {
+            if (it.isSuccessful) {
+                Log.i(TAG, "상품 업데이트 성공 : ${it.result}")
             }
         }
     }
