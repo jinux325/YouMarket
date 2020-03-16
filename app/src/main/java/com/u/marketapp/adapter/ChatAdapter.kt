@@ -154,9 +154,8 @@ class ChatAdapter(val context: Context?, val chatList:MutableList<ChatRoomVO>, v
                 if (task.isSuccessful) {
                     val productEntity: ProductEntity? = task.result!!.toObject<ProductEntity>(
                         ProductEntity::class.java)
-                    //image = productEntity?.imageArray!![0]
                     if (context != null) {
-                        Glide.with(context).load(productEntity?.imageArray!![0]).into(holder.pImage)
+                       // Glide.with(context).load(productEntity?.imageArray!![0]).into(holder.pImage)
                     }
                 }
             }

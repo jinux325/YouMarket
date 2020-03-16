@@ -39,6 +39,8 @@ class SettingActivity : AppCompatActivity() {
         version.setOnClickListener {
             val intent = Intent(this, ChatActivity::class.java)
             intent.putExtra("Chatting", "ROOM")
+            intent.putExtra("pid", "E1vYCUvs3algrwWCVRXF")
+            intent.putExtra("seller", "kLIDekdZbCP0h99ZN8tIP3NhRct1")
             startActivity(intent)
         }
 /*
