@@ -21,6 +21,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private lateinit var pid: String // 상품 문서 ID
+    private lateinit var uid: String // 판매자 문서 ID
     private lateinit var binding: ActivityProductBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,6 +92,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                     Log.i(TAG, "Successful! ${document.result!!.id}")
                     val item = document.result!!.toObject(ProductEntity::class.java)!!
                     binding.setVariable(BR.product, item)
+                    uid = item.seller.toString()
                     getUserData(item.seller)
                     setPagerAdater(item.imageArray)
                 }
