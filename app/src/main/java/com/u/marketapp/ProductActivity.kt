@@ -22,6 +22,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var pid: String // 상품 문서 ID
     private lateinit var uid: String // 판매자 문서 ID
+    private lateinit var userName: String // 판매자 닉네임
     private lateinit var binding: ActivityProductBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,6 +109,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 if (document.isSuccessful) {
                     Log.i(TAG, "Successful! ${document.result!!.id}")
                     val user = document.result!!.toObject(UserEntity::class.java)
+                    userName = user!!.name.toString()
                     binding.setVariable(BR.user, user)
                 }
             }
