@@ -46,6 +46,7 @@
     <!-- Product -->
     <string name="trade_chatting">채팅으로 거래하기</string>
     <string name="price_proposal">가격제안 불가</string>
+    <string name="send_to">이미지 공유</string>
 
     <!-- Format -->
     <string name="format">%1$tY년 %1$tm월 %1$td일</string>

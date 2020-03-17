@@ -14,7 +14,7 @@ data class UserEntity (
     var chattingRoomHistory: ArrayList<String>?, // 채팅방 목록
     var token: String?, // 토큰
     var regDate: Date, // 등록일
-    var state: String // 상태( leave : 탈퇴, active : 활성화, unactive : 비활성화, dormant : 휴면)
+    var status: String // 상태( leave : 탈퇴, active : 활성화, unactive : 비활성화, dormant : 휴면)
 ) : Serializable {
     constructor() : this (null, null, null, null, null, null, null, null, null, Date(), "active")
 }

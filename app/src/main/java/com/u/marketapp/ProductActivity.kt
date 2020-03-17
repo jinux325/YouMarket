@@ -2,6 +2,7 @@ package com.u.marketapp
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -9,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.adapter.ViewPagerAdapter
 import com.u.marketapp.databinding.ActivityProductBinding
@@ -27,13 +29,12 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var uid: String // 판매자 문서 ID
     private lateinit var userName: String // 판매자 닉네임
     private lateinit var binding: ActivityProductBinding
+    private lateinit var viewPagerAdapter: ViewPagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_product)
-
         setActionBar()
-
         if (intent.hasExtra("itemId")) {
             pid = intent.getStringExtra("itemId")
             Log.i(TAG, pid)
@@ -42,7 +43,6 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         } else {
             Log.i(TAG, "Intent Not Signal!!")
         }
-
     }
 
     // 액션바 정의
@@ -54,14 +54,30 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         actionbar.setDisplayShowTitleEnabled(false)
     }
 
+    // 소유권 확인
+    private fun userVerification(menu: Menu?) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener {
+            if (it.isSuccessful) {
+                val item = it.result!!.toObject(ProductEntity::class.java)
+                if (FirebaseAuth.getInstance().currentUser!!.uid == item?.seller) {
+                    menuInflater.inflate(R.menu.toolbar_product_current, menu)
+                } else {
+                    menuInflater.inflate(R.menu.toolbar_product, menu)
+                }
+            }
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.toolbar_product, menu)
+        userVerification(menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_share -> { // 공유
+                share()
                 true
             }
             R.id.action_refresh -> { // 새로고침
@@ -100,6 +116,15 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
 
             }
         }
+    }
+
+    // 이미지 공유
+    private fun share() {
+        val shareIntent = Intent()
+        shareIntent.action = Intent.ACTION_SEND
+        shareIntent.type = "jpg/image"
+        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(viewPagerAdapter.getImage(view_pager.currentItem)))
+        startActivity(Intent.createChooser(shareIntent, resources.getText(R.string.send_to)))
     }
 
     // 상품 수정
@@ -151,7 +176,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
             if (document.isSuccessful) {
                 Log.i(TAG, "Successful! ${document.result!!.id}")
                 val user = document.result!!.toObject(UserEntity::class.java)
-                userName = user!!.name.toString()
+                userName = user?.name.toString()
                 binding.setVariable(BR.user, user)
             }
         }
@@ -161,7 +186,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     private fun setPagerAdater(array: ArrayList<String>?) {
         if (array != null && array.size > 0) {
             view_pager.visibility = View.VISIBLE
-            val viewPagerAdapter = ViewPagerAdapter()
+            viewPagerAdapter = ViewPagerAdapter()
             viewPagerAdapter.addImageList(array)
             view_pager.adapter = viewPagerAdapter
             viewPagerAdapter.itemClick = object : ViewPagerAdapter.ItemClick {
@@ -171,7 +196,6 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
             }
         } else {
             view_pager.visibility = View.GONE
-
         }
     }
 
