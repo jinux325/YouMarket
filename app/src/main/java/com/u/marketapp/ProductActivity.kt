@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.firebase.auth.FirebaseAuth
@@ -85,9 +86,11 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 true
             }
             R.id.action_declaration -> { // 신고하기
+                Toast.makeText(this, "기능 추가 예정입니다.", Toast.LENGTH_SHORT).show()
                 true
             }
             R.id.action_do_not_see -> { // 이 사용자의 글 보지 않기
+                Toast.makeText(this, "기능 추가 예정입니다.", Toast.LENGTH_SHORT).show()
                 true
             }
             R.id.action_hide -> { // 숨기기
@@ -191,12 +194,20 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
             view_pager.adapter = viewPagerAdapter
             viewPagerAdapter.itemClick = object : ViewPagerAdapter.ItemClick {
                 override fun onClick(view: View, position: Int) {
-                    Log.i(TAG, "image path : ${viewPagerAdapter.getImage(position)}")
+                    intentViewPager(array, position)
                 }
             }
         } else {
             view_pager.visibility = View.GONE
         }
+    }
+
+    // 이미지 뷰 페이저 인텐트
+    private fun intentViewPager(array: ArrayList<String>?, position: Int) {
+        val intent = Intent(this, ViewActivity::class.java)
+        intent.putExtra("position", position)
+        intent.putExtra("imageArray", array)
+        startActivity(intent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

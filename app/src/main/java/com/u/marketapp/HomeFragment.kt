@@ -15,7 +15,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.u.marketapp.adapter.ProductRVAdapter
 import com.u.marketapp.databinding.FragmentHomeBinding
-import java.io.Serializable
 
 class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 

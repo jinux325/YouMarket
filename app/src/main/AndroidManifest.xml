@@ -21,20 +21,24 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <activity android:name=".HomeFragment"
+        <activity
+            android:name=".HomeFragment"
+            android:theme="@style/MaterialTheme" />
+        <activity
+            android:name=".EditActivity"
+            android:theme="@style/MaterialTheme" />
+        <activity
+            android:name=".ProductActivity"
+            android:theme="@style/MaterialTheme" />
+        <activity android:name=".ViewActivity"
             android:theme="@style/MaterialTheme"/>
-        <activity android:name=".EditActivity"
+        <activity
+            android:name=".MainActivity"
             android:theme="@style/MaterialTheme"/>
-        <activity android:name=".ProductActivity"
-            android:theme="@style/MaterialTheme"/>
-        <activity android:name=".MainActivity"
-            android:theme="@style/MaterialTheme">
-        </activity>
         <activity
             android:name=".chat.ChatActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
-        </activity>
+            android:windowSoftInputMode="adjustPan"></activity>
         <activity
             android:name=".setting.LocationSettingActivity"
             android:theme="@style/AppTheme.NoActionBar" />

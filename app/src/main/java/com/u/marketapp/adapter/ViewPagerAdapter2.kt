@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.u.marketapp.R
 import kotlinx.android.synthetic.main.layout_image.view.*
 
-class ViewPagerAdapter: PagerAdapter() {
+class ViewPagerAdapter2: PagerAdapter() {
 
     private val images: ArrayList<String> = ArrayList()
 
@@ -29,7 +29,7 @@ class ViewPagerAdapter: PagerAdapter() {
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val inflater = LayoutInflater.from(container.context)
-        val view = inflater.inflate(R.layout.layout_image, container, false)
+        val view = inflater.inflate(R.layout.layout_image2, container, false)
 
         @Suppress("DEPRECATION")
         view.image_view_thumnail.setColorFilter(view.resources.getColor(R.color.colorFilter), PorterDuff.Mode.MULTIPLY)
