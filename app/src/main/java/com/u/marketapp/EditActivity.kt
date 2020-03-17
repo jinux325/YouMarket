@@ -1,6 +1,7 @@
 package com.u.marketapp
 
 import android.app.Activity
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -13,6 +14,7 @@ import android.view.View
 import android.webkit.MimeTypeMap
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
@@ -38,6 +40,7 @@ class EditActivity : AppCompatActivity() {
     private lateinit var actionbar: ActionBar
     private lateinit var adapter: PreviewRVAdapter
     private var pid: String? = null
+    private var progressDialog: AppCompatDialog? = null
     private var currentArray: ArrayList<Uri> = ArrayList()
     private var delImageArray: ArrayList<Uri> = ArrayList()
 
@@ -214,6 +217,7 @@ class EditActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this)
             .setTitle("저장하시겠습니까?")
             .setPositiveButton("확인") { _, _ ->
+                progressON(this)
                 if (pid.isNullOrEmpty()) {
                     saveProduct(getEditData())
                 } else {
@@ -276,7 +280,6 @@ class EditActivity : AppCompatActivity() {
                     updateActiveProduct(it.result!!.id)
                 }
                 addSellList(it.result!!.id)
-                finish() // 종료
             }
         }
     }
@@ -295,7 +298,6 @@ class EditActivity : AppCompatActivity() {
                     updateActiveProduct(pid)
                 }
                 setResult(Activity.RESULT_OK)
-                finish() // 종료
             }
         }
     }
@@ -333,7 +335,7 @@ class EditActivity : AppCompatActivity() {
                     if (it.isSuccessful) {
                         Log.i(TAG, "이미지 추가 성공 : ${it.result.toString()}")
                         updateImage(item, it.result.toString())
-                        if ((++count) >= adapter.itemCount) {
+                        if ((++count) >= currentArray.size) {
                             updateActiveProduct(item)
                         }
                     }
@@ -377,6 +379,8 @@ class EditActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_product)).document(item!!).update("status", "active").addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "상품 업데이트 성공 : ${it.result}")
+                progressOFF()
+                finish() // 종료
             }
         }
     }
@@ -411,6 +415,28 @@ class EditActivity : AppCompatActivity() {
         // 취소 확인 팝업창
         showPopupForCancel()
     }
+
+    // 로딩 활성화
+    private fun progressON(activity: EditActivity) {
+        if (activity.isFinishing) return
+        if (progressDialog == null || !(progressDialog!!.isShowing)) {
+            progressDialog = AppCompatDialog(activity)
+            progressDialog?.let {
+                it.setCancelable(false)
+                it.window?.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
+                it.setContentView(R.layout.layout_loading)
+                it.show()
+            }
+        }
+    }
+
+    // 로딩 비활성화
+    private fun progressOFF() {
+        if (progressDialog != null && progressDialog!!.isShowing) {
+            progressDialog!!.dismiss()
+        }
+    }
+
 
     // Editable 변환
     private fun Int.toEditable(): Editable =  Editable.Factory.getInstance().newEditable(this.toString())

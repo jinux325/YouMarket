@@ -8,6 +8,9 @@
     <string name="chatting">채팅</string>
     <string name="info">나의 정보</string>
 
+    <!-- Loading -->
+    <string name="loading">Please Wait…</string>
+
     <!-- DB Collection -->
     <string name="db_user">User</string>
     <string name="db_product">Product</string>
