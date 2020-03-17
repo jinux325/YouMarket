@@ -142,7 +142,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).document(pid).update("status", "unactive").addOnCompleteListener { document ->
             if (document.isSuccessful) {
-                Log.i(TAG, "상품 비활성화! ${document.result!!}")
+                Log.i(TAG, "상품 비활성화!")
             }
         }
     }
@@ -152,7 +152,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).document(pid).delete().addOnCompleteListener { document ->
             if (document.isSuccessful) {
-                Log.i(TAG, "상품 삭제! ${document.result!!}")
+                Log.i(TAG, "상품 삭제!")
             }
         }
     }
@@ -215,7 +215,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 REQUEST_UPDATE -> {
-                    updateProduct()
+                    getProductData()
                 }
             }
         }

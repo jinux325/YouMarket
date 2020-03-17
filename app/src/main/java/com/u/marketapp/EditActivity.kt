@@ -37,8 +37,9 @@ class EditActivity : AppCompatActivity() {
 
     private lateinit var actionbar: ActionBar
     private lateinit var adapter: PreviewRVAdapter
-    private lateinit var pid: String
-    private lateinit var delImageArray: ArrayList<Uri>
+    private var pid: String? = null
+    private var currentArray: ArrayList<Uri> = ArrayList()
+    private var delImageArray: ArrayList<Uri> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,7 +97,7 @@ class EditActivity : AppCompatActivity() {
     }
 
     // 가격 콤마 처리
-    private lateinit var pointNumStr: String
+    private var pointNumStr: String = ""
     private fun setEditTextPrice() {
         edit_text_price.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
@@ -120,10 +121,12 @@ class EditActivity : AppCompatActivity() {
     // 이전 데이터 로드
     private fun loadBeforeData() {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener {
-            if (it.isSuccessful) {
-                val item = it.result!!.toObject(ProductEntity::class.java)
-                item?.let { it1 -> loadData(it1) }
+        pid?.let {
+            db.collection(resources.getString(R.string.db_product)).document(it).get().addOnCompleteListener { snapshot ->
+                if (snapshot.isSuccessful) {
+                    val item = snapshot.result?.toObject(ProductEntity::class.java)
+                    item?.let { it1 -> loadData(it1) }
+                }
             }
         }
     }
@@ -133,10 +136,12 @@ class EditActivity : AppCompatActivity() {
         text_view_category.text = item.category // 카테고리
         edit_text_title.text = item.title!!.toEditable() // 제목
         edit_text_contents.text = item.contents!!.toEditable() // 내용
-        edit_text_price.text = getString(R.string.price, item.price).toEditable() // 가격
+        edit_text_price.text = item.price.toEditable() // 가격
         check_box_suggestion.isChecked = item.suggestion // 가격 제안 여부
-        for (path in item.imageArray!!) {
-            addSinglePreviewLayout(Uri.parse(path))
+        if (!item.imageArray.isNullOrEmpty()) {
+            for (path in item.imageArray!!) {
+                addBeforePreviewLayout(Uri.parse(path))
+            }
         }
     }
 
@@ -172,12 +177,14 @@ class EditActivity : AppCompatActivity() {
 
     // 여러개의 이미지 추가
     private fun addPreviewLayout(uriList: List<Uri>) {
+        currentArray.addAll(uriList)
         adapter.addAllData(uriList)
         if (adapter.itemCount > 0) recycler_view.visibility = View.VISIBLE
         text_view_picker_count.text = adapter.itemCount.toString()
     }
 
-    private fun addSinglePreviewLayout(uri: Uri) {
+    // 이전 이미지 추가
+    private fun addBeforePreviewLayout(uri: Uri) {
         adapter.addData(uri)
         if (adapter.itemCount > 0) recycler_view.visibility = View.VISIBLE
         text_view_picker_count.text = adapter.itemCount.toString()
@@ -187,8 +194,14 @@ class EditActivity : AppCompatActivity() {
     private fun removePreviewLayout(position: Int) {
         if(adapter.itemCount > 0) {
             Log.i(TAG, "position: $position")
-            if (pid.isNotEmpty()) {
+            if (!pid.isNullOrEmpty()) {
                 delImageArray.add(adapter.getData(position))
+            }
+            for (uri in currentArray) {
+                if (adapter.getData(position) == uri) {
+                    currentArray.removeAt(position)
+                    break
+                }
             }
             adapter.removeData(position)
             if (adapter.itemCount <= 0) recycler_view.visibility = View.GONE
@@ -201,10 +214,10 @@ class EditActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this)
             .setTitle("저장하시겠습니까?")
             .setPositiveButton("확인") { _, _ ->
-                if (pid.isNotEmpty()) {
+                if (pid.isNullOrEmpty()) {
                     saveProduct(getEditData())
                 } else {
-                    updateProduct(pid, getNewEditData())
+                    updateProduct(pid!!, getNewEditData())
                 }
             }
             .setNegativeButton("취소", null)
@@ -252,6 +265,7 @@ class EditActivity : AppCompatActivity() {
 
     // 상품 저장
     private fun saveProduct(item: ProductEntity) {
+        Log.i(TAG, "상품 저장!!")
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).add(item).addOnCompleteListener {
             if (it.isSuccessful) {
@@ -269,13 +283,14 @@ class EditActivity : AppCompatActivity() {
 
     // 상품 수정
     private fun updateProduct(pid: String, data: Map<String, Any>) {
+        Log.i(TAG, "상품 수정!!")
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).document(pid).update(data).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "상품 수정 완료!")
                 if (adapter.itemCount > 0) {
                     saveImage(pid)
-                    deleteImage()
+                    deleteImage(pid)
                 } else {
                     updateActiveProduct(pid)
                 }
@@ -306,7 +321,7 @@ class EditActivity : AppCompatActivity() {
         pid.let { item ->
             val dir = "${SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(Date())}/${FirebaseAuth.getInstance().currentUser!!.uid}/${item}"
             var count = 0
-            for (uri in adapter.getAllData()) {
+            for (uri in currentArray) {
                 val fileName = "${System.currentTimeMillis()}.${getFileExtension(uri)}"
                 val ref = storage.getReference(resources.getString(R.string.db_product)).child(dir).child(fileName)
                 ref.putFile(uri).continueWithTask {
@@ -328,12 +343,19 @@ class EditActivity : AppCompatActivity() {
     }
 
     // 이미지 제거
-    private fun deleteImage() {
+    private fun deleteImage(item: String?) {
+        val db = FirebaseFirestore.getInstance()
         val storage = FirebaseStorage.getInstance()
         for (uri in delImageArray) {
+            Log.i(TAG, "이미지 삭제 : $uri")
+            db.collection(resources.getString(R.string.db_product)).document(item!!).update("imageArray", FieldValue.arrayRemove(uri.toString())).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.i(TAG, "이미지 삭제 성공 (데이터) : $uri")
+                }
+            }
             storage.getReferenceFromUrl(uri.toString()).delete().addOnCompleteListener {
                 if (it.isSuccessful) {
-                    Log.i(TAG, "이미지 삭제 성공 : $uri")
+                    Log.i(TAG, "이미지 삭제 성공 (저장소) : $uri")
                 }
             }
         }
@@ -344,7 +366,7 @@ class EditActivity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).document(item!!).update("imageArray", FieldValue.arrayUnion(path)).addOnCompleteListener {
             if (it.isSuccessful) {
-                Log.i(TAG, "이미지 업데이트 성공 : ${it.result}")
+                Log.i(TAG, "이미지 업데이트 성공 : $path")
             }
         }
     }
@@ -391,6 +413,7 @@ class EditActivity : AppCompatActivity() {
     }
 
     // Editable 변환
+    private fun Int.toEditable(): Editable =  Editable.Factory.getInstance().newEditable(this.toString())
     private fun String.toEditable(): Editable =  Editable.Factory.getInstance().newEditable(this)
 
 }
