@@ -1,5 +1,7 @@
 package com.u.marketapp
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -18,6 +20,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
 
     companion object {
         private val TAG = ProductActivity::class.java.simpleName
+        private const val REQUEST_UPDATE = 100
     }
 
     private lateinit var pid: String // 상품 문서 ID
@@ -75,6 +78,10 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 unActiveProduct()
                 true
             }
+            R.id.action_update -> { // 수정
+                updateProduct()
+                true
+            }
             R.id.action_delete -> { // 삭제
                 deleteProduct()
                 true
@@ -93,6 +100,13 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
 
             }
         }
+    }
+
+    // 상품 수정
+    private fun updateProduct() {
+        val intent = Intent(this, EditActivity::class.java)
+        intent.putExtra("pid", pid)
+        startActivityForResult(intent, REQUEST_UPDATE)
     }
 
     // 상품 비활성화
@@ -161,4 +175,14 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQUEST_UPDATE -> {
+                    updateProduct()
+                }
+            }
+        }
+    }
 }

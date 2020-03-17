@@ -1,5 +1,6 @@
 package com.u.marketapp
 
+import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -26,15 +27,18 @@ import kotlinx.android.synthetic.main.activity_edit.*
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class EditActivity : AppCompatActivity() {
-
-    private lateinit var actionbar: ActionBar
-    private lateinit var adapter: PreviewRVAdapter
 
     companion object {
         private val TAG = EditActivity::class.java.simpleName
     }
+
+    private lateinit var actionbar: ActionBar
+    private lateinit var adapter: PreviewRVAdapter
+    private lateinit var pid: String
+    private lateinit var delImageArray: ArrayList<Uri>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +53,10 @@ class EditActivity : AppCompatActivity() {
         setRVLayoutManager() // 레이아웃 매니저 설정
         setButtonListener() // 버튼 클릭 설정
         setEditTextPrice() // 가격 콤마 처리
+        if (intent.hasExtra("pid")) {
+            pid = intent.getStringExtra("pid")
+            loadBeforeData()
+        }
     }
 
     // 액션바
@@ -109,6 +117,29 @@ class EditActivity : AppCompatActivity() {
         return formatter.format(input)
     }
 
+    // 이전 데이터 로드
+    private fun loadBeforeData() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener {
+            if (it.isSuccessful) {
+                val item = it.result!!.toObject(ProductEntity::class.java)
+                item?.let { it1 -> loadData(it1) }
+            }
+        }
+    }
+
+    // 데이터 로드
+    private fun loadData(item: ProductEntity) {
+        text_view_category.text = item.category // 카테고리
+        edit_text_title.text = item.title!!.toEditable() // 제목
+        edit_text_contents.text = item.contents!!.toEditable() // 내용
+        edit_text_price.text = getString(R.string.price, item.price).toEditable() // 가격
+        check_box_suggestion.isChecked = item.suggestion // 가격 제안 여부
+        for (path in item.imageArray!!) {
+            addSinglePreviewLayout(Uri.parse(path))
+        }
+    }
+
     // 카테고리 변경
     private fun changeCategory() {
         val list = resources.getStringArray(R.array.array_category)
@@ -139,9 +170,15 @@ class EditActivity : AppCompatActivity() {
             .show()
     }
 
-    // 이미지 추가
+    // 여러개의 이미지 추가
     private fun addPreviewLayout(uriList: List<Uri>) {
         adapter.addAllData(uriList)
+        if (adapter.itemCount > 0) recycler_view.visibility = View.VISIBLE
+        text_view_picker_count.text = adapter.itemCount.toString()
+    }
+
+    private fun addSinglePreviewLayout(uri: Uri) {
+        adapter.addData(uri)
         if (adapter.itemCount > 0) recycler_view.visibility = View.VISIBLE
         text_view_picker_count.text = adapter.itemCount.toString()
     }
@@ -150,6 +187,9 @@ class EditActivity : AppCompatActivity() {
     private fun removePreviewLayout(position: Int) {
         if(adapter.itemCount > 0) {
             Log.i(TAG, "position: $position")
+            if (pid.isNotEmpty()) {
+                delImageArray.add(adapter.getData(position))
+            }
             adapter.removeData(position)
             if (adapter.itemCount <= 0) recycler_view.visibility = View.GONE
             text_view_picker_count.text = adapter.itemCount.toString()
@@ -160,7 +200,13 @@ class EditActivity : AppCompatActivity() {
     private fun showPopupForSave() {
         MaterialAlertDialogBuilder(this)
             .setTitle("저장하시겠습니까?")
-            .setPositiveButton("확인") { _, _ -> saveProduct(getEditData()) }
+            .setPositiveButton("확인") { _, _ ->
+                if (pid.isNotEmpty()) {
+                    saveProduct(getEditData())
+                } else {
+                    updateProduct(pid, getNewEditData())
+                }
+            }
             .setNegativeButton("취소", null)
             .show()
     }
@@ -184,9 +230,24 @@ class EditActivity : AppCompatActivity() {
         if (edit_text_price.text.toString().isNotEmpty()) {
             item.price = edit_text_price.text.toString().replace(",", "").toInt() // 가격
         }
-        item.suggestion = check_box_suggestion.isChecked // 가격 제안 여뷰
+        item.suggestion = check_box_suggestion.isChecked // 가격 제안 여부
         item.contents = edit_text_contents.text.toString() // 내용
         return item
+    }
+
+    // 데이터 수집 - 수정
+    private fun getNewEditData() : Map<String, Any> {
+        val map : HashMap<String, Any> = hashMapOf()
+        map["catgory"] = text_view_category.text // 카테고리
+        map["title"] = edit_text_title.text.toString() // 제목
+        map["contents"] = edit_text_contents.text.toString() // 내용
+        map["suggestion"] = check_box_suggestion.isChecked // 가격 제안 여부
+        map["modDate"] = Date() // 수정일
+       map["status"] = "unactive" // 비활성화
+        if (edit_text_price.text.toString().isNotEmpty()) {
+            map["price"] = edit_text_price.text.toString().replace(",", "").toInt() // 가격
+        }
+        return map
     }
 
     // 상품 저장
@@ -197,6 +258,8 @@ class EditActivity : AppCompatActivity() {
                 Log.i(TAG, "추가된 상품 문서 : ${it.result!!.id}")
                 if (adapter.itemCount > 0) {
                     saveImage(it.result!!.id)
+                } else {
+                    updateActiveProduct(it.result!!.id)
                 }
                 addSellList(it.result!!.id)
                 finish() // 종료
@@ -210,6 +273,14 @@ class EditActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_product)).document(pid).update(data).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "상품 수정 완료!")
+                if (adapter.itemCount > 0) {
+                    saveImage(pid)
+                    deleteImage()
+                } else {
+                    updateActiveProduct(pid)
+                }
+                setResult(Activity.RESULT_OK)
+                finish() // 종료
             }
         }
     }
@@ -233,8 +304,8 @@ class EditActivity : AppCompatActivity() {
     private fun saveImage(pid: String?) {
         val storage = FirebaseStorage.getInstance()
         pid.let { item ->
-            val dir = "${SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(Date())}/${item}"
-            var isActive = true
+            val dir = "${SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(Date())}/${FirebaseAuth.getInstance().currentUser!!.uid}/${item}"
+            var count = 0
             for (uri in adapter.getAllData()) {
                 val fileName = "${System.currentTimeMillis()}.${getFileExtension(uri)}"
                 val ref = storage.getReference(resources.getString(R.string.db_product)).child(dir).child(fileName)
@@ -247,11 +318,22 @@ class EditActivity : AppCompatActivity() {
                     if (it.isSuccessful) {
                         Log.i(TAG, "이미지 추가 성공 : ${it.result.toString()}")
                         updateImage(item, it.result.toString())
-                        if (isActive) {
-                            isActive = !isActive
+                        if ((++count) >= adapter.itemCount) {
                             updateActiveProduct(item)
                         }
                     }
+                }
+            }
+        }
+    }
+
+    // 이미지 제거
+    private fun deleteImage() {
+        val storage = FirebaseStorage.getInstance()
+        for (uri in delImageArray) {
+            storage.getReferenceFromUrl(uri.toString()).delete().addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.i(TAG, "이미지 삭제 성공 : $uri")
                 }
             }
         }
@@ -307,6 +389,9 @@ class EditActivity : AppCompatActivity() {
         // 취소 확인 팝업창
         showPopupForCancel()
     }
+
+    // Editable 변환
+    private fun String.toEditable(): Editable =  Editable.Factory.getInstance().newEditable(this)
 
 }
 

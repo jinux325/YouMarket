@@ -18,7 +18,8 @@ data class ProductEntity (
     var commentArray: ArrayList<CommentEntity>?, // 댓글 목록
     var attentionSize: Int, // 관심 수
     var regDate: Date, // 등록일
+    var modDate: Date?, // 수정일
     var status: String // 상태( unactive : 비활성화, active : 활성화, done : 거래완료)
 ) : Serializable {
-    constructor() : this(null, null, null, null, 0, false, null, null, null, null, null, 0, Date(), "unactive")
+    constructor() : this(null, null, null, null, 0, false, null, null, null, null, null, 0, Date(), null, "unactive")
 }
