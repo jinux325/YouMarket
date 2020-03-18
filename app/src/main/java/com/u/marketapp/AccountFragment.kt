@@ -3,7 +3,6 @@ package com.u.marketapp
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
@@ -13,14 +12,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.setting.AccountProfileActivity
 import com.u.marketapp.setting.LocationSettingActivity
 import com.u.marketapp.setting.SettingActivity
-import com.u.marketapp.vo.UserEntity
+import com.u.marketapp.entity.UserEntity
 import kotlinx.android.synthetic.main.fragment_account.*
 import kotlinx.android.synthetic.main.fragment_account.view.*
 
 
 class AccountFragment : Fragment() {
 
-    private lateinit var myData:UserEntity
+    private lateinit var myData: UserEntity
     private val myUid = FirebaseAuth.getInstance().currentUser!!.uid
     private val db = FirebaseFirestore.getInstance()
 
@@ -73,7 +72,8 @@ class AccountFragment : Fragment() {
         db.collection(resources.getString(R.string.db_user)).document(myUid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
+                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
+                        UserEntity::class.java)
                     Glide.with(this).load(userEntity!!.imgPath)
                         .apply(RequestOptions.bitmapTransform(CircleCrop())).into(account_profile)
                     account_name.text = userEntity!!.name

@@ -19,7 +19,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.MainActivity
 import com.u.marketapp.R
-import com.u.marketapp.vo.UserEntity
+import com.u.marketapp.entity.UserEntity
 import kotlinx.android.synthetic.main.activity_sms.*
 import java.util.concurrent.TimeUnit
 
@@ -156,7 +156,8 @@ class SmsActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_user)).document(uid).get()
             .addOnCompleteListener(OnCompleteListener<DocumentSnapshot> { task ->
                 if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
+                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
+                        UserEntity::class.java)
                     Log.d(TAG, userEntity?.name+"  "+userEntity?.address)
                     val prefs = getSharedPreferences("User", Context.MODE_PRIVATE)
                     val edit = prefs.edit()

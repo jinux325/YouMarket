@@ -12,7 +12,7 @@ import com.u.marketapp.R
 import com.u.marketapp.adapter.ChattingAdapter
 import com.u.marketapp.vo.ChatRoomVO
 import com.u.marketapp.vo.ChattingVO
-import com.u.marketapp.vo.UserEntity
+import com.u.marketapp.entity.UserEntity
 import kotlinx.android.synthetic.main.activity_chat.*
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -28,7 +28,7 @@ class ChatActivity : AppCompatActivity() {
     lateinit var chattingList : MutableList<ChattingVO>
     var comment:String=""
     lateinit var name:String
-    lateinit var myData:UserEntity
+    lateinit var myData: UserEntity
     lateinit var pid:String
     lateinit var seller:String
     private lateinit var token:String
@@ -150,8 +150,8 @@ class ChatActivity : AppCompatActivity() {
         Log.d("addChatComment "," uid: $uid, comment: $comment, documentId: $documentId")
         val registDate = Date(System.currentTimeMillis())
         val chat = hashMapOf(
-            "image" to myData!!.imgPath,
-            "name" to myData!!.name,
+            "image" to myData.imgPath,
+            "name" to myData.name,
             "uid" to uid,
             "message" to comment ,
             "registDate" to registDate
@@ -171,8 +171,8 @@ class ChatActivity : AppCompatActivity() {
                     val registDate = Date(System.currentTimeMillis())
 
                     val chat = hashMapOf(
-                        "image" to myData!!.imgPath,
-                        "name" to myData!!.name,
+                        "image" to myData.imgPath,
+                        "name" to myData.name,
                         "uid" to buyerUid,
                         "message" to comment ,
                         "registDate" to registDate
@@ -202,9 +202,10 @@ class ChatActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_user)).document(myUid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
+                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
+                        UserEntity::class.java)
                     myData= userEntity!!
-                    Log.d(" @@@@ 내 데이터 @@@@ ", myData!!.name)
+                    Log.d(" @@@@ 내 데이터 @@@@ ", myData.name)
                 }
             }
     }
@@ -275,11 +276,11 @@ class ChatActivity : AppCompatActivity() {
             .addOnSuccessListener { documentSnapshot ->
                 val chatRoomVO: ChatRoomVO? = documentSnapshot.toObject(ChatRoomVO::class.java)
                 if (chatRoomVO!!.buyer.equals(myUid)) {
-                    Log.d("@@ Thread seller", chatRoomVO!!.buyer+"  $myUid")
-                    getToken(chatRoomVO!!.seller.toString())
+                    Log.d("@@ Thread seller", chatRoomVO.buyer+"  $myUid")
+                    getToken(chatRoomVO.seller.toString())
                 } else {
-                    Log.d("@@ Thread buyer", chatRoomVO!!.seller+"  $myUid")
-                    getToken(chatRoomVO!!.buyer.toString())
+                    Log.d("@@ Thread buyer", chatRoomVO.seller+"  $myUid")
+                    getToken(chatRoomVO.buyer.toString())
                 }
             }
     }
@@ -288,9 +289,10 @@ class ChatActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_user)).document(uid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
-                    token = userEntity!!.token
-                    Log.d("@@ getToken token  ", userEntity!!.token)
+                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
+                        UserEntity::class.java)
+                    token = userEntity!!.token.toString()
+                    Log.d("@@ getToken token  ", userEntity.token)
                     //FCM(userEntity!!.token)
                     val thread=FCM()
                     thread.start()
