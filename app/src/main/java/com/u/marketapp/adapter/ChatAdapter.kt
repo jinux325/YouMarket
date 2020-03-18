@@ -20,7 +20,7 @@ import com.u.marketapp.R
 import com.u.marketapp.chat.ChatActivity
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.vo.ChatRoomVO
-import com.u.marketapp.vo.UserEntity
+import com.u.marketapp.entity.UserEntity
 import kotlinx.android.synthetic.main.item_chatroom.view.*
 import java.text.SimpleDateFormat
 import java.util.*

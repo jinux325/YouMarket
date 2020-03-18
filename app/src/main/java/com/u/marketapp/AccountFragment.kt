@@ -76,9 +76,9 @@ class AccountFragment : Fragment() {
                         UserEntity::class.java)
                     Glide.with(this).load(userEntity!!.imgPath)
                         .apply(RequestOptions.bitmapTransform(CircleCrop())).into(account_profile)
-                    account_name.text = userEntity!!.name
-                    account_address.text = userEntity!!.address
-                    myData = userEntity!!
+                    account_name.text = userEntity.name
+                    account_address.text = userEntity.address
+                    myData = userEntity
                 }
             }
     }

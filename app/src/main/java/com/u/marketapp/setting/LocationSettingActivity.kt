@@ -23,7 +23,7 @@ import com.u.marketapp.R
 import com.u.marketapp.adapter.addrSubString
 import com.u.marketapp.signup.AddressActivity
 import com.u.marketapp.signup.ProfileActivity
-import com.u.marketapp.vo.UserEntity
+import com.u.marketapp.entity.UserEntity
 import kotlinx.android.synthetic.main.activity_location_setting.*
 import kotlinx.android.synthetic.main.activity_profile.*
 import java.util.*
@@ -162,7 +162,7 @@ class LocationSettingActivity : AppCompatActivity() {
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
                     val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
-                    if (userEntity?.address2.equals(null)) {
+                    if (userEntity?.address2.equals("")) {
                         addr2.visibility = View.GONE
                         addr2_add.visibility = View.VISIBLE
                     } else {
