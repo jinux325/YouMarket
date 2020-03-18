@@ -17,7 +17,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="allowBackup"
-        tools:ignore="AllowBackup">
+        tools:ignore="AllowBackup"
+        android:usesCleartextTraffic="true">
         <service
             android:name=".chat.ChatFirebaseMessagingService"
             android:exported="false">
