@@ -77,11 +77,15 @@ class SplashActivity : AppCompatActivity() {
         hd.postDelayed({
             val user = FirebaseAuth.getInstance().currentUser
             if (user != null) {
-                number = FirebaseAuth.getInstance().currentUser!!.phoneNumber!!
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(this@SplashActivity, SplashActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                /*number = FirebaseAuth.getInstance().currentUser!!.phoneNumber!!
                 Log.d("유저 확인", number)
                 val intent = Intent(this@SplashActivity, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
+                startActivity(intent)*/
             }else{
                 Log.d("로그 없음", number)
                 val intent = Intent(this@SplashActivity, SmsActivity::class.java)
