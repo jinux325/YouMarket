@@ -101,11 +101,11 @@
 
                 <!-- 관심 여부 -->
                 <com.google.android.material.checkbox.MaterialCheckBox
-                    android:id="@+id/check_box_suggestion"
+                    android:id="@+id/check_box_attention"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginStart="5dp"
-                    android:button="@drawable/item_checkbox_hart"
+                    android:button="@drawable/selector_custom_check"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
@@ -120,7 +120,7 @@
                     android:layout_marginStart="10dp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/check_box_suggestion"/>
+                    app:layout_constraintLeft_toRightOf="@id/check_box_attention"/>
 
                 <!-- 가격 & 제시여부 -->
                 <LinearLayout
@@ -304,7 +304,7 @@
                             android:text="@{product.contents}"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/layout_category_date"
-                            tools:text="상품 내용...\n\n\n\n\n\n...상담내용..."/>
+                            tools:text="상품 내용...\n...상담내용..."/>
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="wrap_content"
@@ -313,14 +313,54 @@
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/text_view_contents">
 
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/text_view_chatting_attention_lookup"
+                            <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="13sp"
-                                android:text="@{@string/chat_attention_lookup(product.chattingRoomArray.size(), product.lookupArray.size(), product.attentionSize)}"
+                                android:orientation="horizontal"
                                 app:layout_constraintLeft_toLeftOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/text_view_chatting"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="13sp"
+                                    android:text="@{@string/chatting_format(product.chattingRoom.size())}"
+                                    tools:text="채팅"/>
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginEnd="5dp"
+                                    android:textSize="13sp"
+                                    android:text="@string/dot"/>
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/text_view_attention"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="13sp"
+                                    android:text="@{@string/attention_format(product.attention.size())}"
+                                    tools:text="관심"/>
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginEnd="5dp"
+                                    android:textSize="13sp"
+                                    android:text="@string/dot"/>
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/text_view_lookup"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="13sp"
+                                    android:text="@{@string/lookup_format(product.lookup.size())}"
+                                    tools:text="조회"/>
+
+                            </LinearLayout>
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 

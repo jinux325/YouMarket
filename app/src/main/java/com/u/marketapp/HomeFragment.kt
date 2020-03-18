@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.u.marketapp.adapter.ProductRVAdapter
 import com.u.marketapp.databinding.FragmentHomeBinding
+import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
@@ -68,10 +69,26 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).whereEqualTo("status", "active").orderBy("regDate", Query.Direction.DESCENDING).limit(30).get().addOnCompleteListener {
             if (it.isSuccessful) {
-                for(document in it.result?.documents!!) {
-                    adapter.addItem(document)
+                if (it.result?.documents!!.size > 0) {
+                    checkItemsData(true)
+                    for(document in it.result?.documents!!) {
+                        adapter.addItem(document)
+                    }
+                } else {
+                    checkItemsData(false)
                 }
             }
+        }
+    }
+
+    // 상품 존재 여부
+    private fun checkItemsData(isCheck: Boolean) {
+        if (isCheck) {
+            recycler_view.visibility = View.VISIBLE
+            text_view_empty.visibility = View.GONE
+        } else {
+            recycler_view.visibility = View.GONE
+            text_view_empty.visibility = View.VISIBLE
         }
     }
 

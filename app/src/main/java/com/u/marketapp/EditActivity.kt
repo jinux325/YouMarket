@@ -183,7 +183,7 @@ class EditActivity : AppCompatActivity() {
         currentArray.addAll(uriList)
         adapter.addAllData(uriList)
         if (adapter.itemCount > 0) recycler_view.visibility = View.VISIBLE
-        text_view_picker_count.text = adapter.itemCount.toString()
+        text_view_picker_count.text = String.format(resources.getString(R.string.picker), adapter.itemCount)
     }
 
     // 이전 이미지 추가
@@ -208,7 +208,7 @@ class EditActivity : AppCompatActivity() {
             }
             adapter.removeData(position)
             if (adapter.itemCount <= 0) recycler_view.visibility = View.GONE
-            text_view_picker_count.text = adapter.itemCount.toString()
+            text_view_picker_count.text = String.format(resources.getString(R.string.picker), adapter.itemCount)
         }
     }
 
