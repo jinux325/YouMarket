@@ -16,6 +16,7 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:layout_marginBottom="50dp"
+        app:title="@string/toolbar_title_profile_activity"
         android:elevation="2dp"/>
 
     <ImageView
@@ -43,13 +44,13 @@
             app:errorTextAppearance="@style/error_appearance"
             app:hintTextAppearance="@style/hint_color"
             >
+
             <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="250dp"
-                android:layout_gravity="center"
-                android:layout_height="wrap_content"
                 android:id="@+id/profile_name"
-                app:theme="@style/edit_color"
-                />
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:theme="@style/edit_color" />
         </com.google.android.material.textfield.TextInputLayout>
 
 

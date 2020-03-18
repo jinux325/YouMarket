@@ -21,4 +21,8 @@
 
     <color name="Setting">#FD9119</color>
     <color name="SettingText">#F89E38</color>
+
+    <color name="account_uidColor">#c6c4c4</color>
+    <color name="account_nameColor">#232222</color>
+    <color name="account_addressColor">#747272</color>
 </resources>

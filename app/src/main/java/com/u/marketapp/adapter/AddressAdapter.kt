@@ -60,7 +60,7 @@ fun addressDialog( context: Context, lAddr:String, phoneNumber: String,location:
         if (location != "" && location == "update1") {
             if (FirebaseAuth.getInstance().currentUser != null) {
                 val uid = FirebaseAuth.getInstance().currentUser!!.uid
-                db.collection("Users").document(uid).update("address", addrSubString(lAddr))
+                db.collection("User").document(uid).update("address", addrSubString(lAddr))
                 val intent = Intent(context, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 context.startActivity(intent)
@@ -68,7 +68,7 @@ fun addressDialog( context: Context, lAddr:String, phoneNumber: String,location:
         } else if (location != "" && location == "update2") {
             if (FirebaseAuth.getInstance().currentUser != null) {
                 val uid = FirebaseAuth.getInstance().currentUser!!.uid
-                db.collection("Users").document(uid).update("address2", addrSubString(lAddr))
+                db.collection("User").document(uid).update("address2", addrSubString(lAddr))
                 val intent = Intent(context, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 context.startActivity(intent)

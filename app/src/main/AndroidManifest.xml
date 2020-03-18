@@ -14,6 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".setting.AccountProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <service
             android:name=".chat.ChatFirebaseMessagingService"
             android:exported="false">
@@ -21,20 +24,23 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <activity android:name=".HomeFragment"
-            android:theme="@style/MaterialTheme"/>
-        <activity android:name=".EditActivity"
-            android:theme="@style/MaterialTheme"/>
-        <activity android:name=".ProductActivity"
-            android:theme="@style/MaterialTheme"/>
-        <activity android:name=".MainActivity"
-            android:theme="@style/MaterialTheme">
-        </activity>
+
+        <activity
+            android:name=".HomeFragment"
+            android:theme="@style/MaterialTheme" />
+        <activity
+            android:name=".EditActivity"
+            android:theme="@style/MaterialTheme" />
+        <activity
+            android:name=".ProductActivity"
+            android:theme="@style/MaterialTheme" />
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/MaterialTheme" />
         <activity
             android:name=".chat.ChatActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan">
-        </activity>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".setting.LocationSettingActivity"
             android:theme="@style/AppTheme.NoActionBar" />

@@ -6,17 +6,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
 import com.u.marketapp.R
 import com.u.marketapp.signup.AddressActivity
 import com.u.marketapp.vo.UserEntity
 import kotlinx.android.synthetic.main.activity_location_setting.*
+import kotlinx.android.synthetic.main.activity_profile.*
 import java.util.*
 
 class LocationSettingActivity : AppCompatActivity() {
@@ -31,15 +35,15 @@ class LocationSettingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_location_setting)
 
         setSupportActionBar(setting_toolbar)
-        supportActionBar!!.setTitle("동네 설정")
-        supportActionBar!!.setDisplayShowTitleEnabled(true)
 
+        getAddressData()
 
-        db.collection("Users").document(uid).get()
+       /* db.collection("Users").document(uid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
                     val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
-                    if (userEntity?.address2 == "") {
+                    Log.d(" userEntity address2 :  ", " [${userEntity?.address2}]")
+                    if (userEntity?.address2.equals(null)) {
                         addr2.visibility = View.GONE
                         addr2_add.visibility = View.VISIBLE
                     } else {
@@ -51,12 +55,12 @@ class LocationSettingActivity : AppCompatActivity() {
                 } else {
                     Log.d(TAG, "Error getting LocationSetting", task.exception)
                 }
-            }
+            }*/
 
         addr1_delete.setOnClickListener {
             val builder =
                 AlertDialog.Builder(this@LocationSettingActivity)
-            builder.setMessage("동네는 최소 1개이상 선택되어있어야 합니다. 현재 설정된 동네를 변경하시겠어요?")
+            builder.setMessage(R.string.location_activity_addr1_delete)
                 .setCancelable(false)
                 .setNegativeButton(
                     "취소"
@@ -74,8 +78,7 @@ class LocationSettingActivity : AppCompatActivity() {
         }
 
         addr2_add.setOnClickListener {
-            val intent =
-                Intent(this@LocationSettingActivity, AddressActivity::class.java)
+            val intent = Intent(this@LocationSettingActivity, AddressActivity::class.java)
             intent.putExtra("update", "update2")
             startActivity(intent)
         }
@@ -83,7 +86,7 @@ class LocationSettingActivity : AppCompatActivity() {
         addr2_delete.setOnClickListener {
             val builder =
                 AlertDialog.Builder(this@LocationSettingActivity)
-            builder.setMessage("선택한 지역을 삭제하시겠습니까?").setCancelable(false)
+            builder.setMessage(R.string.location_activity_addr2_delete).setCancelable(false)
                 .setNegativeButton(
                     "취소"
                 ) { dialogInterface, i -> dialogInterface.cancel() }
@@ -98,21 +101,42 @@ class LocationSettingActivity : AppCompatActivity() {
 
     // toolbar
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val menuInflater = menuInflater
         menuInflater.inflate(R.menu.toolbar_profile, menu)
         return true
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.join -> {
+                finish()
+                return true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
     @SuppressLint("LongLogTag")
     private fun delete() {
-        db.collection("Users").document(uid).get()
+        val delete = hashMapOf<String, Any>(
+            "address2" to FieldValue.delete()
+        )
+        db.collection(resources.getString(R.string.db_user)).document(uid).update(delete)
+        addr2.visibility = View.GONE
+        addr2_add.visibility = View.VISIBLE
+
+        /*db.collection("Users").document(uid).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
                     val user = hashMapOf(
                         "name" to userEntity?.name,
                         "address" to userEntity?.address,
+                        "address2" to FieldValue.delete(),
                         "registDate" to userEntity?.registDate,
                         "imgPath" to userEntity?.imgPath,
+                        "chatting" to userEntity?.chatting,
                         "token" to userEntity?.token
                     )
                     db.collection("Users").document(uid).delete()
@@ -121,6 +145,27 @@ class LocationSettingActivity : AppCompatActivity() {
                     addr2_add.visibility = View.VISIBLE
                 } else {
                     Log.d(TAG, "Error getting ChatRoom", task.exception)
+                }
+            }*/
+    }
+
+    @SuppressLint("LongLogTag")
+    fun getAddressData(){
+        db.collection(resources.getString(R.string.db_user)).document(uid).get()
+            .addOnCompleteListener{ task ->
+                if (task.isSuccessful) {
+                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
+                    if (userEntity?.address2.equals(null)) {
+                        addr2.visibility = View.GONE
+                        addr2_add.visibility = View.VISIBLE
+                    } else {
+                        tv_addr2.text = userEntity?.address2
+                        addr2.visibility = View.VISIBLE
+                        addr2_add.visibility = View.GONE
+                    }
+                    tv_addr1.text = userEntity?.address
+                } else {
+                    Log.d(TAG, "Error getting LocationSetting", task.exception)
                 }
             }
     }

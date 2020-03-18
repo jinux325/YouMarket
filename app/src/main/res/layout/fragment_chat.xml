@@ -16,7 +16,7 @@
             android:background="@android:color/background_light"
             android:elevation="1dp"
             app:contentInsetStart="0dp"
-            app:title=" 채팅"
+            app:title="@string/toolbar_title_chat_fragement"
             tools:ignore="MissingConstraints"/>
 
         <androidx.recyclerview.widget.RecyclerView

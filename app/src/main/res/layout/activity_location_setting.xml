@@ -14,6 +14,7 @@
         android:layout_centerHorizontal="true"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
+        app:title="@string/toolbar_title_setting_Location_activity"
         android:elevation="2dp"/>
 
     <TextView

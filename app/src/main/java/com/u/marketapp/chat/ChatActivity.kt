@@ -26,7 +26,7 @@ class ChatActivity : AppCompatActivity() {
     lateinit var chatRoom : HashMap<String,Any>
     lateinit var chatRoomUid : String
     lateinit var chattingList : MutableList<ChattingVO>
-    //lateinit var comment:String
+    lateinit var comment:String
     lateinit var name:String
     lateinit var myData:UserEntity
     lateinit var pid:String
@@ -39,55 +39,39 @@ class ChatActivity : AppCompatActivity() {
         setContentView(R.layout.activity_chat)
 
         val intent_items = getIntent()
-
-
-/*
-        Log.d("fasfasdfsa fa1 2121 31 ", "$pid  $seller" )*/
-
         tv_partner_nickname.text = intent_items.getStringExtra("name")
-
-        /*val seller = "kLIDekdZbCP0h99ZN8tIP3NhRct1"
-        val pid = "9JXpSGLpUL8iXVOxJU0q"*/
-
-        //comment = et_message.text.toString()
-
-
         myData()
-
-
-        if(intent_items.getStringExtra("chatRoomUid") != null) {
+        if(intent_items.hasExtra("chatRoomUid") ) {
+            Log.d("EQWRQ!@D!@D!d 11 ", "asada ")
             chatRoomUid = intent_items.getStringExtra("chatRoomUid")
             getChattingList()
-        }
-
-        if(intent_items.getStringExtra("pid") != null) {
-            Log.d("EQWRQ!@D!@D!d  ", "asada ")
-
+        }else{
+            Log.d("EQWRQ!@D!@D!d 22 ", "asada ")
             getChattingRoom()
-       /*     pid = intent_items.getStringExtra("pid")
-            seller = intent_items.getStringExtra("seller")
+            /*     pid = intent_items.getStringExtra("pid")
+                 seller = intent_items.getStringExtra("seller")
 
-            chatRoom = hashMapOf(
-                "pid" to pid,
-                "buyer" to myUid,
-                "seller" to seller,
-                "comment" to comment,
-                "registDate" to Date(System.currentTimeMillis())
-            )*/
+                 chatRoom = hashMapOf(
+                     "pid" to pid,
+                     "buyer" to myUid,
+                     "seller" to seller,
+                     "comment" to comment,
+                     "registDate" to Date(System.currentTimeMillis())
+                 )*/
 
             //Log.d("EQWRQ!@D!@D!d  ", pid+"   "+myUid)
 
 
             //getDocumentId(pid, myUid)
-           /* Log.d("EQWRQ!@D!@D!d 111 ", pid+"   "+myUid)
-            db.collection("Chatting").whereEqualTo("pid", pid).whereEqualTo("buyer", myUid).get().addOnSuccessListener { result ->
-                    Log.d("EQWRQ!@D!@D!d 444  ", result.toString())
-                    for(document in result){
-                        chatRoomUid = document.id
-                        Log.d("EQWRQ!@D!@D!d 555 ", chatRoomUid)
-                        getChattingList()
-                    }
-                }*/
+            /* Log.d("EQWRQ!@D!@D!d 111 ", pid+"   "+myUid)
+             db.collection("Chatting").whereEqualTo("pid", pid).whereEqualTo("buyer", myUid).get().addOnSuccessListener { result ->
+                     Log.d("EQWRQ!@D!@D!d 444  ", result.toString())
+                     for(document in result){
+                         chatRoomUid = document.id
+                         Log.d("EQWRQ!@D!@D!d 555 ", chatRoomUid)
+                         getChattingList()
+                     }
+                 }*/
         }
 
 
@@ -123,15 +107,17 @@ class ChatActivity : AppCompatActivity() {
             // kLIDekdZbCP0h99ZN8tIP3NhRct1
            // val uid = FirebaseAuth.getInstance().currentUser!!.uid
            // val uid = "3Nlu6jrJ0UcBC4cGjty17mOXoVj1"
-            Log.d("채팅방 id ", chatRoomUid)
-            Log.d(" 채팅보내기 ", " comment:   et_message: "+et_message.text+"  "+et_message.text.toString())
+            /*Log.d("채팅방 id ", chatRoomUid)
+            Log.d(" 채팅보내기 ", " comment:   et_message: "+et_message.text+"  "+et_message.text.toString())*/
+            comment= et_message.text.toString()
+
             val intent_items = intent
-            if(intent_items.getStringExtra("Chatting") != null){
+            if(intent_items.hasExtra("pid")){
                 addChatRoom(myUid, pid, seller)
             }else{
-                addChatComment(myUid, et_message.text.toString(), chatRoomUid)
+                addChatComment(myUid, comment, chatRoomUid)
             }
-
+            et_message.text.clear()
 
         }
 
@@ -147,11 +133,11 @@ class ChatActivity : AppCompatActivity() {
                 if(result.size() == 0){
                     FirebaseFirestore.getInstance().collection("Chatting").document()
                         .set(chatRoom).addOnSuccessListener {
-                            addChatComment(uid, pid, et_message.text.toString(), sellerUid)
+                            addChatComment(uid, pid, comment, sellerUid)
                         }
                 }else{
                     for(document in result){
-                        addChatComment(uid, et_message.text.toString(), document.id)
+                        addChatComment(uid, comment, document.id)
                     }
                 }
             }
@@ -193,12 +179,12 @@ class ChatActivity : AppCompatActivity() {
                     FirebaseFirestore.getInstance().collection("Chatting").document(document.id)
                         .collection("comment").document().set(chat)
                     if(!(buyerUid.equals(sellerUid))){
-                        FirebaseFirestore.getInstance().collection("Users").document(sellerUid)
+                        FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(sellerUid)
                             .update("chatting", FieldValue.arrayUnion(document.id))
                     }
-                    FirebaseFirestore.getInstance().collection("Users").document(buyerUid)
+                    FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(buyerUid)
                         .update("chatting", FieldValue.arrayUnion(document.id))
-                    FirebaseFirestore.getInstance().collection("Chatting").document(chatRoomUid).update("comment", comment,"registDate", registDate)
+                    FirebaseFirestore.getInstance().collection("Chatting").document(document.id).update("comment", comment,"registDate", registDate)
                     token()
                     /*
                     FirebaseFirestore.getInstance().collection("Users").document(sellerUid)
@@ -210,7 +196,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     fun myData(){
-        db.collection("Users").document(myUid).get()
+        db.collection(resources.getString(R.string.db_user)).document(myUid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
                     val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
@@ -259,7 +245,7 @@ class ChatActivity : AppCompatActivity() {
             "pid" to pid,
             "buyer" to myUid,
             "seller" to seller,
-            "comment" to et_message.text.toString(),
+            "comment" to comment,
             "registDate" to Date(System.currentTimeMillis())
         )
 
@@ -293,7 +279,7 @@ class ChatActivity : AppCompatActivity() {
     }
     fun getToken(uid:String){
         Log.d("@@ getToken ", "uid: $uid")
-        db.collection("Users").document(uid).get()
+        db.collection(resources.getString(R.string.db_user)).document(uid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
                     val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
@@ -404,7 +390,7 @@ class ChatActivity : AppCompatActivity() {
                 val registrationToken: String = token
                 val FCM_URL = "https://fcm.googleapis.com/fcm/send"
                 val title = myData.name
-                val body = et_message.text.toString()
+                val body = comment
                 Log.e("@@ ChatActivity Thread", token + "  " + title + "  " + body)
                 // FMC 메시지 생성 start
                 val root = JSONObject()
