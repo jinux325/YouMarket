@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.MainActivity
 import com.u.marketapp.R
+import com.u.marketapp.setting.LocationSettingActivity
 import com.u.marketapp.signup.ProfileActivity
 import com.u.marketapp.vo.AddressVO
 import kotlinx.android.synthetic.main.item_address.view.*
@@ -37,7 +38,9 @@ class AddressAdapter (val context: Context, private var addressList:MutableList<
         holder.addressLAddr.text = lAddr
 
         holder.addressCardView.setOnClickListener {
+           // val locationSettingActivity = LocationSettingActivity()
             addressDialog(context, lAddr, phoneNumber,location)
+            //addressDialog(context, lAddr, phoneNumber,location)
         }
 
     }
@@ -51,6 +54,7 @@ class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
 }
 
 
+
 fun addressDialog( context: Context, lAddr:String, phoneNumber: String,location:String){
     val dialog = AlertDialog.Builder(context)
     dialog.setMessage("주소가 '$lAddr' 이(가) 맞습니까?").setCancelable(false)
@@ -60,17 +64,17 @@ fun addressDialog( context: Context, lAddr:String, phoneNumber: String,location:
         if (location != "" && location == "update1") {
             if (FirebaseAuth.getInstance().currentUser != null) {
                 val uid = FirebaseAuth.getInstance().currentUser!!.uid
-                db.collection("User").document(uid).update("address", addrSubString(lAddr))
-                val intent = Intent(context, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                db.collection(context!!.resources.getString(R.string.db_user)).document(uid).update("address", addrSubString(lAddr))
+                val intent = Intent(context, LocationSettingActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 context.startActivity(intent)
             }
         } else if (location != "" && location == "update2") {
             if (FirebaseAuth.getInstance().currentUser != null) {
                 val uid = FirebaseAuth.getInstance().currentUser!!.uid
-                db.collection("User").document(uid).update("address2", addrSubString(lAddr))
-                val intent = Intent(context, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                db.collection(context!!.resources.getString(R.string.db_user)).document(uid).update("address2", addrSubString(lAddr))
+                val intent = Intent(context, LocationSettingActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 context.startActivity(intent)
             }
         } else {
@@ -95,6 +99,7 @@ fun addressDialog( context: Context, lAddr:String, phoneNumber: String,location:
     dialog.show()
 
 }
+
 
 
 fun addrSubString(lAddr:String):String{

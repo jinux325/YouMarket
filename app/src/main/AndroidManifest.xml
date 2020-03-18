@@ -57,6 +57,9 @@
             android:name=".setting.SettingActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".setting.AccountProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".signup.ProfileActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".signup.AddressActivity"

@@ -26,7 +26,7 @@ class ChatActivity : AppCompatActivity() {
     lateinit var chatRoom : HashMap<String,Any>
     lateinit var chatRoomUid : String
     lateinit var chattingList : MutableList<ChattingVO>
-    lateinit var comment:String
+    var comment:String=""
     lateinit var name:String
     lateinit var myData:UserEntity
     lateinit var pid:String
@@ -40,8 +40,10 @@ class ChatActivity : AppCompatActivity() {
 
         val intent_items = getIntent()
         tv_partner_nickname.text = intent_items.getStringExtra("name")
+
         myData()
-        if(intent_items.hasExtra("chatRoomUid") ) {
+
+        if(intent_items.hasExtra("chatRoomUid")) {
             Log.d("EQWRQ!@D!@D!d 11 ", "asada ")
             chatRoomUid = intent_items.getStringExtra("chatRoomUid")
             getChattingList()
@@ -175,16 +177,17 @@ class ChatActivity : AppCompatActivity() {
                         "message" to comment ,
                         "registDate" to registDate
                     )
-
+                    chatRoomUid = document.id
                     FirebaseFirestore.getInstance().collection("Chatting").document(document.id)
-                        .collection("comment").document().set(chat)
+                        .collection("comment").document().set(chat).addOnSuccessListener { getChattingList() }
                     if(!(buyerUid.equals(sellerUid))){
                         FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(sellerUid)
                             .update("chatting", FieldValue.arrayUnion(document.id))
                     }
                     FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(buyerUid)
                         .update("chatting", FieldValue.arrayUnion(document.id))
-                    FirebaseFirestore.getInstance().collection("Chatting").document(document.id).update("comment", comment,"registDate", registDate)
+                    FirebaseFirestore.getInstance().collection("Chatting").document(document.id)
+                        .update("comment", comment,"registDate", registDate)
                     token()
                     /*
                     FirebaseFirestore.getInstance().collection("Users").document(sellerUid)
@@ -253,7 +256,9 @@ class ChatActivity : AppCompatActivity() {
 
         getDocumentId(pid, myUid)
 
-       /* FirebaseFirestore.getInstance().collection("Chatting")
+       /*
+
+       FirebaseFirestore.getInstance().collection("Chatting")
             .whereEqualTo("pid", pid).whereEqualTo("buyer", myUid).get().addOnSuccessListener { result ->
                 Log.d("EQWRQ!@D!@D!d  ", result.toString())
                 for(document in result){
@@ -261,6 +266,7 @@ class ChatActivity : AppCompatActivity() {
                     Log.d("EQWRQ!@D!@D!d  ", chatRoomUid)
                 }
             }
+
 */
     }
 

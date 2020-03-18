@@ -177,6 +177,7 @@ class AddressActivity : AppCompatActivity() {
 
                 Log.e(TAG, "location2: ")
                 val adapter = AddressAdapter(this@AddressActivity, addressList, phoneNumber, "")
+                recycler_view.visibility = View.GONE
                 recycler_view.setAdapter(adapter)
             }
             if (page > 1) {
