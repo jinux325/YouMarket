@@ -44,6 +44,8 @@ dependencies {
     // Glide - Github : https://github.com/bumptech/glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
+    // Circle Image View
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
     // ViewPager Indicator - Github : https://github.com/romandanylyk/PageIndicatorView
     implementation 'com.romandanylyk:pageindicatorview:1.0.3'
     // ImagePicker - Github : https://github.com/ParkSangGwon/TedImagePicker

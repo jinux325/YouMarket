@@ -1,5 +1,7 @@
 package com.u.marketapp
 
+import android.app.Activity
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -12,6 +14,7 @@ import android.view.View
 import android.webkit.MimeTypeMap
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
@@ -26,15 +29,20 @@ import kotlinx.android.synthetic.main.activity_edit.*
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class EditActivity : AppCompatActivity() {
-
-    private lateinit var actionbar: ActionBar
-    private lateinit var adapter: PreviewRVAdapter
 
     companion object {
         private val TAG = EditActivity::class.java.simpleName
     }
+
+    private lateinit var actionbar: ActionBar
+    private lateinit var adapter: PreviewRVAdapter
+    private var pid: String? = null
+    private var progressDialog: AppCompatDialog? = null
+    private var currentArray: ArrayList<Uri> = ArrayList()
+    private var delImageArray: ArrayList<Uri> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +57,10 @@ class EditActivity : AppCompatActivity() {
         setRVLayoutManager() // 레이아웃 매니저 설정
         setButtonListener() // 버튼 클릭 설정
         setEditTextPrice() // 가격 콤마 처리
+        if (intent.hasExtra("pid")) {
+            pid = intent.getStringExtra("pid")
+            loadBeforeData()
+        }
     }
 
     // 액션바
@@ -88,7 +100,7 @@ class EditActivity : AppCompatActivity() {
     }
 
     // 가격 콤마 처리
-    private var pointNumStr = ""
+    private var pointNumStr: String = ""
     private fun setEditTextPrice() {
         edit_text_price.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
@@ -107,6 +119,33 @@ class EditActivity : AppCompatActivity() {
     private fun makeCommaNumber(input: Long): String {
         val formatter = DecimalFormat("###,###")
         return formatter.format(input)
+    }
+
+    // 이전 데이터 로드
+    private fun loadBeforeData() {
+        val db = FirebaseFirestore.getInstance()
+        pid?.let {
+            db.collection(resources.getString(R.string.db_product)).document(it).get().addOnCompleteListener { snapshot ->
+                if (snapshot.isSuccessful) {
+                    val item = snapshot.result?.toObject(ProductEntity::class.java)
+                    item?.let { it1 -> loadData(it1) }
+                }
+            }
+        }
+    }
+
+    // 데이터 로드
+    private fun loadData(item: ProductEntity) {
+        text_view_category.text = item.category // 카테고리
+        edit_text_title.text = item.title!!.toEditable() // 제목
+        edit_text_contents.text = item.contents!!.toEditable() // 내용
+        edit_text_price.text = item.price.toEditable() // 가격
+        check_box_suggestion.isChecked = item.suggestion // 가격 제안 여부
+        if (!item.imageArray.isNullOrEmpty()) {
+            for (path in item.imageArray!!) {
+                addBeforePreviewLayout(Uri.parse(path))
+            }
+        }
     }
 
     // 카테고리 변경
@@ -139,21 +178,37 @@ class EditActivity : AppCompatActivity() {
             .show()
     }
 
-    // 이미지 추가
+    // 여러개의 이미지 추가
     private fun addPreviewLayout(uriList: List<Uri>) {
+        currentArray.addAll(uriList)
         adapter.addAllData(uriList)
         if (adapter.itemCount > 0) recycler_view.visibility = View.VISIBLE
+        text_view_picker_count.text = String.format(resources.getString(R.string.picker), adapter.itemCount)
+    }
+
+    // 이전 이미지 추가
+    private fun addBeforePreviewLayout(uri: Uri) {
+        adapter.addData(uri)
+        if (adapter.itemCount > 0) recycler_view.visibility = View.VISIBLE
         text_view_picker_count.text = adapter.itemCount.toString()
-        //recycler_view.smoothScrollToPosition(adapter.itemCount-1)
     }
 
     // 이미지 제거
     private fun removePreviewLayout(position: Int) {
         if(adapter.itemCount > 0) {
             Log.i(TAG, "position: $position")
+            if (!pid.isNullOrEmpty()) {
+                delImageArray.add(adapter.getData(position))
+            }
+            for (uri in currentArray) {
+                if (adapter.getData(position) == uri) {
+                    currentArray.removeAt(position)
+                    break
+                }
+            }
             adapter.removeData(position)
             if (adapter.itemCount <= 0) recycler_view.visibility = View.GONE
-            text_view_picker_count.text = adapter.itemCount.toString()
+            text_view_picker_count.text = String.format(resources.getString(R.string.picker), adapter.itemCount)
         }
     }
 
@@ -161,7 +216,14 @@ class EditActivity : AppCompatActivity() {
     private fun showPopupForSave() {
         MaterialAlertDialogBuilder(this)
             .setTitle("저장하시겠습니까?")
-            .setPositiveButton("확인") { _, _ -> saveProduct() }
+            .setPositiveButton("확인") { _, _ ->
+                progressON(this)
+                if (pid.isNullOrEmpty()) {
+                    saveProduct(getEditData())
+                } else {
+                    updateProduct(pid!!, getNewEditData())
+                }
+            }
             .setNegativeButton("취소", null)
             .show()
     }
@@ -179,30 +241,63 @@ class EditActivity : AppCompatActivity() {
     private fun getEditData() : ProductEntity {
         val item = ProductEntity()
         item.seller = FirebaseAuth.getInstance().currentUser!!.uid // 판매자 정보
-//        item.seller = "QdqJ1cFReQ7EHxf4bptP"
         item.category = text_view_category.text.toString() // 카테고리
         item.title = edit_text_title.text.toString() // 제목
         item.address = "망포동"
         if (edit_text_price.text.toString().isNotEmpty()) {
             item.price = edit_text_price.text.toString().replace(",", "").toInt() // 가격
         }
-        item.suggestion = check_box_suggestion.isChecked // 가격 제안 여뷰
+        item.suggestion = check_box_suggestion.isChecked // 가격 제안 여부
         item.contents = edit_text_contents.text.toString() // 내용
         return item
     }
 
+    // 데이터 수집 - 수정
+    private fun getNewEditData() : Map<String, Any> {
+        val map : HashMap<String, Any> = hashMapOf()
+        map["catgory"] = text_view_category.text // 카테고리
+        map["title"] = edit_text_title.text.toString() // 제목
+        map["contents"] = edit_text_contents.text.toString() // 내용
+        map["suggestion"] = check_box_suggestion.isChecked // 가격 제안 여부
+        map["modDate"] = Date() // 수정일
+       map["status"] = "unactive" // 비활성화
+        if (edit_text_price.text.toString().isNotEmpty()) {
+            map["price"] = edit_text_price.text.toString().replace(",", "").toInt() // 가격
+        }
+        return map
+    }
+
     // 상품 저장
-    private fun saveProduct() {
-        val item = getEditData()
+    private fun saveProduct(item: ProductEntity) {
+        Log.i(TAG, "상품 저장!!")
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).add(item).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "추가된 상품 문서 : ${it.result!!.id}")
                 if (adapter.itemCount > 0) {
                     saveImage(it.result!!.id)
+                } else {
+                    updateActiveProduct(it.result!!.id)
                 }
                 addSellList(it.result!!.id)
-                finish() // 종료
+            }
+        }
+    }
+
+    // 상품 수정
+    private fun updateProduct(pid: String, data: Map<String, Any>) {
+        Log.i(TAG, "상품 수정!!")
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid).update(data).addOnCompleteListener {
+            if (it.isSuccessful) {
+                Log.i(TAG, "상품 수정 완료!")
+                if (adapter.itemCount > 0) {
+                    saveImage(pid)
+                    deleteImage(pid)
+                } else {
+                    updateActiveProduct(pid)
+                }
+                setResult(Activity.RESULT_OK)
             }
         }
     }
@@ -211,7 +306,6 @@ class EditActivity : AppCompatActivity() {
     private fun addSellList(documentId: String?) {
         val db = FirebaseFirestore.getInstance()
         val uid = FirebaseAuth.getInstance().currentUser!!.uid
-//        val uid = "QdqJ1cFReQ7EHxf4bptP"
         uid.let {
             documentId.let { item ->
                 db.collection(resources.getString(R.string.db_user)).document(it).update("salesHistory", FieldValue.arrayUnion(item)).addOnCompleteListener { task ->
@@ -227,8 +321,9 @@ class EditActivity : AppCompatActivity() {
     private fun saveImage(pid: String?) {
         val storage = FirebaseStorage.getInstance()
         pid.let { item ->
-            val dir = "${SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(Date())}/${item}"
-            for (uri in adapter.getAllData()) {
+            val dir = "${SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(Date())}/${FirebaseAuth.getInstance().currentUser!!.uid}/${item}"
+            var count = 0
+            for (uri in currentArray) {
                 val fileName = "${System.currentTimeMillis()}.${getFileExtension(uri)}"
                 val ref = storage.getReference(resources.getString(R.string.db_product)).child(dir).child(fileName)
                 ref.putFile(uri).continueWithTask {
@@ -240,7 +335,29 @@ class EditActivity : AppCompatActivity() {
                     if (it.isSuccessful) {
                         Log.i(TAG, "이미지 추가 성공 : ${it.result.toString()}")
                         updateImage(item, it.result.toString())
+                        if ((++count) >= currentArray.size) {
+                            updateActiveProduct(item)
+                        }
                     }
+                }
+            }
+        }
+    }
+
+    // 이미지 제거
+    private fun deleteImage(item: String?) {
+        val db = FirebaseFirestore.getInstance()
+        val storage = FirebaseStorage.getInstance()
+        for (uri in delImageArray) {
+            Log.i(TAG, "이미지 삭제 : $uri")
+            db.collection(resources.getString(R.string.db_product)).document(item!!).update("imageArray", FieldValue.arrayRemove(uri.toString())).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.i(TAG, "이미지 삭제 성공 (데이터) : $uri")
+                }
+            }
+            storage.getReferenceFromUrl(uri.toString()).delete().addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.i(TAG, "이미지 삭제 성공 (저장소) : $uri")
                 }
             }
         }
@@ -251,7 +368,19 @@ class EditActivity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).document(item!!).update("imageArray", FieldValue.arrayUnion(path)).addOnCompleteListener {
             if (it.isSuccessful) {
-                Log.i(TAG, "이미지 업데이트 성공 : ${it.result}")
+                Log.i(TAG, "이미지 업데이트 성공 : $path")
+            }
+        }
+    }
+
+    // 상품 활성화
+    private fun updateActiveProduct(item: String?) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(item!!).update("status", "active").addOnCompleteListener {
+            if (it.isSuccessful) {
+                Log.i(TAG, "상품 업데이트 성공 : ${it.result}")
+                progressOFF()
+                finish() // 종료
             }
         }
     }
@@ -286,6 +415,32 @@ class EditActivity : AppCompatActivity() {
         // 취소 확인 팝업창
         showPopupForCancel()
     }
+
+    // 로딩 활성화
+    private fun progressON(activity: EditActivity) {
+        if (activity.isFinishing) return
+        if (progressDialog == null || !(progressDialog!!.isShowing)) {
+            progressDialog = AppCompatDialog(activity)
+            progressDialog?.let {
+                it.setCancelable(false)
+                it.window?.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
+                it.setContentView(R.layout.layout_loading)
+                it.show()
+            }
+        }
+    }
+
+    // 로딩 비활성화
+    private fun progressOFF() {
+        if (progressDialog != null && progressDialog!!.isShowing) {
+            progressDialog!!.dismiss()
+        }
+    }
+
+
+    // Editable 변환
+    private fun Int.toEditable(): Editable =  Editable.Factory.getInstance().newEditable(this.toString())
+    private fun String.toEditable(): Editable =  Editable.Factory.getInstance().newEditable(this)
 
 }
 

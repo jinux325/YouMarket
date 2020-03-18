@@ -152,7 +152,7 @@
                         android:gravity="center_vertical"
                         android:visibility="visible"
                         android:orientation="horizontal"
-                        bindSize="@{item.commentArray.size()}"
+                        bindSize="@{item.commentSize}"
                         tools:ignore="UseCompoundDrawables">
 
                         <ImageView
@@ -167,7 +167,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="13sp"
-                            android:text="@{Integer.toString(item.commentArray.size())}"
+                            android:text="@{Integer.toString(item.commentSize)}"
                             tools:text="0"/>
 
                     </LinearLayout>
@@ -181,7 +181,7 @@
                         android:gravity="center_vertical"
                         android:visibility="visible"
                         android:orientation="horizontal"
-                        bindSize="@{item.chattingRoomArray.size()}"
+                        bindSize="@{item.chattingRoom.size()}"
                         tools:ignore="UseCompoundDrawables">
 
                         <ImageView
@@ -196,7 +196,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="13sp"
-                            android:text="@{Integer.toString(item.chattingRoomArray.size())}"
+                            android:text="@{Integer.toString(item.chattingRoom.size())}"
                             tools:text="0"/>
 
                     </LinearLayout>
@@ -210,14 +210,14 @@
                         android:gravity="center_vertical"
                         android:visibility="visible"
                         android:orientation="horizontal"
-                        bindSize="@{item.attentionSize}"
+                        bindSize="@{item.attention.size()}"
                         tools:ignore="UseCompoundDrawables">
 
                         <ImageView
                             android:layout_width="15dp"
                             android:layout_height="15dp"
                             android:layout_marginEnd="5dp"
-                            android:src="@drawable/ic_hart"
+                            android:src="@drawable/ic_heart"
                             tools:ignore="ContentDescription" />
 
                         <TextView
@@ -225,7 +225,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="13sp"
-                            android:text="@{Integer.toString(item.attentionSize)}"
+                            android:text="@{Integer.toString(item.attention.size())}"
                             tools:text="0"/>
 
                     </LinearLayout>
