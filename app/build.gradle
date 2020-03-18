@@ -62,6 +62,8 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-firestore:5.0.0'
     // Firebase Messaging
     implementation 'com.google.firebase:firebase-messaging:20.1.2'
+    // Kakao Link - https://developers.kakao.com/docs/android/getting-started#gradle-%ED%99%98%EA%B2%BD%EC%84%A4%EC%A0%95
+    implementation group: 'com.kakao.sdk', name: 'kakaolink', version: '1.27.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

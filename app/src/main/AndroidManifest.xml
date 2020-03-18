@@ -33,7 +33,13 @@
             android:theme="@style/MaterialTheme" />
         <activity
             android:name=".ProductActivity"
-            android:theme="@style/MaterialTheme" />
+            android:theme="@style/MaterialTheme" >
+            <intent-filter>
+                <data
+                    android:host="@string/kakaolink_host"
+                    android:scheme="@string/kakao_scheme" />
+            </intent-filter>
+        </activity>
         <activity android:name=".ViewActivity"
             android:theme="@style/MaterialTheme"/>
         <activity
@@ -63,6 +69,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="@string/kakao_app_key" />
     </application>
 
 </manifest>

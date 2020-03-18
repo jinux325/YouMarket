@@ -220,7 +220,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    // 이미지 공유
+    // 링크 공유
     private fun share() {
         val shareIntent = Intent()
         shareIntent.action = Intent.ACTION_SEND
