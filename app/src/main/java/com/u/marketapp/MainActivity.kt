@@ -42,9 +42,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 supportFragmentManager.beginTransaction().replace(R.id.frame_layout, chatFragment).commit()
             }
             R.id.navigation_info -> {
-                val intent = Intent(this, SettingActivity::class.java)
-                startActivity(intent)
-                return false
+                val accountFragment = AccountFragment()
+                supportFragmentManager.beginTransaction().replace(R.id.frame_layout, accountFragment).commit()
             }
         }
         return true

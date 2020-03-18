@@ -24,7 +24,7 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
         Log.e("@@ token", "FirebaseInstanceServiceToken : $s")
         if (FirebaseAuth.getInstance().currentUser != null) {
             val uid = FirebaseAuth.getInstance().currentUser!!.uid
-            db.collection("Users").document(uid)
+            db.collection(resources.getString(R.string.db_user)).document(uid)
                 .update("token", s)
         }
 

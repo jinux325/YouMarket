@@ -133,7 +133,7 @@ class ChatAdapter(val context: Context?, val chatList:MutableList<ChatRoomVO>, v
     }
 
     fun getName(uid:String, holder:ViewHolder){
-        db.collection("Users").document(uid).get()
+        db.collection("User").document(uid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
                     val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
@@ -162,7 +162,7 @@ class ChatAdapter(val context: Context?, val chatList:MutableList<ChatRoomVO>, v
     }
 
     fun chattingIntent(uid:String, chatRoomUid:String){
-        db.collection("Users").document(uid).get()
+        db.collection("User").document(uid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
                     val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)

@@ -46,7 +46,6 @@ class ProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_profile)
 
         setSupportActionBar(toolbar)
-        supportActionBar!!.setTitle("프로필 설정")
         supportActionBar!!.setDisplayShowTitleEnabled(true)
 
         Glide.with(this).load(R.drawable.ic_profile)
@@ -92,7 +91,6 @@ class ProfileActivity : AppCompatActivity() {
 
     // toolbar
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val menuInflater = menuInflater
         menuInflater.inflate(R.menu.toolbar_profile, menu)
         return true
     }
@@ -186,7 +184,7 @@ class ProfileActivity : AppCompatActivity() {
                     "token" to FirebaseInstanceId.getInstance().getToken()
                 )
 
-                db.collection("Users").document(uid!!)
+                db.collection(resources.getString(R.string.db_user)).document(uid!!)
                     .set(user)
                     .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
                     .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }

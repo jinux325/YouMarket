@@ -20,7 +20,6 @@ class SettingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_setting)
 
         setSupportActionBar(setting_toolbar)
-        supportActionBar!!.setTitle("설정")
         supportActionBar!!.setDisplayShowTitleEnabled(true)
 
         logout.setOnClickListener {
@@ -33,16 +32,16 @@ class SettingActivity : AppCompatActivity() {
             val intent = Intent(this@SettingActivity, SplashActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
-
         }
 
-        version.setOnClickListener {
+     /*   version.setOnClickListener {
             val intent = Intent(this, ChatActivity::class.java)
             intent.putExtra("Chatting", "ROOM")
-            intent.putExtra("pid", "E1vYCUvs3algrwWCVRXF")
-            intent.putExtra("seller", "kLIDekdZbCP0h99ZN8tIP3NhRct1")
+            intent.putExtra("pid", "6iKkNnd91f7W6JqNCgtp")
+            intent.putExtra("seller", "ijrvoWflm3ahqVyYoMRQu1INCEn1")
+            intent.putExtra("name", "ㄷㄴㅅ6ㄹㅅㄷ")
             startActivity(intent)
-        }
+        }*/
 /*
 
         withdrawal.setOnClickListener{

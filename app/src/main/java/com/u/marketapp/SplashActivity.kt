@@ -85,8 +85,7 @@ class SplashActivity : AppCompatActivity() {
             }else{
                 Log.d("로그 없음", number)
                 val intent = Intent(this@SplashActivity, SmsActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-
+                intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
                 intent.putExtra("number",number)
                 startActivity(intent)
             }

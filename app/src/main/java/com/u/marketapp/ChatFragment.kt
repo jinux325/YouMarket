@@ -33,7 +33,7 @@ class ChatFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.hide()
         //(activity as AppCompatActivity).setSupportActionBar(setting_toolbar)
 
-        val chat_recyclerView = view.findViewById(R.id.chat_recyclerView) as RecyclerView
+      //  val chat_recyclerView = view.findViewById(R.id.chat_recyclerView) as RecyclerView
        // chattingRoomList = mutableListOf<ChatRoomVO>(ChatRoomVO("1","1", "","1","1","1","1","1"),ChatRoomVO("1","1", "","1","1","1","1","1"),ChatRoomVO("1","1", "","1","1","1","1","1"))
 
 
@@ -57,7 +57,7 @@ class ChatFragment : Fragment() {
     }
     fun userData(){
         var uid = FirebaseAuth.getInstance().currentUser!!.uid
-        FirebaseFirestore.getInstance().collection("Users").document(uid).get()
+        FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(uid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
                     val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)

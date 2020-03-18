@@ -137,9 +137,9 @@ class SmsActivity : AppCompatActivity() {
         override fun onVerificationFailed(p0: FirebaseException) {
             //Toast.makeText(this@SmsActivity, p0.message, Toast.LENGTH_LONG).show()
             if (p0 is FirebaseAuthInvalidCredentialsException) {
-                Toast.makeText(this@SmsActivity, " 다른 이유 ", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@SmsActivity, " error ", Toast.LENGTH_LONG).show()
             } else if (p0 is FirebaseTooManyRequestsException) {
-                Toast.makeText(this@SmsActivity, " 인증 많이함 ", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@SmsActivity, " 인증 많이함. 나중에 다시 해주세요. ", Toast.LENGTH_LONG).show()
             }
         }
 
@@ -153,7 +153,7 @@ class SmsActivity : AppCompatActivity() {
 
     fun userData(){
         var uid = FirebaseAuth.getInstance().currentUser!!.uid
-        db.collection("Users").document(uid).get()
+        db.collection(resources.getString(R.string.db_user)).document(uid).get()
             .addOnCompleteListener(OnCompleteListener<DocumentSnapshot> { task ->
                 if (task.isSuccessful) {
                     val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
@@ -185,7 +185,7 @@ class SmsActivity : AppCompatActivity() {
                 }
             }*/
         var count =0
-        FirebaseFirestore.getInstance().collection("Users").get().addOnSuccessListener { result ->
+        FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).get().addOnSuccessListener { result ->
             for(document in result){
                 count++
                 Log.d("@@@@@@@@@@@@@@@ ", document.id+"   "+uid)
@@ -202,6 +202,7 @@ class SmsActivity : AppCompatActivity() {
                 }else if(count ==  result.size()){
                     Log.d("유저 확인", "false  가입")
                     val intent = Intent(this, AddressActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
                     intent.putExtra("phoneNumber", phone)
                     startActivity(intent)
                 }

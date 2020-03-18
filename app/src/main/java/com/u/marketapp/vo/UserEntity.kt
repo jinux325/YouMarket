@@ -8,7 +8,7 @@ import kotlin.collections.ArrayList
 data class UserEntity (
     val name: String="", // 닉네임
     val address: String="", // 주소1
-    val address2: String="", // 주소2
+    val address2: String?=null, // 주소2
     val token: String="",
     val imgPath: String="", // 프로필 이미지 경로
     val salesHistory: ArrayList<DocumentReference>?=null, // 판매 내역
