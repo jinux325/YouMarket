@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.adapter.ViewPagerAdapter
+import com.u.marketapp.chat.ChatActivity
 import com.u.marketapp.databinding.ActivityProductBinding
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
@@ -326,7 +327,11 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_chatting -> { // 거래하기 버튼
-
+                val intent = Intent(this, ChatActivity::class.java)
+                intent.putExtra("pid", pid)
+                intent.putExtra("seller", uid)
+                intent.putExtra("name", userName)
+                startActivity(intent)
             }
         }
     }
