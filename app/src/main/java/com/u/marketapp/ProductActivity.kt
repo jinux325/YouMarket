@@ -2,7 +2,6 @@ package com.u.marketapp
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -14,6 +13,10 @@ import androidx.databinding.DataBindingUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.kakao.kakaolink.v2.KakaoLinkResponse
+import com.kakao.kakaolink.v2.KakaoLinkService
+import com.kakao.network.ErrorResult
+import com.kakao.network.callback.ResponseCallback
 import com.u.marketapp.adapter.ViewPagerAdapter
 import com.u.marketapp.chat.ChatActivity
 import com.u.marketapp.databinding.ActivityProductBinding
@@ -31,6 +34,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var pid: String // 상품 문서 ID
     private lateinit var uid: String // 판매자 문서 ID
     private lateinit var userName: String // 판매자 닉네임
+    private lateinit var productEntity: ProductEntity // 상품 객체
     private lateinit var currentUid: String // 유저 ID
     private lateinit var binding: ActivityProductBinding
     private lateinit var viewPagerAdapter: ViewPagerAdapter
@@ -223,11 +227,43 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
 
     // 링크 공유
     private fun share() {
-        val shareIntent = Intent()
-        shareIntent.action = Intent.ACTION_SEND
-        shareIntent.type = "jpg/image"
-        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(viewPagerAdapter.getImage(view_pager.currentItem)))
-        startActivity(Intent.createChooser(shareIntent, resources.getText(R.string.send_to)))
+        val templateId = "21927"
+
+        val templateArgs = HashMap<String, String>()
+        templateArgs["title"] = productEntity.title.toString()
+        templateArgs["contents"] = String.format(resources.getString(R.string.price), productEntity.price)
+        templateArgs["attention"] = productEntity.attention?.size.toString()
+        templateArgs["comment"] = productEntity.commentSize.toString()
+        templateArgs["lookup"] = productEntity.lookup?.size.toString()
+        when (productEntity.imageArray?.size!!) {
+            1 -> {
+                templateArgs["url1"] = productEntity.imageArray!![0]
+            }
+            2 -> {
+                templateArgs["url1"] = productEntity.imageArray!![0]
+                templateArgs["url2"] = productEntity.imageArray!![1]
+            }
+            else -> {
+                templateArgs["url1"] = productEntity.imageArray!![0]
+                templateArgs["url2"] = productEntity.imageArray!![1]
+                templateArgs["url3"] = productEntity.imageArray!![2]
+            }
+        }
+
+        val serverCallbackArgs = HashMap<String, String>()
+        serverCallbackArgs["user_id"] = "\${current_user_id}"
+        serverCallbackArgs["product_id"] = "\${shared_product_id}"
+
+        KakaoLinkService.getInstance().sendCustom(this, templateId, templateArgs, serverCallbackArgs, object: ResponseCallback<KakaoLinkResponse>() {
+            override fun onFailure(errorResult: ErrorResult?) {
+                Log.i(TAG, errorResult.toString())
+            }
+
+            override fun onSuccess(result: KakaoLinkResponse?) {
+                Log.i(TAG, "성공 : ${result.toString()}")
+            }
+        })
+
     }
 
     // 상품 수정
@@ -266,6 +302,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 Log.i(TAG, "Successful! ${document.result!!.id}")
                 val item = document.result!!.toObject(ProductEntity::class.java)!!
                 binding.setVariable(BR.product, item)
+                productEntity = item
                 uid = item.seller.toString()
                 getUserData()
                 setPagerAdater(item.imageArray)

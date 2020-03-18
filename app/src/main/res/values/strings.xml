@@ -78,11 +78,6 @@
     <string name="lookup_format">조회 %d</string>
     <string name="chat_attention_lookup">채팅 %d · 관심 %d · 조회 %d</string>
 
-    <!-- Kakao -->
-    <string name="kakao_app_key">cc76fb183a0bd141c8bbd81cf03ac186</string>
-    <string name="kakao_scheme">kakaocc76fb183a0bd141c8bbd81cf03ac186</string>
-    <string name="kakaolink_host">kakaolink</string>
-
     <string name="toolbar_title_account_fragement">나의 정보</string>
     <string name="toolbar_title_chat_fragement">채팅</string>
     <string name="toolbar_title_setting_activity">앱 설정</string>
