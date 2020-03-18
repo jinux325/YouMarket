@@ -33,8 +33,6 @@ class AddressActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_address)
 
-
-
        // addressList = mutableListOf(AddressVO("1","1","1"),AddressVO("2","2","2"),AddressVO("3","3","3"),AddressVO("4","4","4"))
 
         val layoutManager = LinearLayoutManager(this)

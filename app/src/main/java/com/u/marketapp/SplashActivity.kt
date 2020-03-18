@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
+import com.u.marketapp.signup.AddressActivity
 import com.u.marketapp.signup.SmsActivity
 import kotlinx.android.synthetic.main.activity_chat.*
 import org.json.JSONObject
@@ -88,9 +89,13 @@ class SplashActivity : AppCompatActivity() {
                 startActivity(intent)*/
             }else{
                 Log.d("로그 없음", number)
-                val intent = Intent(this@SplashActivity, SmsActivity::class.java)
+                /*val intent = Intent(this@SplashActivity, SmsActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
                 intent.putExtra("number",number)
+                startActivity(intent)*/
+                val intent = Intent(this@SplashActivity, AddressActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
+                intent.putExtra("phoneNumber","01040166410")
                 startActivity(intent)
             }
         }, 1000) // 1초 후 이미지를 닫습니다

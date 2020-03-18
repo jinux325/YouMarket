@@ -58,8 +58,10 @@
         <activity
             android:name=".signup.ProfileActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".signup.AddressActivity" />
-        <activity android:name=".signup.SmsActivity" />
+        <activity android:name=".signup.AddressActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".signup.SmsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
