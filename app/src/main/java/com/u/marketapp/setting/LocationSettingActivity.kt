@@ -8,20 +8,14 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.iid.FirebaseInstanceId
 import com.u.marketapp.R
 import com.u.marketapp.signup.AddressActivity
-import com.u.marketapp.vo.UserEntity
+import com.u.marketapp.entity.UserEntity
 import kotlinx.android.synthetic.main.activity_location_setting.*
-import kotlinx.android.synthetic.main.activity_profile.*
-import java.util.*
 
 class LocationSettingActivity : AppCompatActivity() {
 
@@ -154,7 +148,8 @@ class LocationSettingActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_user)).document(uid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
+                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
+                        UserEntity::class.java)
                     if (userEntity?.address2.equals(null)) {
                         addr2.visibility = View.GONE
                         addr2_add.visibility = View.VISIBLE

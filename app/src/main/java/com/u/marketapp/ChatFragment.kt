@@ -1,7 +1,6 @@
 package com.u.marketapp
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,15 +9,11 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.adapter.ChatAdapter
-import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.vo.ChatRoomVO
-import com.u.marketapp.vo.UserEntity
+import com.u.marketapp.entity.UserEntity
 import kotlinx.android.synthetic.main.fragment_chat.*
 
 
@@ -60,7 +55,8 @@ class ChatFragment : Fragment() {
         FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(uid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
+                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
+                        UserEntity::class.java)
                     if(userEntity?.chatting != null){
                         for(i in userEntity?.chatting!!){
                             chattingRoomUidList.add(i)

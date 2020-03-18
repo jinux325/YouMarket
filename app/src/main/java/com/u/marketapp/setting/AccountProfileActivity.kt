@@ -1,8 +1,6 @@
 package com.u.marketapp.setting
 
 import android.Manifest
-import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -21,17 +19,12 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.common.io.Files
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.u.marketapp.MainActivity
 import com.u.marketapp.R
-import com.u.marketapp.signup.ProfileActivity
-import com.u.marketapp.vo.UserEntity
+import com.u.marketapp.entity.UserEntity
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.android.synthetic.main.activity_profile.*
-import kotlinx.android.synthetic.main.fragment_account.*
-import java.util.*
 
 class AccountProfileActivity : AppCompatActivity() {
 
@@ -43,7 +36,7 @@ class AccountProfileActivity : AppCompatActivity() {
     lateinit var address:String
     var uid: String? = null
 
-    private lateinit var myData:UserEntity
+    private lateinit var myData: UserEntity
     private val myUid = FirebaseAuth.getInstance().currentUser!!.uid
     private val db = FirebaseFirestore.getInstance()
     private var mStorageRef: StorageReference? = FirebaseStorage.getInstance().getReference("Profile")
@@ -205,11 +198,12 @@ class AccountProfileActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_user)).document(FirebaseAuth.getInstance().currentUser!!.uid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
+                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
+                        UserEntity::class.java)
                     Glide.with(this).load(userEntity!!.imgPath)
                         .apply(RequestOptions.bitmapTransform(CircleCrop())).into(proflie_imageView)
-                    dbImage=userEntity!!.imgPath
-                    name = userEntity!!.name
+                    dbImage= userEntity.imgPath.toString()
+                    name = userEntity.name.toString()
 
                 }
             }
