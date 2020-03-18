@@ -78,25 +78,25 @@ class SplashActivity : AppCompatActivity() {
         hd.postDelayed({
             val user = FirebaseAuth.getInstance().currentUser
             if (user != null) {
-                FirebaseAuth.getInstance().signOut()
+               /* FirebaseAuth.getInstance().signOut()
                 val intent = Intent(this@SplashActivity, SplashActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-                /*number = FirebaseAuth.getInstance().currentUser!!.phoneNumber!!
+                startActivity(intent)*/
+                number = FirebaseAuth.getInstance().currentUser!!.phoneNumber!!
                 Log.d("유저 확인", number)
                 val intent = Intent(this@SplashActivity, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)*/
+                startActivity(intent)
             }else{
                 Log.d("로그 없음", number)
-                /*val intent = Intent(this@SplashActivity, SmsActivity::class.java)
+                val intent = Intent(this@SplashActivity, SmsActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
                 intent.putExtra("number",number)
-                startActivity(intent)*/
-                val intent = Intent(this@SplashActivity, AddressActivity::class.java)
+                startActivity(intent)
+                /*val intent = Intent(this@SplashActivity, AddressActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
                 intent.putExtra("phoneNumber","01040166410")
-                startActivity(intent)
+                startActivity(intent)*/
             }
         }, 1000) // 1초 후 이미지를 닫습니다
 
