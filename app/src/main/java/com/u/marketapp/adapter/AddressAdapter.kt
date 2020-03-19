@@ -4,17 +4,14 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.u.marketapp.MainActivity
 import com.u.marketapp.R
 import com.u.marketapp.setting.LocationSettingActivity
-import com.u.marketapp.signup.AddressActivity
 import com.u.marketapp.signup.ProfileActivity
 import com.u.marketapp.vo.AddressVO
 import kotlinx.android.synthetic.main.item_address.view.*
@@ -31,9 +28,9 @@ class AddressAdapter (val context: Context, private var addressList:MutableList<
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val zipNo = addressList.get(position).zipNo
-        val rAddr = addressList.get(position).rAddr
-        val lAddr = addressList.get(position).lAddr
+        val zipNo = addressList[position].zipNo
+        val rAddr = addressList[position].rAddr
+        val lAddr = addressList[position].lAddr
 
         holder.addressZipNo.text = zipNo
         holder.addressRAddr.text = rAddr
@@ -49,10 +46,10 @@ class AddressAdapter (val context: Context, private var addressList:MutableList<
 }
 
 class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
-    val addressZipNo = itemView.tv_zipNo
-    val addressRAddr = itemView.tv_rnAddr
-    val addressLAddr = itemView.tv_lnmAddr
-    var addressCardView = itemView.cardview
+    val addressZipNo = itemView.tv_zipNo!!
+    val addressRAddr = itemView.tv_rnAddr!!
+    val addressLAddr = itemView.tv_lnmAddr!!
+    var addressCardView = itemView.cardview!!
 }
 
 
@@ -66,7 +63,7 @@ fun addressDialog( context: Context, lAddr:String, phoneNumber: String,location:
         if (location != "" && location == "update1") {
             if (FirebaseAuth.getInstance().currentUser != null) {
                 val uid = FirebaseAuth.getInstance().currentUser!!.uid
-                db.collection(context!!.resources.getString(R.string.db_user)).document(uid).update("address", addrSubString(lAddr))
+                db.collection(context.resources.getString(R.string.db_user)).document(uid).update("address", addrSubString(lAddr))
                 val intent = Intent(context, LocationSettingActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 context.startActivity(intent)
@@ -74,7 +71,7 @@ fun addressDialog( context: Context, lAddr:String, phoneNumber: String,location:
         } else if (location != "" && location == "update2") {
             if (FirebaseAuth.getInstance().currentUser != null) {
                 val uid = FirebaseAuth.getInstance().currentUser!!.uid
-                db.collection(context!!.resources.getString(R.string.db_user)).document(uid).update("address2", addrSubString(lAddr))
+                db.collection(context.resources.getString(R.string.db_user)).document(uid).update("address2", addrSubString(lAddr))
                 val intent = Intent(context, LocationSettingActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 context.startActivity(intent)
@@ -89,15 +86,15 @@ fun addressDialog( context: Context, lAddr:String, phoneNumber: String,location:
         }
 
     }
-    val dialog_listener = object: DialogInterface.OnClickListener{
+    val dialogListener = object: DialogInterface.OnClickListener{
         override fun onClick(dialog: DialogInterface?, p1: Int) {
             when(p1){
                 DialogInterface.BUTTON_POSITIVE -> pos()
             }
         }
     }
-    dialog.setPositiveButton("확인",dialog_listener)
-    dialog.setNegativeButton("취소",dialog_listener)
+    dialog.setPositiveButton("확인",dialogListener)
+    dialog.setNegativeButton("취소",dialogListener)
     dialog.show()
 
 }
@@ -106,14 +103,14 @@ fun addressDialog( context: Context, lAddr:String, phoneNumber: String,location:
 
 fun addrSubString(lAddr:String):String{
     var addr=""
-    if(!(lAddr.replace(" ","").equals(""))){
-        val idx_bf = lAddr.indexOf("(")
-        val idx_af = lAddr.indexOf(")")
-        if (lAddr.contains(",")) {
+    if(lAddr.replace(" ","") != ""){
+        val idxBf = lAddr.indexOf("(")
+        val idxAf = lAddr.indexOf(")")
+        addr = if (lAddr.contains(",")) {
             val idx = lAddr.indexOf(",")
-            addr = lAddr.substring(idx_bf + 1, idx)
+            lAddr.substring(idxBf + 1, idx)
         } else {
-            addr = lAddr.substring(idx_bf + 1, idx_af)
+            lAddr.substring(idxBf + 1, idxAf)
         }
     }
     return addr

@@ -1,5 +1,6 @@
 package com.u.marketapp.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.view.Gravity
@@ -17,7 +18,7 @@ import com.u.marketapp.vo.ChattingVO
 import kotlinx.android.synthetic.main.item_chatting.view.*
 import java.text.SimpleDateFormat
 
-class ChattingAdapter(val context: Context?, val chattingList:MutableList<ChattingVO>):
+class ChattingAdapter(val context: Context?, private val chattingList:MutableList<ChattingVO>):
     RecyclerView.Adapter<ChattingAdapter.ViewHolder>() {
 
     private val myUid = FirebaseAuth.getInstance().currentUser!!.uid
@@ -26,7 +27,8 @@ class ChattingAdapter(val context: Context?, val chattingList:MutableList<Chatti
 
     override fun getItemCount(): Int =chattingList.size
 
-    override fun onBindViewHolder(holder: ChattingAdapter.ViewHolder, position: Int) {
+    @SuppressLint("RtlHardcoded", "SimpleDateFormat")
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val date = SimpleDateFormat("a hh:mm")
         Log.d("chattingAdapter  ", chattingList[position].uid +"   $myUid")
@@ -54,13 +56,13 @@ class ChattingAdapter(val context: Context?, val chattingList:MutableList<Chatti
 
     inner class ViewHolder(parent: ViewGroup): RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.item_chatting,parent,false)) {
-        val message = itemView.chatting_text
-        val image = itemView.chatting_image
-        val linearLayout = itemView.layout
-        val cardView = itemView.chatting_cardview
-        val rightTime = itemView.chatting_time_right
-        val leftTime = itemView.chatting_time_left
-        val date_linear = itemView.linear_date_text
-        val date_txt = itemView.date_text
+        val message = itemView.chatting_text!!
+        val image = itemView.chatting_image!!
+        val linearLayout = itemView.layout!!
+       // val cardView = itemView.chatting_cardview
+        val rightTime = itemView.chatting_time_right!!
+        val leftTime = itemView.chatting_time_left!!
+       // val dateLinear = itemView.linear_date_text
+       // val dateTxt = itemView.date_text
     }
 }

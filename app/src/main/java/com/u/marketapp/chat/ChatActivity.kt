@@ -23,9 +23,9 @@ class ChatActivity : AppCompatActivity() {
 
     private val db = FirebaseFirestore.getInstance()
     private val myUid = FirebaseAuth.getInstance().currentUser!!.uid
-    lateinit var chatRoom : HashMap<String,Any>
-    lateinit var chatRoomUid : String
-    lateinit var chattingList : MutableList<ChattingVO>
+    private lateinit var chatRoom : HashMap<String,Any>
+    private lateinit var chatRoomUid : String
+    private lateinit var chattingList : MutableList<ChattingVO>
     var comment:String=""
     lateinit var name:String
     lateinit var myData: UserEntity
@@ -38,14 +38,14 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
-        val intent_items = getIntent()
-        tv_partner_nickname.text = intent_items.getStringExtra("name")
+        val intentItems = intent
+        tv_partner_nickname.text = intentItems.getStringExtra("name")
 
         myData()
 
-        if(intent_items.hasExtra("chatRoomUid")) {
+        if(intentItems.hasExtra("chatRoomUid")) {
             Log.d("EQWRQ!@D!@D!d 11 ", "asada ")
-            chatRoomUid = intent_items.getStringExtra("chatRoomUid")
+            chatRoomUid = intentItems.getStringExtra("chatRoomUid")
             getChattingList()
         }else{
             Log.d("EQWRQ!@D!@D!d 22 ", "asada ")
@@ -113,8 +113,8 @@ class ChatActivity : AppCompatActivity() {
             Log.d(" 채팅보내기 ", " comment:   et_message: "+et_message.text+"  "+et_message.text.toString())*/
             comment= et_message.text.toString()
 
-            val intent_items = intent
-            if(intent_items.hasExtra("pid")){
+            val intentItem = intent
+            if(intentItem.hasExtra("pid")){
                 addChatRoom(myUid, pid, seller)
             }else{
                 addChatComment(myUid, comment, chatRoomUid)
@@ -163,7 +163,7 @@ class ChatActivity : AppCompatActivity() {
 
     }
 
-    fun addChatComment(buyerUid:String, pid:String, comment:String, sellerUid:String){
+    private fun addChatComment(buyerUid:String, pid:String, comment:String, sellerUid:String){
         Log.d("addChatComment "," buyerUid: $buyerUid, pid: $pid, comment: $comment, sellerUid: $sellerUid")
         FirebaseFirestore.getInstance().collection("Chatting")
             .whereEqualTo("pid", pid).whereEqualTo("buyer", buyerUid).get().addOnSuccessListener { result ->
@@ -180,7 +180,7 @@ class ChatActivity : AppCompatActivity() {
                     chatRoomUid = document.id
                     FirebaseFirestore.getInstance().collection("Chatting").document(document.id)
                         .collection("comment").document().set(chat).addOnSuccessListener { getChattingList() }
-                    if(!(buyerUid.equals(sellerUid))){
+                    if(buyerUid != sellerUid){
                         FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(sellerUid)
                             .update("chatting", FieldValue.arrayUnion(document.id))
                     }
@@ -198,7 +198,7 @@ class ChatActivity : AppCompatActivity() {
             }
     }
 
-    fun myData(){
+    private fun myData(){
         db.collection(resources.getString(R.string.db_user)).document(myUid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
@@ -210,8 +210,8 @@ class ChatActivity : AppCompatActivity() {
             }
     }
 
-    fun getDocumentId(pid:String, myUid:String){
-        Log.d("EQWRQ!@D!@D!d 333 ", pid+"   "+myUid)
+    private fun getDocumentId(pid:String, myUid:String){
+        Log.d("EQWRQ!@D!@D!d 333 ", "$pid   $myUid")
         FirebaseFirestore.getInstance().collection("Chatting")
             .whereEqualTo("pid", pid).whereEqualTo("buyer", myUid).get().addOnSuccessListener { result ->
                 Log.d("EQWRQ!@D!@D!d 444 ", "firebase ")
@@ -225,9 +225,9 @@ class ChatActivity : AppCompatActivity() {
 
     }
 
-    fun getChattingList(){
+    private fun getChattingList(){
         db.collection("Chatting").document(chatRoomUid).collection("comment").orderBy("registDate")
-            .addSnapshotListener{ snapshot, e ->
+            .addSnapshotListener{ snapshot, _ ->
                 chattingList= mutableListOf()
                 for (doc in snapshot!!) {
                     val chattingVO: ChattingVO = doc.toObject(ChattingVO::class.java)
@@ -240,10 +240,10 @@ class ChatActivity : AppCompatActivity() {
     }
 
 
-    fun getChattingRoom(){
-        val intent_items = getIntent()
-        pid = intent_items.getStringExtra("pid")
-        seller = intent_items.getStringExtra("seller")
+    private fun getChattingRoom(){
+        val intentItems = intent
+        pid = intentItems.getStringExtra("pid")
+        seller = intentItems.getStringExtra("seller")
 
         chatRoom = hashMapOf(
             "pid" to pid,
@@ -253,7 +253,7 @@ class ChatActivity : AppCompatActivity() {
             "registDate" to Date(System.currentTimeMillis())
         )
 
-        Log.d("EQWRQ!@D!@D!d  ", pid+"   "+myUid)
+        Log.d("EQWRQ!@D!@D!d  ", "$pid   $myUid")
 
         getDocumentId(pid, myUid)
 
@@ -271,7 +271,7 @@ class ChatActivity : AppCompatActivity() {
 */
     }
 
-    fun token(){
+    private fun token(){
         db.collection("Chatting").document(chatRoomUid).get()
             .addOnSuccessListener { documentSnapshot ->
                 val chatRoomVO: ChatRoomVO? = documentSnapshot.toObject(ChatRoomVO::class.java)
@@ -284,7 +284,7 @@ class ChatActivity : AppCompatActivity() {
                 }
             }
     }
-    fun getToken(uid:String){
+    private fun getToken(uid:String){
         Log.d("@@ getToken ", "uid: $uid")
         db.collection(resources.getString(R.string.db_user)).document(uid).get()
             .addOnCompleteListener{ task ->
@@ -396,10 +396,10 @@ class ChatActivity : AppCompatActivity() {
                 val serverKey =
                     "AAAACA4EsA0:APA91bGdb7Oxa49X6z23tXjCn48DiosjzqYFZXM6G67I_gH5sFI_AKuoFJ6ayLyqBHGAmckEkMSO8UU5qD8XFesWRSlDKBVdx6zHI_cCEaz6xCTg4CbgWkKCNxVBzM3SupUJXio41w6a"
                 val registrationToken: String = token
-                val FCM_URL = "https://fcm.googleapis.com/fcm/send"
+                val URL = "https://fcm.googleapis.com/fcm/send"
                 val title = myData.name
                 val body = comment
-                Log.e("@@ ChatActivity Thread", token + "  " + title + "  " + body)
+                Log.e("@@ ChatActivity Thread", "$token  $title  $body")
                 // FMC 메시지 생성 start
                 val root = JSONObject()
                 val data = JSONObject()
@@ -412,9 +412,9 @@ class ChatActivity : AppCompatActivity() {
                 root.put("data", data)
                 // FMC 메시지 생성 end
                 Log.d("Main_ Thread", "@@@")
-                val Url = URL(FCM_URL)
+                val url = URL(URL)
                 val conn =
-                    Url.openConnection() as HttpURLConnection
+                    url.openConnection() as HttpURLConnection
                 conn.requestMethod = "POST"
                 conn.doOutput = true
                 conn.doInput = true

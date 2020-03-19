@@ -33,8 +33,8 @@ import java.util.*
 class ProfileActivity : AppCompatActivity() {
 
     private val TAG = "ProfileActivity"
-    var profileImage : Uri? =null
-    lateinit var phoneNumber:String
+    private var profileImage : Uri? =null
+    private lateinit var phoneNumber:String
     lateinit var address:String
     var uid: String? = null
 
@@ -56,8 +56,9 @@ class ProfileActivity : AppCompatActivity() {
             permission()
         }
 
-        text_inpur_edit.setCounterEnabled(true)
-        text_inpur_edit.setCounterMaxLength(10)
+        text_inpur_edit.isCounterEnabled = true
+        text_inpur_edit.counterMaxLength = 10
+
 
         profile_name.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(
@@ -74,12 +75,16 @@ class ProfileActivity : AppCompatActivity() {
                 before: Int,
                 count: Int
             ) {
-                if (s.length == 0) {
-                    text_inpur_edit.setError(null)
-                } else if (s.length > 10) {
-                    text_inpur_edit.setError("10자 이하로 적어주세요.")
-                } else {
-                    text_inpur_edit.setError(null)
+                when {
+                    s.isEmpty() -> {
+                        text_inpur_edit.error = null
+                    }
+                    s.length > 10 -> {
+                        text_inpur_edit.error = "10자 이하로 적어주세요."
+                    }
+                    else -> {
+                        text_inpur_edit.error = null
+                    }
                 }
             }
 
@@ -98,21 +103,20 @@ class ProfileActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.join -> {
                 val name = profile_name.text.toString()
-                if (name.length <= 0) {
+                if (name.replace(" ", "").isEmpty()) {
                     Toast.makeText(this@ProfileActivity, "닉네임을 입력해주세요", Toast.LENGTH_LONG).show()
                 } else if (name.length >= 11) {
                     Toast.makeText(this@ProfileActivity, "10자 이하로 적어주세요.", Toast.LENGTH_LONG).show()
-                } else if (name.length >= 1 && name.length <= 10) {
-                    if (profileImage == null || profileImage.toString().length == 0 ) {
-                        Toast.makeText(this@ProfileActivity, "이미지를 넣어주세요.", Toast.LENGTH_LONG)
-                            .show()
-                    } else {
-                        try {
-                            join(name)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
+                } else if (name.length in 1..10) {
+                    if (profileImage == null || profileImage.toString().isEmpty()) {
+                        profileImage = Uri.parse("android.resource://com.u.marketapp/drawable/ic_default")
                     }
+                    try {
+                        join(name)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+
                 }
                 true
             }
@@ -124,17 +128,17 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     // 퍼미션 권한 설정
-    fun permission() {
+    private fun permission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                Log.d("TAG", "권한 설정 완료");
+                Log.d("TAG", "권한 설정 완료")
                 TedImagePicker.with(this)
                     .start { uriList -> getImageList(uriList) }
             } else {
-                Log.d("TAG", "권한 설정 요청");
+                Log.d("TAG", "권한 설정 요청")
                 ActivityCompat.requestPermissions( this, arrayOf(
                     Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.INTERNET), 1 )
@@ -146,7 +150,7 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
-    fun getImageList(image: Uri){
+    private fun getImageList(image: Uri){
         profileImage = image
         Glide.with(this).load(image)
             .apply(RequestOptions.bitmapTransform(CircleCrop())).into(proflie_imageView)
@@ -155,9 +159,9 @@ class ProfileActivity : AppCompatActivity() {
 
 
     private fun join(name:String) {
-        val intent_items = getIntent()
-        phoneNumber = intent_items.getStringExtra("phoneNumber")
-        address = intent_items.getStringExtra("address")
+        val intentItems = intent
+        phoneNumber = intentItems.getStringExtra("phoneNumber")
+        address = intentItems.getStringExtra("address")
         Log.d("@adapter@ activity ", " $phoneNumber  $address")
 
         val prefs = getSharedPreferences("User", Context.MODE_PRIVATE)
@@ -181,7 +185,7 @@ class ProfileActivity : AppCompatActivity() {
                     "address" to address,
                     "registDate" to Date(System.currentTimeMillis()),
                     "imgPath" to downloadUri.toString(),
-                    "token" to FirebaseInstanceId.getInstance().getToken()
+                    "token" to FirebaseInstanceId.getInstance().token
                 )
 
                 db.collection(resources.getString(R.string.db_user)).document(uid!!)

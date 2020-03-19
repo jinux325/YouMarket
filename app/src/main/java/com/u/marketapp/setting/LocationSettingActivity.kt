@@ -2,31 +2,20 @@ package com.u.marketapp.setting
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.iid.FirebaseInstanceId
-import com.u.marketapp.MainActivity
 import com.u.marketapp.R
-import com.u.marketapp.adapter.addrSubString
 import com.u.marketapp.signup.AddressActivity
-import com.u.marketapp.signup.ProfileActivity
 import com.u.marketapp.entity.UserEntity
 import kotlinx.android.synthetic.main.activity_location_setting.*
-import kotlinx.android.synthetic.main.activity_profile.*
-import java.util.*
 
 class LocationSettingActivity : AppCompatActivity() {
 

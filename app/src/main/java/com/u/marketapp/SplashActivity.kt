@@ -8,14 +8,7 @@ import android.os.Handler
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.iid.FirebaseInstanceId
-import com.u.marketapp.signup.AddressActivity
 import com.u.marketapp.signup.SmsActivity
-import kotlinx.android.synthetic.main.activity_chat.*
-import org.json.JSONObject
-import java.net.HttpURLConnection
-import java.net.URL
 
 class SplashActivity : AppCompatActivity() {
 

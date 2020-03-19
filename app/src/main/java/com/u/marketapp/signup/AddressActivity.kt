@@ -1,14 +1,11 @@
 package com.u.marketapp.signup
 
-import android.app.ProgressDialog
-import android.content.Context
+import android.annotation.SuppressLint
 import android.os.AsyncTask
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.AbsListView
-import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +14,7 @@ import com.u.marketapp.adapter.AddressAdapter
 import com.u.marketapp.vo.AddressVO
 import kotlinx.android.synthetic.main.activity_address.*
 import org.xmlpull.v1.XmlPullParser
+import org.xmlpull.v1.XmlPullParser.TEXT
 import org.xmlpull.v1.XmlPullParserFactory
 import java.io.InputStreamReader
 import java.net.URL
@@ -40,18 +38,18 @@ class AddressActivity : AppCompatActivity() {
 
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
-        recycler_view.setLayoutManager(layoutManager)
+        recycler_view.layoutManager = layoutManager
         /* val addrAdapter = AddressAdapter(this, addressList)
          recycler_view.setAdapter(addrAdapter)*/
 
-        bt.setOnClickListener(View.OnClickListener {
+        bt.setOnClickListener {
             page = 1
                        // loading()
 
             val async = asyncTask()
             async.execute()
 
-        })
+        }
 
         recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -75,7 +73,7 @@ class AddressActivity : AppCompatActivity() {
                     (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
                 val itemTotalCount = recyclerView.adapter!!.itemCount
                 if (isScrolling && lastVisibleItemPosition == itemTotalCount - 1) {
-                    page = page + 1
+                    page += 1
                     isScrolling = false
                     /*if (loadData.isCancelled){
 
@@ -93,6 +91,7 @@ class AddressActivity : AppCompatActivity() {
     }
 
 
+    @SuppressLint("StaticFieldLeak")
     inner class asyncTask : AsyncTask<Unit, Unit, String>() {
         override fun doInBackground(vararg params: Unit?): String? {
             requestUrl =
@@ -131,25 +130,31 @@ class AddressActivity : AppCompatActivity() {
                             lnmAddrVal=""
                         }
                         XmlPullParser.START_TAG -> {
-                            if (parser.name == "newAddressListAreaCdSearchAll") {
+                           /* if (parser.name == "newAddressListAreaCdSearchAll") {
                                 // item =
-                            }
+                            }*/
                             if (parser.name == "zipNo") zipNo = true
                             if (parser.name == "rnAdres") rnAddr = true
                             if (parser.name == "lnmAdres") lnmAddr = true
                         }
-                        XmlPullParser.TEXT -> if (zipNo) {
-                            //item.setlAddr(parser.text)
-                            zipNoVal = parser.text
-                            zipNo = false
-                        } else if (rnAddr) {
-                            // item.setrAddr(parser.text)
-                            rnAddrVal = parser.text
-                            rnAddr = false
-                        } else if (lnmAddr) {
-                            //item.setZipNo(parser.text)
-                            lnmAddrVal = parser.text
-                            lnmAddr = false
+                        TEXT -> {
+                            when {
+                                zipNo -> {
+                                    //item.setlAddr(parser.text)
+                                    zipNoVal = parser.text
+                                    zipNo = false
+                                }
+                                rnAddr -> {
+                                    // item.setrAddr(parser.text)
+                                    rnAddrVal = parser.text
+                                    rnAddr = false
+                                }
+                                lnmAddr -> {
+                                    //item.setZipNo(parser.text)
+                                    lnmAddrVal = parser.text
+                                    lnmAddr = false
+                                }
+                            }
                         }
                     }
                     eventType = parser.next()
@@ -161,30 +166,30 @@ class AddressActivity : AppCompatActivity() {
             return null
         }
 
-        override fun onPreExecute() {
+   /*     override fun onPreExecute() {
             super.onPreExecute()
 
-        }
+        }*/
 
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
             //어답터 연결
-            val intent_items = intent
-            if (intent_items.getStringExtra("update") != null) {
-                Log.e(TAG, "location1: " + intent_items.getStringExtra("update"))
-                val location = intent_items.getStringExtra("update")
+            val intentItems = intent
+            if (intentItems.getStringExtra("update") != null) {
+                Log.e(TAG, "location1: " + intentItems.getStringExtra("update"))
+                val location = intentItems.getStringExtra("update")
                 val addrAdapter =
                     AddressAdapter(this@AddressActivity, addressList, "", location)
 
 
 
                 recycler_view.visibility = View.VISIBLE
-                recycler_view.setAdapter(addrAdapter)
+                recycler_view.adapter = addrAdapter
 
 
             } else {
-                val intent_items = getIntent()
-                phoneNumber = intent_items.getStringExtra("phoneNumber")
+                val intentItem = intent
+                phoneNumber = intentItem.getStringExtra("phoneNumber")
                 Log.d("@adapter@ activity ", " $phoneNumber ")
 
                 Log.e(TAG, "location2: ")
@@ -192,11 +197,11 @@ class AddressActivity : AppCompatActivity() {
 
 
 
-                recycler_view.visibility = View.VISIBLE
-                recycler_view.setAdapter(adapter)
+                this@AddressActivity.recycler_view.visibility = View.VISIBLE
+                recycler_view.adapter = adapter
             }
             if (page > 1) {
-                recycler_view.getLayoutManager()!!.scrollToPosition(count - 3)
+                recycler_view.layoutManager!!.scrollToPosition(count - 3)
             }
         }
     }

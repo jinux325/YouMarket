@@ -3,6 +3,7 @@ package com.u.marketapp.signup
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.*
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -25,7 +26,7 @@ import java.util.concurrent.TimeUnit
 
 class SmsActivity : AppCompatActivity() {
 
-    val TAG = "SmsActivity"
+    private val TAG = "SmsActivity"
     private val mAuth= FirebaseAuth.getInstance()
     var codeSent : String = ""
     var phone=""
@@ -61,7 +62,7 @@ class SmsActivity : AppCompatActivity() {
         }*/
     }
 
-    fun verifySignIn(){
+    private fun verifySignIn(){
         val code = verifyEditText.text.toString()
         val credential = PhoneAuthProvider.getCredential(codeSent, code)
         signInWithPhoneAuthCredential(credential)
@@ -71,10 +72,10 @@ class SmsActivity : AppCompatActivity() {
         mAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    val intent_items = getIntent()
-                    val firebaseNumber = intent_items.getStringExtra("number")
+                ////    val intent_items = intent
+                   // val firebaseNumber = intent_items.getStringExtra("number")
                     // var phoneNumber = phone.substring(1, 11)
-                    var uid = FirebaseAuth.getInstance().currentUser!!.uid
+                    val uid = FirebaseAuth.getInstance().currentUser!!.uid
                     Log.d(" userExist(uid) 유저 확인", uid)
 
                     userExist(uid)
@@ -100,11 +101,11 @@ class SmsActivity : AppCompatActivity() {
             }
     }
 
-    fun sendVerification(){
+    private fun sendVerification(){
         phone = editTextMobile.text.toString()
 
         if(phone.isEmpty()){
-            editTextMobile.setError("번호를 입력해주세요")
+            editTextMobile.error = "번호를 입력해주세요"
         }
         var phoneNumber=""
         if( phone.length != 11){
@@ -121,16 +122,16 @@ class SmsActivity : AppCompatActivity() {
 
     }
 
-    var callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+    private var callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         @SuppressLint("LongLogTag")
         override fun onVerificationCompleted(p0: PhoneAuthCredential) {
-            val code = p0.getSmsCode()
+            val code = p0.smsCode
             Log.d("onVerificationCompleted ", code)
 
             if (code != null) {
                 verifyEditText.setText(code)
-                verifyEditText.setVisibility(View.VISIBLE)
-                verifyButton.setVisibility(View.VISIBLE)
+                verifyEditText.visibility = View.VISIBLE
+                verifyButton.visibility = View.VISIBLE
             }
         }
 
@@ -151,10 +152,10 @@ class SmsActivity : AppCompatActivity() {
 
     }
 
-    fun userData(){
-        var uid = FirebaseAuth.getInstance().currentUser!!.uid
+    private fun userData(){
+        val uid = mAuth.currentUser!!.uid
         db.collection(resources.getString(R.string.db_user)).document(uid).get()
-            .addOnCompleteListener(OnCompleteListener<DocumentSnapshot> { task ->
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
                         UserEntity::class.java)
@@ -172,7 +173,7 @@ class SmsActivity : AppCompatActivity() {
                 } else {
                     Log.d(TAG, "Error getting Users", task.exception)
                 }
-            })
+            }
     }
 
     fun userExist(uid:String){
@@ -186,7 +187,7 @@ class SmsActivity : AppCompatActivity() {
                 }
             }*/
         var count =0
-        FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).get().addOnSuccessListener { result ->
+        db.collection(resources.getString(R.string.db_user)).get().addOnSuccessListener { result ->
             for(document in result){
                 count++
                 Log.d("@@@@@@@@@@@@@@@ ", document.id+"   "+uid)
@@ -196,7 +197,7 @@ class SmsActivity : AppCompatActivity() {
                     // 로그인
                     Log.d("유저 확인", "true  로그인")
                     val intent = Intent(this, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
                     intent.putExtra("phoneNumber", phone)
                     userData()
                     startActivity(intent)
@@ -204,7 +205,7 @@ class SmsActivity : AppCompatActivity() {
                 }else if(count ==  result.size()){
                     Log.d("유저 확인", "false  가입")
                     val intent = Intent(this, AddressActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
                     intent.putExtra("phoneNumber", phone)
                     startActivity(intent)
                 }
