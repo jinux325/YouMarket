@@ -41,6 +41,7 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:hint="닉네임"
+            app:helperText=""
             app:errorTextAppearance="@style/error_appearance"
             app:hintTextAppearance="@style/hint_color"
             >
