@@ -3,4 +3,6 @@
     <string name="product_trade_chatting">채팅으로 거래하기</string>
     <string name="product_price_proposal">가격제안 불가</string>
     <string name="product_send_to">이미지 공유</string>
+    <string name="product_add_comment">댓글쓰기</string>
+    <string name="product_add_reply">답글쓰기</string>
 </resources>

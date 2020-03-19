@@ -7,4 +7,6 @@
     <string name="format_chatting">채팅 %d개</string>
     <string name="format_attention">관심 %d</string>
     <string name="format_lookup">조회 %d</string>
+    <string name="format_comment">댓글 %d</string>
+    <string name="format_all_comment">%d개 댓글 전체보기</string>
 </resources>

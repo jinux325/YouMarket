@@ -10,13 +10,17 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.storage.FirebaseStorage
 import com.kakao.kakaolink.v2.KakaoLinkResponse
 import com.kakao.kakaolink.v2.KakaoLinkService
 import com.kakao.network.ErrorResult
 import com.kakao.network.callback.ResponseCallback
+import com.u.marketapp.adapter.CommentRVAdapter
 import com.u.marketapp.adapter.ViewPagerAdapter
 import com.u.marketapp.chat.ChatActivity
 import com.u.marketapp.databinding.ActivityProductBinding
@@ -38,17 +42,21 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var currentUid: String // 유저 ID
     private lateinit var binding: ActivityProductBinding
     private lateinit var viewPagerAdapter: ViewPagerAdapter
+    private lateinit var commentAdapter : CommentRVAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_product)
         setActionBar()
         currentUid = FirebaseAuth.getInstance().currentUser!!.uid
-        if (intent.hasExtra("itemId")) {
-            pid = intent.getStringExtra("itemId")
+        if (intent.hasExtra("id")) {
+            pid = intent.getStringExtra("id")
             Log.i(TAG, pid)
             getProductData()
+            initCommentView()
             button_chatting.setOnClickListener(this)
+            text_view_comment_buttom.setOnClickListener(this)
+            text_view_all_reply.setOnClickListener(this)
             setAttentionCheckListener()
         } else {
             Log.i(TAG, "Intent Not Signal!!")
@@ -76,49 +84,6 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                     menuInflater.inflate(R.menu.toolbar_product, menu)
                 }
             }
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        userVerification(menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_share -> { // 공유
-                share()
-                true
-            }
-            R.id.action_refresh -> { // 새로고침
-                getProductData()
-                true
-            }
-            R.id.action_declaration -> { // 신고하기
-                Toast.makeText(this, resources.getString(R.string.feature_to_be_added), Toast.LENGTH_SHORT).show()
-                true
-            }
-            R.id.action_do_not_see -> { // 이 사용자의 글 보지 않기
-                Toast.makeText(this, resources.getString(R.string.feature_to_be_added), Toast.LENGTH_SHORT).show()
-                true
-            }
-            R.id.action_hide -> { // 숨기기
-                unActiveProduct()
-                true
-            }
-            R.id.action_update -> { // 수정
-                updateProduct()
-                true
-            }
-            R.id.action_delete -> { // 삭제
-                deleteProduct()
-                true
-            }
-            android.R.id.home -> { // 뒤로가기
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -289,7 +254,22 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         db.collection(resources.getString(R.string.db_product)).document(pid).delete().addOnCompleteListener { document ->
             if (document.isSuccessful) {
                 Log.i(TAG, "상품 삭제!")
+                deleteImage()
                 finish() // 종료
+            }
+        }
+    }
+
+    // 이미지 삭제
+    private fun deleteImage() {
+        val storage = FirebaseStorage.getInstance()
+        if (!productEntity.imageArray.isNullOrEmpty()) {
+            for (uri in productEntity.imageArray!!) {
+                storage.getReferenceFromUrl(uri).delete().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.i(TAG, "이미지 삭제 성공 (저장소) : $uri")
+                    }
+                }
             }
         }
     }
@@ -350,6 +330,67 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         startActivity(intent)
     }
 
+    private fun initCommentView() {
+        setCommentRVLayoutManager()
+        setCommentRVAdapter()
+        setCommentItemsData()
+    }
+
+    // 댓글 어댑터 설정
+    private fun setCommentRVAdapter() {
+        commentAdapter = CommentRVAdapter(this, true)
+        binding.recyclerViewComment.adapter = commentAdapter
+        commentAdapter.setMoreClickListener(object : CommentRVAdapter.MoreClickListener {
+            override fun onClick(view: View, position: Int) {
+                Log.i(TAG, "More Click : $position")
+            }
+        })
+        commentAdapter.setReplyClickListener(object : CommentRVAdapter.ReplyClickListener {
+            override fun onClick(view: View, position: Int) {
+                moveReplyActivity()
+            }
+        })
+    }
+
+    // 댓글 레이아웃 매니저 설정
+    private fun setCommentRVLayoutManager() {
+        binding.recyclerViewComment.layoutManager = LinearLayoutManager(this)
+        binding.recyclerViewComment.setHasFixedSize(true)
+    }
+
+    // 댓글 데이터 설정
+    private fun setCommentItemsData() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid)
+            .collection(resources.getString(R.string.db_comment)).orderBy("regDate", Query.Direction.ASCENDING).limit(10).get().addOnCompleteListener {
+                if (it.isSuccessful) {
+                    if (it.result?.documents!!.size > 0) {
+                        checkCommentItemsData(true)
+                        for (document in it.result?.documents!!) {
+                            commentAdapter.addItem(document)
+                        }
+                    } else {
+                        checkCommentItemsData(false)
+                    }
+                }
+            }
+    }
+
+    // 댓글 존재 여부
+    private fun checkCommentItemsData(isCheck: Boolean) {
+        if (isCheck) {
+            recycler_view_comment.visibility = View.VISIBLE
+        } else {
+            recycler_view_comment.visibility = View.GONE
+        }
+    }
+
+    // 댓글 상세 페이지 이동
+    private fun moveReplyActivity() {
+        val intent = Intent(this, ReplyActivity::class.java)
+        startActivity(intent)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -370,6 +411,52 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 intent.putExtra("name", userName)
                 startActivity(intent)
             }
+            R.id.text_view_comment_buttom, R.id.text_view_all_reply -> {
+                moveReplyActivity()
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        userVerification(menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_share -> { // 공유
+                share()
+                true
+            }
+            R.id.action_refresh -> { // 새로고침
+                getProductData()
+                true
+            }
+            R.id.action_declaration -> { // 신고하기
+                Toast.makeText(this, resources.getString(R.string.feature_to_be_added), Toast.LENGTH_SHORT).show()
+                true
+            }
+            R.id.action_do_not_see -> { // 이 사용자의 글 보지 않기
+                Toast.makeText(this, resources.getString(R.string.feature_to_be_added), Toast.LENGTH_SHORT).show()
+                true
+            }
+            R.id.action_hide -> { // 숨기기
+                unActiveProduct()
+                true
+            }
+            R.id.action_update -> { // 수정
+                updateProduct()
+                true
+            }
+            R.id.action_delete -> { // 삭제
+                deleteProduct()
+                true
+            }
+            android.R.id.home -> { // 뒤로가기
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

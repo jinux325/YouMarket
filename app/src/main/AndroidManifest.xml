@@ -16,9 +16,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="allowBackup"
+        android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup"
-        android:usesCleartextTraffic="true">
+        tools:replace="allowBackup"
+        tools:targetApi="m">
+        
         <service
             android:name=".chat.ChatFirebaseMessagingService"
             android:exported="false">
@@ -26,6 +28,9 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <activity android:name=".ReplyActivity"
+            android:theme="@style/MaterialTheme" />
         <activity
             android:name=".HomeFragment"
             android:theme="@style/MaterialTheme" />
@@ -34,22 +39,23 @@
             android:theme="@style/MaterialTheme" />
         <activity
             android:name=".ProductActivity"
-            android:theme="@style/MaterialTheme" >
+            android:theme="@style/MaterialTheme">
             <intent-filter>
                 <data
                     android:host="@string/kakaolink_host"
                     android:scheme="@string/kakao_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".ViewActivity"
-            android:theme="@style/MaterialTheme"/>
+        <activity
+            android:name=".ViewActivity"
+            android:theme="@style/MaterialTheme" />
         <activity
             android:name=".MainActivity"
-            android:theme="@style/MaterialTheme"/>
+            android:theme="@style/MaterialTheme" />
         <activity
             android:name=".chat.ChatActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".setting.LocationSettingActivity"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -62,9 +68,11 @@
         <activity
             android:name=".signup.ProfileActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".signup.AddressActivity"
+        <activity
+            android:name=".signup.AddressActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".signup.SmsActivity"
+        <activity
+            android:name=".signup.SmsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SplashActivity"
@@ -75,6 +83,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakao_app_key" />
