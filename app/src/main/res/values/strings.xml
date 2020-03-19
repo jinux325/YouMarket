@@ -1,82 +1,9 @@
 <resources>
     <string name="app_name">MarketApp</string>
 
-    <!-- Bottom Navigation Menu -->
-    <string name="home">홈</string>
-    <string name="category">카테고리</string>
-    <string name="edit">글쓰기</string>
-    <string name="chatting">채팅</string>
-    <string name="info">나의 정보</string>
-
-    <!-- Loading -->
     <string name="loading">Please Wait…</string>
-
-    <!-- Empty -->
-    <string name="no_data_available">등록된 상품이 없습니다.</string>
-
-    <!-- DB Collection -->
-    <string name="db_user">User</string>
-    <string name="db_product">Product</string>
-    <string name="db_chatting">Chatting</string>
-
-    <!-- Category -->
-    <string-array name="array_category">
-        <item>디지털/가전</item>
-        <item>가구/인테리어</item>
-        <item>유아동/유아도서</item>
-        <item>생활/가공식품</item>
-        <item>여성의류</item>
-        <item>여성잡화</item>
-        <item>뷰티/미용</item>
-        <item>남성패션/잡화</item>
-        <item>스포츠/레저</item>
-        <item>게임/취미</item>
-        <item>도서/티켓/음반</item>
-        <item>반려동물용품</item>
-        <item>기타 중고물품</item>
-        <item>삽니다</item>
-    </string-array>
-    
-    <string name="footnote_textview">이미지가 존재하지 않습니다.</string>
-
-    <!-- Menu -->
-    <string name="share">공유</string>
-    <string name="refresh">새로고침</string>
-    <string name="update">수정</string>
-    <string name="declaration">신고하기</string>
-    <string name="do_not_see">이 사용자의 글 보지 않기</string>
-    <string name="hide">숨기기</string>
-    <string name="delete">삭제</string>
-
-    <string name="option_setting">설정</string>
-    <string name="option_complete">완료</string>
-
     <string name="dot">·</string>
-
-    <!-- Product -->
-    <string name="trade_chatting">채팅으로 거래하기</string>
-    <string name="price_proposal">가격제안 불가</string>
-    <string name="send_to">이미지 공유</string>
-
-    <!-- Eidt -->
-    <string name="hint_title">글 제목</string>
-    <string name="won">￦</string>
-    <string name="hint_price">가격 입력(선택사항)</string>
-    <string name="hint_contents">내용을 작성해주세요.</string>
-    <string name="suggestion">가격 제안 받기</string>
-    <string name="edit_category">디지털/가전</string>
-    <string name="edit_picker">0/10</string>
-
-    <!-- Format -->
-    <string name="format">%1$tY년 %1$tm월 %1$td일</string>
-    <string name="edit_price">%,d</string>
-    <string name="price">%,d원</string>
-    <string name="address">%s</string>
-    <string name="picker">%d/10</string>
-    <string name="chatting_format">채팅 %d</string>
-    <string name="attention_format">관심 %d</string>
-    <string name="lookup_format">조회 %d</string>
-    <string name="chat_attention_lookup">채팅 %d · 관심 %d · 조회 %d</string>
+    <string name="feature_to_be_added">기능 추가 예정입니다.</string>
 
     <string name="toolbar_title_account_fragement">나의 정보</string>
     <string name="toolbar_title_chat_fragement">채팅</string>

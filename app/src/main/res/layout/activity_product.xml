@@ -140,7 +140,7 @@
                         android:textSize="15sp"
                         android:textColor="@color/black"
                         android:textStyle="bold"
-                        android:text="@{@string/price(product.price)}"
+                        android:text="@{@string/format_price(product.price)}"
                         tools:text="40,000원"/>
 
                     <com.google.android.material.textview.MaterialTextView
@@ -148,7 +148,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
-                        android:text="@string/price_proposal"
+                        android:text="@string/product_price_proposal"
                         tools:text="가격제안 불가" />
 
                 </LinearLayout>
@@ -165,7 +165,7 @@
                     android:textColor="@color/white"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:text="@string/trade_chatting"
+                    android:text="@string/product_trade_chatting"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
@@ -289,7 +289,7 @@
                                 android:id="@+id/text_view_date"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@{@string/format(product.regDate)}"
+                                android:text="@{@string/format_date(product.regDate)}"
                                 tools:text="등록일"/>
 
                         </LinearLayout>
@@ -325,7 +325,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textSize="13sp"
-                                    android:text="@{@string/chatting_format(product.chattingRoom.size())}"
+                                    android:text="@{@string/format_chatting(product.chattingRoom.size())}"
                                     tools:text="채팅"/>
 
                                 <com.google.android.material.textview.MaterialTextView
@@ -341,7 +341,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textSize="13sp"
-                                    android:text="@{@string/attention_format(product.attention.size())}"
+                                    android:text="@{@string/format_attention(product.attention.size())}"
                                     tools:text="관심"/>
 
                                 <com.google.android.material.textview.MaterialTextView
@@ -357,7 +357,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textSize="13sp"
-                                    android:text="@{@string/lookup_format(product.lookup.size())}"
+                                    android:text="@{@string/format_lookup(product.lookup.size())}"
                                     tools:text="조회"/>
 
                             </LinearLayout>
@@ -367,6 +367,13 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </LinearLayout>
+
+                <!-- Line -->
+                <View style="@style/Divider"
+                    android:layout_marginBottom="20dp" />
+
+                <!-- 댓글 -->
+
 
             </LinearLayout>
 

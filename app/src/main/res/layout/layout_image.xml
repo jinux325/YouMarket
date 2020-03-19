@@ -14,8 +14,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            tools:src="@drawable/ic_no_photo"
-            tools:ignore="ContentDescription" />
+            android:contentDescription="@string/empty_image_view"
+            tools:src="@drawable/ic_no_photo" />
 
     </RelativeLayout>
 

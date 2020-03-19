@@ -95,11 +95,11 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 true
             }
             R.id.action_declaration -> { // 신고하기
-                Toast.makeText(this, "기능 추가 예정입니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, resources.getString(R.string.feature_to_be_added), Toast.LENGTH_SHORT).show()
                 true
             }
             R.id.action_do_not_see -> { // 이 사용자의 글 보지 않기
-                Toast.makeText(this, "기능 추가 예정입니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, resources.getString(R.string.feature_to_be_added), Toast.LENGTH_SHORT).show()
                 true
             }
             R.id.action_hide -> { // 숨기기
@@ -157,7 +157,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 val item = it.result!!.toObject(ProductEntity::class.java)
-                item?.let { a -> text_view_lookup.text = String.format(resources.getString(R.string.lookup_format), a.lookup?.size) }
+                item?.let { a -> text_view_lookup.text = String.format(resources.getString(R.string.format_lookup), a.lookup?.size) }
             }
         }
     }
@@ -220,7 +220,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 val item = it.result!!.toObject(ProductEntity::class.java)
-                item?.let { a -> text_view_attention.text = String.format(resources.getString(R.string.attention_format), a.attention?.size) }
+                item?.let { a -> text_view_attention.text = String.format(resources.getString(R.string.format_attention), a.attention?.size) }
             }
         }
     }
@@ -231,7 +231,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
 
         val templateArgs = HashMap<String, String>()
         templateArgs["title"] = productEntity.title.toString()
-        templateArgs["contents"] = String.format(resources.getString(R.string.price), productEntity.price)
+        templateArgs["contents"] = String.format(resources.getString(R.string.format_price), productEntity.price)
         templateArgs["attention"] = productEntity.attention?.size.toString()
         templateArgs["comment"] = productEntity.commentSize.toString()
         templateArgs["lookup"] = productEntity.lookup?.size.toString()

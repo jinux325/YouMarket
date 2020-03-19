@@ -96,7 +96,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
                         android:textColor="@android:color/darker_gray"
-                        android:text="@{@string/address(item.address)}"
+                        android:text="@{item.address}"
                         tools:text="세류동" />
 
                     <TextView
@@ -111,7 +111,7 @@
                         android:id="@+id/text_view_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{@string/format(item.regDate)}"
+                        android:text="@{@string/format_date(item.regDate)}"
                         android:textColor="@android:color/darker_gray"
                         android:textSize="12sp"
                         tools:text="시간" />
@@ -127,7 +127,7 @@
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textColor="@color/black"
-                    android:text="@{@string/price(item.price)}"
+                    android:text="@{@string/format_price(item.price)}"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/layout_address"
                     tools:text="가격입니다." />
@@ -160,7 +160,7 @@
                             android:layout_height="15dp"
                             android:layout_marginEnd="5dp"
                             android:src="@drawable/ic_communication"
-                            tools:ignore="ContentDescription" />
+                            android:contentDescription="@string/empty_image_view" />
 
                         <TextView
                             android:id="@+id/text_view_comment_count"
@@ -189,7 +189,7 @@
                             android:layout_height="15dp"
                             android:layout_marginEnd="5dp"
                             android:src="@drawable/ic_speech_bubble"
-                            tools:ignore="ContentDescription" />
+                            android:contentDescription="@string/empty_image_view" />
 
                         <TextView
                             android:id="@+id/text_view_chatting_count"
@@ -218,7 +218,7 @@
                             android:layout_height="15dp"
                             android:layout_marginEnd="5dp"
                             android:src="@drawable/ic_heart_uncheck"
-                            tools:ignore="ContentDescription" />
+                            android:contentDescription="@string/empty_image_view" />
 
                         <TextView
                             android:id="@+id/text_view_attention_count"

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edit_hint_title">글 제목</string>
+    <string name="edit_won">￦</string>
+    <string name="edit_hint_price">가격 입력(선택사항)</string>
+    <string name="edit_hint_contents">내용을 작성해주세요.</string>
+    <string name="edit_suggestion">가격 제안 받기</string>
+    <string name="edit_category">디지털/가전</string>
+    <string name="edit_picker">0/10</string>
+    <string name="edit_price">%,d</string>
+</resources>

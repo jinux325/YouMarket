@@ -52,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_photo_camera_24px"
-                android:contentDescription="@string/footnote_textview"
+                android:contentDescription="@string/empty_image_view"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent" />
@@ -133,7 +133,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_arrow_down_24px"
-                    android:contentDescription="@string/footnote_textview" />
+                    android:contentDescription="@string/empty_image_view" />
 
             </LinearLayout>
 
@@ -150,7 +150,7 @@
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:inputType="text"
-                android:hint="@string/hint_title"
+                android:hint="@string/edit_hint_title"
                 tools:targetApi="O" />
 
             <View style="@style/Divider"
@@ -171,7 +171,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/won"
+                    android:text="@string/edit_won"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -183,7 +183,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
-                    android:hint="@string/hint_price"
+                    android:hint="@string/edit_hint_price"
                     android:inputType="number|textNoSuggestions"
                     android:maxLength="11"
                     android:textColor="@color/black"
@@ -199,7 +199,7 @@
                     android:buttonTint="@color/navigation_state"
                     android:checked="false"
                     android:textSize="15sp"
-                    android:text="@string/suggestion"
+                    android:text="@string/edit_suggestion"
                     android:textColor="@color/navigation_state"
                     tools:ignore="HardcodedText" />
 
@@ -236,7 +236,7 @@
                 android:textSize="18sp"
                 android:inputType="text"
                 android:importantForAutofill="no"
-                android:hint="@string/hint_contents"
+                android:hint="@string/edit_hint_contents"
                 tools:targetApi="O" />
 
         </LinearLayout>
