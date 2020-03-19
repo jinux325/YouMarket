@@ -6,12 +6,16 @@ import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.u.marketapp.ChatFragment
+import com.u.marketapp.MainActivity
 import com.u.marketapp.R
 import com.u.marketapp.chat.ChatActivity
 import com.u.marketapp.entity.ProductEntity
@@ -33,12 +37,15 @@ class ChatAdapter(val context: Context?, val chatList:MutableList<ChatRoomVO>, v
 
     @SuppressLint("LongLogTag")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
+        val chatFragment = ChatFragment()
         if(myUid.equals(chatList[position].buyer)){
+            //chatList[position].buyer?.let { chatFragment.getName(it, holder, context!!) }
             chatList[position].buyer?.let { getName(it,holder) }
         }else{
+           // chatList[position].seller?.let { chatFragment.getName(it, holder, context!!) }
             chatList[position].seller?.let { getName(it,holder) }
         }
+        //chatList[position].pid?.let { chatFragment.getProductImage(it, holder, context!!) }
         chatList[position].pid?.let { getProductImage(it, holder) }
 
 
@@ -50,8 +57,10 @@ class ChatAdapter(val context: Context?, val chatList:MutableList<ChatRoomVO>, v
                 comment.text = item.comment
                 cardView.setOnClickListener {
                     if(myUid.equals(chatList[position].buyer)){
+                        //chatList[position].buyer?.let { it1 -> chatFragment.chattingIntent(it1, chatUidList[position], context!!) }
                         chatList[position].buyer?.let { it1 -> chattingIntent(it1, chatUidList[position]) }
                     }else{
+                        //chatList[position].seller?.let { it1 -> chatFragment.chattingIntent(it1, chatUidList[position], context!!) }
                         chatList[position].seller?.let { it1 -> chattingIntent(it1, chatUidList[position]) }
                     }
                 }
@@ -129,12 +138,11 @@ class ChatAdapter(val context: Context?, val chatList:MutableList<ChatRoomVO>, v
         val nickname = itemView.chat_nickname
     }
 
-    fun getName(uid:String, holder:ViewHolder){
-        db.collection("User").document(uid).get()
+   fun getName(uid:String, holder:ViewHolder){
+        db.collection(context!!.resources.getString(R.string.db_user)).document(uid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
-                        UserEntity::class.java)
+                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
                     //name = userEntity?.name.toString()
                     Log.d("getName 1231 231 2  ", userEntity?.name+"    image:   "+ userEntity?.imgPath)
                     holder.nickname.text = userEntity?.name
@@ -153,18 +161,17 @@ class ChatAdapter(val context: Context?, val chatList:MutableList<ChatRoomVO>, v
                     val productEntity: ProductEntity? = task.result!!.toObject<ProductEntity>(
                         ProductEntity::class.java)
                     if (context != null) {
-                       // Glide.with(context).load(productEntity?.imageArray!![0]).into(holder.pImage)
+                        Glide.with(context).load(productEntity?.imageArray!![0]).into(holder.pImage)
                     }
                 }
             }
     }
 
     fun chattingIntent(uid:String, chatRoomUid:String){
-        db.collection("User").document(uid).get()
+        db.collection(context!!.resources.getString(R.string.db_user)).document(uid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
-                        UserEntity::class.java)
+                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
                     val intent = Intent(context, ChatActivity::class.java)
                     intent.putExtra("chatRoomUid", chatRoomUid)
                     intent.putExtra("name", userEntity?.name.toString())

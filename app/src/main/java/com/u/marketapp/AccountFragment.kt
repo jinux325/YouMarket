@@ -2,6 +2,7 @@ package com.u.marketapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -35,7 +36,9 @@ class AccountFragment : Fragment() {
        // (activity as MainActivity?)!!.setSupportActionBar(account_toolbar) //액션바와 같게 만들어줌
 
 
-        view.account_profile.setOnClickListener { startActivity(Intent(activity, AccountProfileActivity::class.java)) }
+        view.account_profile.setOnClickListener {
+            startActivity(Intent(activity, AccountProfileActivity::class.java).putExtra("name",myData.name).putExtra("imgPath",myData.imgPath))
+        }
         view.account_setting.setOnClickListener { startActivity(Intent(activity, SettingActivity::class.java)) }
         view.location.setOnClickListener { startActivity(Intent(activity, LocationSettingActivity::class.java)) }
 
@@ -76,9 +79,9 @@ class AccountFragment : Fragment() {
                         UserEntity::class.java)
                     Glide.with(this).load(userEntity!!.imgPath)
                         .apply(RequestOptions.bitmapTransform(CircleCrop())).into(account_profile)
-                    account_name.text = userEntity!!.name
-                    account_address.text = userEntity!!.address
-                    myData = userEntity!!
+                    account_name.text = userEntity.name
+                    account_address.text = userEntity.address
+                    myData = userEntity
                 }
             }
     }

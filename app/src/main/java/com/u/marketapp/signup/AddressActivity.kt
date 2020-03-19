@@ -1,15 +1,17 @@
 package com.u.marketapp.signup
 
-import android.content.Intent
+import android.app.ProgressDialog
+import android.content.Context
 import android.os.AsyncTask
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.AbsListView
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.FirebaseAuth
 import com.u.marketapp.R
 import com.u.marketapp.adapter.AddressAdapter
 import com.u.marketapp.vo.AddressVO
@@ -18,6 +20,7 @@ import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 import java.io.InputStreamReader
 import java.net.URL
+
 
 class AddressActivity : AppCompatActivity() {
 
@@ -33,18 +36,21 @@ class AddressActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_address)
 
-       // addressList = mutableListOf(AddressVO("1","1","1"),AddressVO("2","2","2"),AddressVO("3","3","3"),AddressVO("4","4","4"))
+        // addressList = mutableListOf(AddressVO("1","1","1"),AddressVO("2","2","2"),AddressVO("3","3","3"),AddressVO("4","4","4"))
 
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         recycler_view.setLayoutManager(layoutManager)
-       /* val addrAdapter = AddressAdapter(this, addressList)
-        recycler_view.setAdapter(addrAdapter)*/
+        /* val addrAdapter = AddressAdapter(this, addressList)
+         recycler_view.setAdapter(addrAdapter)*/
 
         bt.setOnClickListener(View.OnClickListener {
             page = 1
+                       // loading()
+
             val async = asyncTask()
             async.execute()
+
         })
 
         recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -126,7 +132,7 @@ class AddressActivity : AppCompatActivity() {
                         }
                         XmlPullParser.START_TAG -> {
                             if (parser.name == "newAddressListAreaCdSearchAll") {
-                               // item =
+                                // item =
                             }
                             if (parser.name == "zipNo") zipNo = true
                             if (parser.name == "rnAdres") rnAddr = true
@@ -137,7 +143,7 @@ class AddressActivity : AppCompatActivity() {
                             zipNoVal = parser.text
                             zipNo = false
                         } else if (rnAddr) {
-                           // item.setrAddr(parser.text)
+                            // item.setrAddr(parser.text)
                             rnAddrVal = parser.text
                             rnAddr = false
                         } else if (lnmAddr) {
@@ -169,7 +175,13 @@ class AddressActivity : AppCompatActivity() {
                 val location = intent_items.getStringExtra("update")
                 val addrAdapter =
                     AddressAdapter(this@AddressActivity, addressList, "", location)
+
+
+
+                recycler_view.visibility = View.VISIBLE
                 recycler_view.setAdapter(addrAdapter)
+
+
             } else {
                 val intent_items = getIntent()
                 phoneNumber = intent_items.getStringExtra("phoneNumber")
@@ -177,6 +189,10 @@ class AddressActivity : AppCompatActivity() {
 
                 Log.e(TAG, "location2: ")
                 val adapter = AddressAdapter(this@AddressActivity, addressList, phoneNumber, "")
+
+
+
+                recycler_view.visibility = View.VISIBLE
                 recycler_view.setAdapter(adapter)
             }
             if (page > 1) {
@@ -185,15 +201,16 @@ class AddressActivity : AppCompatActivity() {
         }
     }
 
- /*   override fun onDestroy() {
-        super.onDestroy()
-        val intent_items = intent
-        Log.d("@@ onDestroy  ", intent_items.getStringExtra("update"))
-        if(intent_items.getStringExtra("update") == null){
-            FirebaseAuth.getInstance().signOut()
-        }
-    }
-*/
+    /*   override fun onDestroy() {
+           super.onDestroy()
+           val intent_items = intent
+           Log.d("@@ onDestroy  ", intent_items.getStringExtra("update"))
+           if(intent_items.getStringExtra("update") == null){
+               FirebaseAuth.getInstance().signOut()
+           }
+       }
+   */
+
 
 
 }

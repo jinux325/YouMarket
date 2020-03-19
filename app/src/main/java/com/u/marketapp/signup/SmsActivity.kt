@@ -196,6 +196,7 @@ class SmsActivity : AppCompatActivity() {
                     // 로그인
                     Log.d("유저 확인", "true  로그인")
                     val intent = Intent(this, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     intent.putExtra("phoneNumber", phone)
                     userData()
                     startActivity(intent)
@@ -203,7 +204,7 @@ class SmsActivity : AppCompatActivity() {
                 }else if(count ==  result.size()){
                     Log.d("유저 확인", "false  가입")
                     val intent = Intent(this, AddressActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     intent.putExtra("phoneNumber", phone)
                     startActivity(intent)
                 }

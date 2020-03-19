@@ -31,7 +31,7 @@ class AccountProfileActivity : AppCompatActivity() {
     private val TAG = "AccountProfileActivity"
     lateinit var dbImage:String
     var profileImage : Uri? = null
-    lateinit var name : String
+    lateinit var db_name : String
     lateinit var phoneNumber:String
     lateinit var address:String
     var uid: String? = null
@@ -50,6 +50,9 @@ class AccountProfileActivity : AppCompatActivity() {
 
         myData()
 
+        text_inpur_edit.helperText = "현재: $db_name"
+
+
         proflie_imageView.setOnClickListener {
             Toast.makeText(this," 이미지 선택",Toast.LENGTH_SHORT).show()
             permission()
@@ -59,20 +62,11 @@ class AccountProfileActivity : AppCompatActivity() {
         text_inpur_edit.setCounterMaxLength(10)
 
         profile_name.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(
-                s: CharSequence,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int ) {
             }
 
-            override fun onTextChanged(
-                s: CharSequence,
-                start: Int,
-                before: Int,
-                count: Int
-            ) {
+            override fun onTextChanged( s: CharSequence, start: Int, before: Int, count: Int ) {
+
                 if (s.length == 0) {
                     text_inpur_edit.setError(null)
                 } else if (s.length > 10) {
@@ -97,26 +91,28 @@ class AccountProfileActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.join -> {
                 val name = profile_name.text.toString()
-                if (name.length <= 0) {
-                    Toast.makeText(this, "닉네임을 입력해주세요", Toast.LENGTH_LONG).show()
-                } else if (name.length >= 11) {
+                Log.e("imgPath 1111 ", " $name  $profileImage")
+               /* if (name.length <= 0) {
+                    Toast.makeText(this, " $db_name 으로 하시겠어요?", Toast.LENGTH_LONG).show()
+                } else */
+                if (name.length >= 11) {
                     Toast.makeText(this, "10자 이하로 적어주세요.", Toast.LENGTH_LONG).show()
-                } else if (name.length >= 1 && name.length <= 10) {
-                    if (profileImage == null || profileImage.toString().length == 0 ) {
-                        Toast.makeText(this, "이미지를 넣어주세요.", Toast.LENGTH_LONG)
-                            .show()
-                    } else {
+                } else if (name.length >= 0 && name.length <= 10) {
+                    Log.e("imgPath 2222 ", " $name  $profileImage")
+                  /*  if (profileImage == null || profileImage.toString().length == 0 ) {
+                    } else {*/
                         try {
+                            Log.e("imgPath 3333 ", " $name  $profileImage")
                             if(name.replace(" ","").length <= 0){
-                                update("공백")
+                                update(db_name, profileImage)
                             }else{
-                                update(name)
+                                update(name, profileImage)
                             }
 
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
-                    }
+                    //}
                 }
                 true
             }
@@ -158,34 +154,44 @@ class AccountProfileActivity : AppCompatActivity() {
     }
 
 
-    private fun update(name:String) {
+    private fun update(name:String, imgPath:Uri?) {
+        Log.e("imgPath  ", "$name  $imgPath")
+        if(imgPath == null){
+            db.collection(resources.getString(R.string.db_user)).document(myUid)
+                .update("name" , name)
+                .addOnSuccessListener {
+                    finish()
+                }
+        }else {
+            val fileReference: StorageReference = mStorageRef!!.child(myUid!!)
+                .child(System.currentTimeMillis().toString() + "." + Files.getFileExtension(profileImage.toString()))
+            fileReference.putFile(profileImage!!).continueWithTask { task ->
+                if (!task.isSuccessful) {
+                    throw task.exception!!
+                }
+                fileReference.downloadUrl
+            }.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val downloadUri = task.result
 
-        val fileReference: StorageReference = mStorageRef!!.child(myUid!!)
-            .child(System.currentTimeMillis().toString() + "." + Files.getFileExtension(profileImage.toString()))
-        fileReference.putFile(profileImage!!).continueWithTask { task ->
-            if (!task.isSuccessful) {
-                throw task.exception!!
-            }
-            fileReference.downloadUrl
-        }.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val downloadUri = task.result
 
-                db.collection(resources.getString(R.string.db_user)).document(myUid)
-                    .update("imgPath", downloadUri.toString(),"name" , name)
-                    .addOnSuccessListener {
-                        finish()
-                    }
+                    db.collection(resources.getString(R.string.db_user)).document(myUid)
+                        .update("imgPath", downloadUri.toString(), "name", name)
+                        .addOnSuccessListener {
+                            finish()
+                        }
 
 
-            } else {
-                Toast.makeText(
-                    this,
-                    "upload failed: " + task.exception!!.message,
-                    Toast.LENGTH_SHORT
-                ).show()
+                } else {
+                    Toast.makeText(
+                        this,
+                        "upload failed: " + task.exception!!.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
+
     }
 
 
@@ -195,7 +201,12 @@ class AccountProfileActivity : AppCompatActivity() {
     }
 
     fun myData() {
-        db.collection(resources.getString(R.string.db_user)).document(FirebaseAuth.getInstance().currentUser!!.uid).get()
+        val intent_items = intent
+        dbImage= intent_items.getStringExtra("imgPath")
+        db_name = intent_items.getStringExtra("name")
+        Glide.with(this).load(dbImage)
+            .apply(RequestOptions.bitmapTransform(CircleCrop())).into(proflie_imageView)
+        /*db.collection(resources.getString(R.string.db_user)).document(FirebaseAuth.getInstance().currentUser!!.uid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
                     val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
@@ -206,7 +217,7 @@ class AccountProfileActivity : AppCompatActivity() {
                     name = userEntity.name.toString()
 
                 }
-            }
+            }*/
     }
 
 
