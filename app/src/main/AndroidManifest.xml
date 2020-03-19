@@ -48,8 +48,7 @@
             android:theme="@style/MaterialTheme"/>
         <activity
             android:name=".chat.ChatActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan"/>
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".setting.LocationSettingActivity"
             android:theme="@style/AppTheme.NoActionBar" />

@@ -44,7 +44,7 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
         val channelId = "CollocNotification"
         val NAME = "CollocChannel"
         val description = "This is Colloc channel"
-        var importance = NotificationManager.IMPORTANCE_HIGH
+        val importance = NotificationManager.IMPORTANCE_HIGH
 
         val notificationManager: NotificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 

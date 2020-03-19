@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:padding="2dp"
@@ -19,7 +18,8 @@
             android:padding="10dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            tools:ignore="UselessParent">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -29,14 +29,15 @@
                 <TextView
                     android:background="@drawable/background_zipno"
                     android:layout_margin="3dp"
-                    android:layout_marginRight="20dp"
+                    android:layout_marginEnd="20dp"
                     android:text="우편번호"
                     android:padding="3dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText" />
                 <TextView
                     android:id="@+id/tv_zipNo"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:textStyle="bold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -50,14 +51,15 @@
                 <TextView
                     android:background="@drawable/background_raddr"
                     android:text="도로명 주소"
-                    android:layout_marginRight="20dp"
+                    android:layout_marginEnd="20dp"
                     android:padding="3dp"
                     android:layout_margin="3dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText" />
                 <TextView
                     android:id="@+id/tv_lnmAddr"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:textStyle="bold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -72,22 +74,24 @@
                     android:background="@drawable/background_laddr"
                     android:text="지번 주소"
                     android:padding="3dp"
-                    android:layout_marginRight="20dp"
+                    android:layout_marginEnd="20dp"
                     android:layout_margin="3dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    tools:ignore="HardcodedText" />
                 <TextView
                     android:id="@+id/tv_rnAddr"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:textStyle="bold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
     <View
 
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/colorGray"></View>
+        android:background="@color/colorGray" />
 </LinearLayout>

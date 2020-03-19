@@ -10,14 +10,15 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.R
 import com.u.marketapp.adapter.ChattingAdapter
+import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.vo.ChatRoomVO
 import com.u.marketapp.vo.ChattingVO
-import com.u.marketapp.entity.UserEntity
 import kotlinx.android.synthetic.main.activity_chat.*
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
+
 
 class ChatActivity : AppCompatActivity() {
 
@@ -37,6 +38,7 @@ class ChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
+
 
         val intentItems = intent
         tv_partner_nickname.text = intentItems.getStringExtra("name")
@@ -465,4 +467,6 @@ class ChatActivity : AppCompatActivity() {
                 }
             }
     }*/
+
+
 }

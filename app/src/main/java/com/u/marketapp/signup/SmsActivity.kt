@@ -9,14 +9,12 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.MainActivity
 import com.u.marketapp.R
@@ -40,6 +38,7 @@ class SmsActivity : AppCompatActivity() {
 
         buttonContinue.setOnClickListener {
             Toast.makeText(this,"잠시만 기다려 주세요.", Toast.LENGTH_SHORT).show()
+            buttonContinue.isEnabled = false
             sendVerification()
         }
         verifyButton.setOnClickListener {
@@ -132,6 +131,7 @@ class SmsActivity : AppCompatActivity() {
                 verifyEditText.setText(code)
                 verifyEditText.visibility = View.VISIBLE
                 verifyButton.visibility = View.VISIBLE
+                buttonContinue.isEnabled = true
             }
         }
 

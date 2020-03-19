@@ -12,9 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.adapter.ChatAdapter
-import com.u.marketapp.vo.ChatRoomVO
 import com.u.marketapp.entity.UserEntity
+import com.u.marketapp.vo.ChatRoomVO
 import kotlinx.android.synthetic.main.fragment_chat.*
+import java.util.*
 
 
 class ChatFragment : Fragment() {
@@ -68,6 +69,8 @@ class ChatFragment : Fragment() {
             }
     }
 
+
+
     @SuppressLint("LongLogTag")
     fun chattingRoomList(list:MutableList<String>){
         for(i in list){
@@ -83,15 +86,17 @@ class ChatFragment : Fragment() {
 
                         Log.d("chattingRoomList ", chatRoomVO!!.buyer)
 
+                        chatRoomVO?.cId=i
                         chattingRoomList.add(chatRoomVO)
-                        Log.d("chattingRoomList 11111 ", chattingRoomList[0].buyer)
+                        Log.d("chattingRoomList 11111 ", chattingRoomList[0].comment+"  "+chattingRoomList[0].cId)
+                        chattingRoomList.sortWith(Comparator { data1, data2 -> data2.registDate!!.compareTo(data1.registDate)})
 
                     }
                     Log.d("chattingRoomList 4444444 ", chattingRoomList[0].buyer)
 
                     if(list.size == chattingRoomUidList.size){
                         chat_recyclerView.layoutManager = LinearLayoutManager(context)
-                        chat_recyclerView.adapter = ChatAdapter(context, chattingRoomList, chattingRoomUidList)
+                        chat_recyclerView.adapter = ChatAdapter(context, chattingRoomList)
                     }
                 }
         }

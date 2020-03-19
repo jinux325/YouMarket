@@ -1,56 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-
     android:layout_width="match_parent"
-
     android:layout_height="wrap_content"
-
     android:background="@android:color/background_light">
 
-
-
-
-
     <RelativeLayout
-
         android:layout_margin="10dp"
-
         android:id="@+id/chat_cardview"
-
         android:orientation="horizontal"
-
         android:layout_width="match_parent"
-
         android:layout_height="wrap_content">
 
-
-
         <ImageView
-
             android:layout_centerVertical="true"
-
             android:id="@+id/chat_image"
-
             android:layout_width="55dp"
-
             android:layout_height="55dp"
-
             android:src="@drawable/ic_profile"
-
-            />
-
-
+            tools:ignore="ContentDescription" />
 
         <LinearLayout
             android:id="@+id/linear"
-            android:layout_toRightOf="@+id/chat_image"
+            android:layout_toEndOf="@+id/chat_image"
             android:layout_marginTop="3dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
@@ -62,7 +38,7 @@
                     <TextView
                         android:id="@+id/chat_nickname"
                         android:text=""
-                        android:textSize="15dp"
+                        android:textSize="15sp"
                         android:textStyle="bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -70,13 +46,14 @@
 
                 <TextView
                     android:id="@+id/chat_time"
-                    android:layout_toRightOf="@+id/linear"
-                    android:layout_marginLeft="10dp"
+                    android:layout_toEndOf="@+id/linear"
+                    android:layout_marginStart="10dp"
                     android:text=""
-                    android:textSize="10dp"
+                    android:textSize="12sp"
                     android:textStyle="normal"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    tools:ignore="ObsoleteLayoutParam" />
 
             </LinearLayout>
                 <TextView
@@ -86,67 +63,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-
         </LinearLayout>
 
-
-
-
-
-
-
-
-
         <androidx.cardview.widget.CardView
-
             android:id="@+id/cardview"
-
             android:layout_centerVertical="true"
-
             android:layout_width="50dp"
-
             android:layout_height="50dp"
-
             app:cardBackgroundColor="@android:color/background_light"
-
             android:layout_alignParentEnd="true"
-
             app:cardUseCompatPadding="false">
 
-
-
             <ImageView
-
                 android:id="@+id/product_iamge"
-
                 android:layout_width="wrap_content"
-
                 android:layout_height="wrap_content"
-
                 android:adjustViewBounds="false"
-
-                android:scaleType="fitXY"/>
-
+                android:scaleType="fitXY"
+                tools:ignore="ContentDescription" />
         </androidx.cardview.widget.CardView>
-
-
-
-
-
     </RelativeLayout>
 
 
-
-
-
     <View
-
-
-
         android:layout_width="match_parent"
-
         android:layout_height="1dp"
-
-        android:background="@color/colorGray"></View>
+        android:background="@color/colorGray" />
 
 </LinearLayout>

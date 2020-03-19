@@ -31,7 +31,8 @@ class ChattingAdapter(val context: Context?, private val chattingList:MutableLis
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val date = SimpleDateFormat("a hh:mm")
-        Log.d("chattingAdapter  ", chattingList[position].uid +"   $myUid")
+        Log.e("chattingAdapter  ", chattingList[position].message +"  "+chattingList[position].image)
+        Log.e("chattingAdapter if ", chattingList[position].uid +"   $myUid")
         if(chattingList[position].uid.equals(myUid)){
             holder.image.visibility = GONE
             holder.linearLayout.gravity = Gravity.RIGHT
@@ -40,16 +41,17 @@ class ChattingAdapter(val context: Context?, private val chattingList:MutableLis
             holder.rightTime.visibility = GONE
 
         }else{
+            holder.image.visibility = VISIBLE
             holder.linearLayout.gravity = Gravity.LEFT
             holder.leftTime.visibility = GONE
             holder.rightTime.visibility = VISIBLE
             holder.rightTime.text = date.format(chattingList[position].registDate)
         }
         holder.message.text = chattingList[position].message
-        if (context != null) {
-            Glide.with(context).load(chattingList[position].image)
-                .apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.image)
-        }
+            Log.d("chattingAdapter 22 ", context.toString()+" "+chattingList[position].message +"  "+chattingList[position].image)
+        Glide.with(context!!).load(chattingList[position].image)
+            .apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.image)
+
 
 
     }

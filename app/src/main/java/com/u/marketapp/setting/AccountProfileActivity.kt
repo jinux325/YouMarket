@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.google.common.io.Files
+import com.google.common.io.Files.getFileExtension
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -164,7 +165,7 @@ class AccountProfileActivity : AppCompatActivity() {
                 }
         }else {
             val fileReference: StorageReference = mStorageRef!!.child(myUid)
-                .child(System.currentTimeMillis().toString() + "." + Files.getFileExtension(profileImage.toString()))
+                .child(System.currentTimeMillis().toString() + "." + getFileExtension(profileImage.toString()))
             fileReference.putFile(profileImage!!).continueWithTask { task ->
                 if (!task.isSuccessful) {
                     throw task.exception!!

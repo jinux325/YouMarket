@@ -11,12 +11,10 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:layout_marginBottom="50dp"
-        app:title="@string/toolbar_title_profile_activity"
+        app:title="프로필 설정"
         android:elevation="2dp"/>
 
     <ImageView
@@ -26,7 +24,7 @@
         android:layout_gravity="center"
         android:layout_margin="10dp"
         android:background="#00FFFFFF"
-        />
+        tools:ignore="ContentDescription"/>
     <LinearLayout
         android:layout_width="250dp"
         android:layout_height="250dp"
@@ -40,7 +38,7 @@
             android:layout_height="wrap_content"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:hint="닉네임"
+            android:hint="@string/tv_nickName"
             app:helperText=""
             app:errorTextAppearance="@style/error_appearance"
             app:hintTextAppearance="@style/hint_color"

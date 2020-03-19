@@ -103,20 +103,24 @@ class ProfileActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.join -> {
                 val name = profile_name.text.toString()
-                if (name.replace(" ", "").isEmpty()) {
-                    Toast.makeText(this@ProfileActivity, "닉네임을 입력해주세요", Toast.LENGTH_LONG).show()
-                } else if (name.length >= 11) {
-                    Toast.makeText(this@ProfileActivity, "10자 이하로 적어주세요.", Toast.LENGTH_LONG).show()
-                } else if (name.length in 1..10) {
-                    if (profileImage == null || profileImage.toString().isEmpty()) {
-                        profileImage = Uri.parse("android.resource://com.u.marketapp/drawable/ic_default")
+                when {
+                    name.replace(" ", "").isEmpty() -> {
+                        Toast.makeText(this@ProfileActivity, "닉네임을 입력해주세요", Toast.LENGTH_LONG).show()
                     }
-                    try {
-                        join(name)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                    name.length >= 11 -> {
+                        Toast.makeText(this@ProfileActivity, "10자 이하로 적어주세요.", Toast.LENGTH_LONG).show()
                     }
+                    name.length in 1..10 -> {
+                        if (profileImage == null || profileImage.toString().isEmpty()) {
+                            profileImage = Uri.parse("android.resource://com.u.marketapp/drawable/ic_default")
+                        }
+                        try {
+                            join(name)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
 
+                    }
                 }
                 true
             }
