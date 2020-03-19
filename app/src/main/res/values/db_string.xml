@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="db_user">User</string>
+    <string name="db_product">Product</string>
+    <string name="db_chatting">Chatting</string>
+    <string name="db_comment">Comment</string>
+</resources>

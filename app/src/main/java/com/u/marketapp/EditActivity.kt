@@ -1,7 +1,6 @@
 package com.u.marketapp
 
 import android.app.Activity
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -14,7 +13,6 @@ import android.view.View
 import android.webkit.MimeTypeMap
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
@@ -39,10 +37,9 @@ class EditActivity : AppCompatActivity() {
 
     private lateinit var actionbar: ActionBar
     private lateinit var adapter: PreviewRVAdapter
-    private var pid: String? = null
-    private var progressDialog: AppCompatDialog? = null
-    private var currentArray: ArrayList<Uri> = ArrayList()
-    private var delImageArray: ArrayList<Uri> = ArrayList()
+    private lateinit var pid: String
+    private val currentArray: ArrayList<Uri> = ArrayList()
+    private val delImageArray: ArrayList<Uri> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,7 +121,7 @@ class EditActivity : AppCompatActivity() {
     // 이전 데이터 로드
     private fun loadBeforeData() {
         val db = FirebaseFirestore.getInstance()
-        pid?.let {
+        pid.let {
             db.collection(resources.getString(R.string.db_product)).document(it).get().addOnCompleteListener { snapshot ->
                 if (snapshot.isSuccessful) {
                     val item = snapshot.result?.toObject(ProductEntity::class.java)
@@ -142,7 +139,7 @@ class EditActivity : AppCompatActivity() {
         edit_text_price.text = item.price.toEditable() // 가격
         check_box_suggestion.isChecked = item.suggestion // 가격 제안 여부
         if (!item.imageArray.isNullOrEmpty()) {
-            for (path in item.imageArray!!) {
+            for (path in item.imageArray) {
                 addBeforePreviewLayout(Uri.parse(path))
             }
         }
@@ -183,33 +180,40 @@ class EditActivity : AppCompatActivity() {
         currentArray.addAll(uriList)
         adapter.addAllData(uriList)
         if (adapter.itemCount > 0) recycler_view.visibility = View.VISIBLE
-        text_view_picker_count.text = String.format(resources.getString(R.string.picker), adapter.itemCount)
+        showCurrentPreviewCount()
     }
 
     // 이전 이미지 추가
     private fun addBeforePreviewLayout(uri: Uri) {
         adapter.addData(uri)
         if (adapter.itemCount > 0) recycler_view.visibility = View.VISIBLE
-        text_view_picker_count.text = adapter.itemCount.toString()
+        showCurrentPreviewCount()
     }
 
     // 이미지 제거
     private fun removePreviewLayout(position: Int) {
         if(adapter.itemCount > 0) {
             Log.i(TAG, "position: $position")
-            if (!pid.isNullOrEmpty()) {
+            if (::pid.isInitialized) {
                 delImageArray.add(adapter.getData(position))
             }
             for (uri in currentArray) {
                 if (adapter.getData(position) == uri) {
-                    currentArray.removeAt(position)
+                    currentArray.remove(uri)
                     break
                 }
             }
             adapter.removeData(position)
             if (adapter.itemCount <= 0) recycler_view.visibility = View.GONE
-            text_view_picker_count.text = String.format(resources.getString(R.string.picker), adapter.itemCount)
+            showCurrentPreviewCount()
         }
+    }
+
+    // 현재 선택된 이미지 수 표시
+    private fun showCurrentPreviewCount() {
+        val str = String.format(resources.getString(R.string.format_picker), adapter.itemCount)
+        Log.i(TAG, "Added Image -> Count : $str")
+        text_view_picker_count.text = str
     }
 
     // 저장 확인 팝업창
@@ -217,11 +221,11 @@ class EditActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this)
             .setTitle("저장하시겠습니까?")
             .setPositiveButton("확인") { _, _ ->
-                progressON(this)
-                if (pid.isNullOrEmpty()) {
+                BaseApplication.instance.progressON(this, resources.getString(R.string.loading))
+                if (!(::pid.isInitialized)) {
                     saveProduct(getEditData())
                 } else {
-                    updateProduct(pid!!, getNewEditData())
+                    updateProduct(pid, getNewEditData())
                 }
             }
             .setNegativeButton("취소", null)
@@ -349,7 +353,6 @@ class EditActivity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         val storage = FirebaseStorage.getInstance()
         for (uri in delImageArray) {
-            Log.i(TAG, "이미지 삭제 : $uri")
             db.collection(resources.getString(R.string.db_product)).document(item!!).update("imageArray", FieldValue.arrayRemove(uri.toString())).addOnCompleteListener {
                 if (it.isSuccessful) {
                     Log.i(TAG, "이미지 삭제 성공 (데이터) : $uri")
@@ -379,7 +382,7 @@ class EditActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_product)).document(item!!).update("status", "active").addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "상품 업데이트 성공 : ${it.result}")
-                progressOFF()
+                BaseApplication.instance.progressOFF()
                 finish() // 종료
             }
         }
@@ -415,28 +418,6 @@ class EditActivity : AppCompatActivity() {
         // 취소 확인 팝업창
         showPopupForCancel()
     }
-
-    // 로딩 활성화
-    private fun progressON(activity: EditActivity) {
-        if (activity.isFinishing) return
-        if (progressDialog == null || !(progressDialog!!.isShowing)) {
-            progressDialog = AppCompatDialog(activity)
-            progressDialog?.let {
-                it.setCancelable(false)
-                it.window?.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
-                it.setContentView(R.layout.layout_loading)
-                it.show()
-            }
-        }
-    }
-
-    // 로딩 비활성화
-    private fun progressOFF() {
-        if (progressDialog != null && progressDialog!!.isShowing) {
-            progressDialog!!.dismiss()
-        }
-    }
-
 
     // Editable 변환
     private fun Int.toEditable(): Editable =  Editable.Factory.getInstance().newEditable(this.toString())

@@ -6,24 +6,24 @@
     <item
         android:id="@+id/action_share"
         android:icon="@drawable/ic_share_24px"
-        android:title="@string/share"
+        android:title="@string/option_share"
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction" />
 
     <item
         android:id="@+id/action_refresh"
-        android:title="@string/refresh"
+        android:title="@string/option_refresh"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_declaration"
-        android:title="@string/declaration"
+        android:title="@string/option_declaration"
         app:showAsAction="never"
         tools:ignore="HardcodedText" />
 
     <item
         android:id="@+id/action_do_not_see"
-        android:title="@string/do_not_see"
+        android:title="@string/option_do_not_see"
         app:showAsAction="never" />
 
 </menu>

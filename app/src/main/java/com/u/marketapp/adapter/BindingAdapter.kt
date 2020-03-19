@@ -1,8 +1,10 @@
 package com.u.marketapp.adapter
 
+import android.graphics.Color
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.u.marketapp.R
@@ -37,6 +39,33 @@ fun bindViewFromUrl(view: ImageView, image: String?) {
 
 @BindingAdapter("bindSize")
 fun bindViewFromSize(view: LinearLayout, size: Int?) {
+    if (size != null && size > 0) {
+        view.visibility = View.VISIBLE
+    } else {
+        view.visibility = View.GONE
+    }
+}
+
+@BindingAdapter("bindReplySize", "bindReplyLayout")
+fun bindViewFromReplySize(view: LinearLayout, size: Int?, isReply: Boolean) {
+    if (!isReply && size != null && size > 0) {
+        view.visibility = View.VISIBLE
+    } else {
+        view.visibility = View.GONE
+    }
+}
+
+@BindingAdapter("bindReply")
+fun bindViewFromReply(view: ImageView, isReply: Boolean) {
+    if (isReply) {
+        view.visibility = View.VISIBLE
+    } else {
+        view.visibility = View.GONE
+    }
+}
+
+@BindingAdapter("bindReplyView")
+fun bindViewFromReplyView(view: View, size: Int?) {
     if (size != null && size > 0) {
         view.visibility = View.VISIBLE
     } else {

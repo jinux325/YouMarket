@@ -22,13 +22,13 @@
             android:indeterminateTint="@color/hintcolor" />
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/text_view_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:textColor="@color/white"
-            android:text="@string/loading"/>
+            android:textColor="@color/white" />
 
     </LinearLayout>
 

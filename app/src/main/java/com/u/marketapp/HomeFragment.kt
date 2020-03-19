@@ -25,6 +25,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private lateinit var adapter : ProductRVAdapter
     private lateinit var binding : FragmentHomeBinding
+    private lateinit var lastVisible: DocumentSnapshot
 
     // 새로고침
     override fun onRefresh() {
@@ -59,7 +60,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         binding.recyclerView.adapter = adapter
         adapter.setItemClickListener(object : ProductRVAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int) {
-                moveActivity(adapter.getItem(position))
+                moveActivity(adapter.getItem(position).id)
             }
         })
     }
@@ -67,10 +68,13 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     // 데이터 설정
     private fun setItemsData() {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).whereEqualTo("status", "active").orderBy("regDate", Query.Direction.DESCENDING).limit(30).get().addOnCompleteListener {
+        db.collection(resources.getString(R.string.db_product)).whereEqualTo("status", "active").orderBy("regDate", Query.Direction.DESCENDING)
+//            .startAfter(lastVisible)
+            .limit(30).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 if (it.result?.documents!!.size > 0) {
                     checkItemsData(true)
+                    lastVisible = it.result?.documents!![it.result?.documents!!.size-1]
                     for(document in it.result?.documents!!) {
                         adapter.addItem(document)
                     }
@@ -93,10 +97,10 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     // 상품 상세 정보 페이지 이동
-    private fun moveActivity(item: DocumentSnapshot) {
-        Log.i(TAG, item.toString())
+    private fun moveActivity(id: String) {
+        Log.i(TAG, "Document ID : $id")
         val intent = Intent(context, ProductActivity::class.java)
-        intent.putExtra("itemId", item.id)
+        intent.putExtra("id", id)
         startActivity(intent)
     }
 
