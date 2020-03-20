@@ -38,7 +38,7 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun sendNotification(remoteMessage: RemoteMessage) {
         val intent:Intent
-        if(remoteMessage.data["click_action"]!=null){
+        if(remoteMessage.data["partnerName"] != ""){
             intent = Intent(this, ChatActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 putExtra("chatRoomUid", remoteMessage.data["documentId"])
@@ -50,8 +50,6 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
                 putExtra("pid", remoteMessage.data["documentId"])
             }
         }
-
-
 
         val channelId = "CollocNotification"
         val NAME = "CollocChannel"
@@ -65,7 +63,7 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
             channel.description = description
             channel.enableLights(true)
             channel.lightColor = Color.RED
-            channel.enableVibration(true)
+            channel.enableVibration(false)
             channel.setShowBadge(false)
             notificationManager.createNotificationChannel(channel)
         }
