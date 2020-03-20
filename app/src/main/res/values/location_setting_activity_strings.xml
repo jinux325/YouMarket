@@ -1,0 +1,4 @@
+<resources>
+    <string name="location_activity_addr1_delete">동네는 최소 1개이상 선택되어있어야 합니다. 현재 설정된 동네를 변경하시겠어요?</string>
+    <string name="location_activity_addr2_delete">선택한 지역을 삭제하시겠습니까?</string>
+</resources>

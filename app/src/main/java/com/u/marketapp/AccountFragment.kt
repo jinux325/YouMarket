@@ -2,7 +2,6 @@ package com.u.marketapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -26,15 +25,6 @@ class AccountFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
         val view = inflater.inflate(R.layout.fragment_account, container, false)
-        //(activity as AppCompatActivity).supportActionBar?.hide()
-
-      /*
-        Log.d("myData ", " myData : ${myData.name}, ${myData.address}")
-        */
-
-      //  setHasOptionsMenu(true)
-       // (activity as MainActivity?)!!.setSupportActionBar(account_toolbar) //액션바와 같게 만들어줌
-
 
         view.account_profile.setOnClickListener {
             startActivity(Intent(activity, AccountProfileActivity::class.java).putExtra("name",myData.name).putExtra("imgPath",myData.imgPath))

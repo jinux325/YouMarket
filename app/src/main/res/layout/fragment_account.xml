@@ -11,12 +11,12 @@
         android:id="@+id/account_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        app:title="@string/toolbar_title_account_fragement"
-        android:elevation="2dp"/>
+        android:backgroundTint="@color/SettingText"
+        app:title="나의 정보"
+        android:elevation="2dp"
+        tools:ignore="HardcodedText"/>
 <ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -33,21 +33,23 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_span="2">
+                android:layout_span="2"
+                tools:ignore="UselessParent">
 
                 <ImageView
                     android:id="@+id/account_profile"
                     android:layout_width="65dp"
                     android:layout_height="65dp"
                     android:layout_marginBottom="25dp"
-                    android:layout_marginLeft="22dp"
+                    android:layout_marginStart="22dp"
                     android:layout_marginTop="15dp"
-                    android:src="@drawable/ic_profile" />
+                    android:src="@drawable/ic_profile"
+                    tools:ignore="ContentDescription" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="20dp"
                     android:orientation="vertical">
 
@@ -55,7 +57,6 @@
                         android:id="@+id/account_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="마켓"
                         android:textColor="@color/account_nameColor"
                         android:textSize="20sp"
                         />
@@ -70,7 +71,6 @@
                             android:id="@+id/account_address"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="태장동"
                             android:textColor="@color/account_addressColor"
                             android:textSize="13sp" />
 
@@ -78,7 +78,7 @@
                             android:id="@+id/account_uid"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="8dp"
+                            android:layout_marginStart="8dp"
                             android:layout_toRightOf="@id/account_address"
                             android:text="#12314551"
                             android:textColor="@color/account_uidColor"
@@ -102,12 +102,12 @@
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="10dp"
                     android:src="@drawable/ic_bag"
 
 
-                    />
+                    tools:ignore="ContentDescription" />
 
                 <TextView
 
@@ -115,7 +115,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="판매내역"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
+                    tools:ignore="HardcodedText"
 
                     />
             </LinearLayout>
@@ -129,21 +130,21 @@
                 >
                 <ImageView
                     android:id="@+id/account_buy"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_gravity="center"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:src="@drawable/ic_coin"
-
-
+                    tools:ignore="ContentDescription"
                     />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="구매내역"
                     android:layout_gravity="center"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
+                    tools:ignore="HardcodedText"
 
                     />
             </LinearLayout>
@@ -160,8 +161,8 @@
                 >
                 <ImageView
                     android:id="@+id/account_interest"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_marginBottom="5dp"
                     android:layout_gravity="center"
                     android:layout_width="35dp"
@@ -169,15 +170,15 @@
                     android:src="@drawable/ic_heart"
 
 
-
-                    />
+                    tools:ignore="ContentDescription" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="관심목록"
                     android:layout_gravity="center"
                     android:layout_marginBottom="5dp"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
+                    tools:ignore="HardcodedText"
 
                     />
             </LinearLayout>
@@ -188,19 +189,19 @@
                 android:background="@drawable/background_bottomline"
                 >
                 <ImageView
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_gravity="center"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
 
 
-                    />
+                    tools:ignore="ContentDescription" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
 
                     />
             </LinearLayout>
@@ -216,23 +217,24 @@
 
                 <ImageView
                     android:id="@+id/account_gps"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_gravity="center"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:src="@drawable/ic_gps"
 
 
-                    />
+                    tools:ignore="ContentDescription" />
                 <TextView
 
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="내 동네 설정"
-                    android:layout_marginRight="-19dp"
+                    android:layout_marginEnd="-19dp"
                     android:layout_gravity="center"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
+                    tools:ignore="HardcodedText"
 
                     />
             </LinearLayout>
@@ -245,23 +247,23 @@
                 >
                 <ImageView
                     android:id="@+id/account_gps_2"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_gravity="center"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:src="@drawable/ic_gps_2"
 
 
-                    />
+                    tools:ignore="ContentDescription" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="동네 인증"
                     android:layout_gravity="center"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
 
-                    />
+                    tools:ignore="HardcodedText" />
             </LinearLayout>
         </TableRow>
 
@@ -275,8 +277,8 @@
 
                 <ImageView
                     android:id="@+id/account_bookmark"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_gravity="center"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
@@ -288,7 +290,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="키워드 알림"
-                    android:layout_marginRight="-50dp"
+                    android:layout_marginEnd="-50dp"
                     android:layout_gravity="center"
                     android:textSize="15dp"
 
@@ -302,8 +304,8 @@
                 >
                 <ImageView
                     android:id="@+id/account_letter"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_gravity="center"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
@@ -331,13 +333,14 @@
                 >
                 <ImageView
                     android:id="@+id/account_bookmark"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_marginBottom="5dp"
                     android:layout_gravity="center"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:src="@drawable/ic_keyword"
+                    tools:ignore="ContentDescription,HardcodedText"
 
 
                     />
@@ -345,10 +348,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="키워드 알림"
-                    android:layout_marginRight="-50dp"
+                    android:layout_marginEnd="-50dp"
                     android:layout_marginBottom="5dp"
                     android:layout_gravity="center"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
+                    tools:ignore="HardcodedText"
 
 
                     />
@@ -362,8 +366,8 @@
                 >
                 <!--<ImageView
                     android:id="@+id/account_letter"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
                     android:layout_gravity="center"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
@@ -372,8 +376,8 @@
                     />-->
                 <ImageView
                     android:id="@+id/account_letter"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_marginBottom="5dp"
                     android:layout_gravity="center"
                     android:layout_width="45dp"
@@ -381,15 +385,16 @@
                     android:src="@drawable/ic_letter"
 
 
-                    />
+                    tools:ignore="ContentDescription" />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="초대하기"
-                    android:layout_marginRight="-50dp"
+                    android:layout_marginEnd="-50dp"
                     android:layout_marginBottom="5dp"
                     android:layout_gravity="center"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
+                    tools:ignore="HardcodedText"
                     />
             </LinearLayout>
         </TableRow>
@@ -407,6 +412,7 @@
                 android:text="홈 전체보기 관리"
                 android:textSize="15sp"
                 android:layout_margin="20dp"
+                tools:ignore="HardcodedText"
 
                 />
 
@@ -425,6 +431,7 @@
                 android:text="고객센터"
                 android:textSize="15sp"
                 android:layout_margin="20dp"
+                tools:ignore="HardcodedText"
 
                 />
 
@@ -441,6 +448,7 @@
                 android:text="공지사항"
                 android:textSize="15sp"
                 android:layout_margin="20dp"
+                tools:ignore="HardcodedText"
 
                 />
 
@@ -457,6 +465,7 @@
                 android:text="앱 공유하기"
                 android:textSize="15sp"
                 android:layout_margin="20dp"
+                tools:ignore="HardcodedText"
 
                 />
 
@@ -474,9 +483,10 @@
                 android:text="앱 설정"
                 android:textSize="15sp"
                 android:layout_marginTop="20dp"
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
 
                 android:layout_marginBottom="30dp"
+                tools:ignore="HardcodedText"
                 />
         </LinearLayout>
         <LinearLayout
@@ -492,9 +502,10 @@
                 android:textSize="15sp"
                 android:textColor="@color/editcolor"
                 android:layout_marginTop="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginLeft="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginBottom="30dp"
+                tools:ignore="HardcodedText"
                 />
         </LinearLayout>
     </TableLayout>

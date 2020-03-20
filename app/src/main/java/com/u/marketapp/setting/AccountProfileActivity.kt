@@ -17,26 +17,23 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.google.common.io.Files
+import com.google.common.io.Files.getFileExtension
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.u.marketapp.R
-import com.u.marketapp.entity.UserEntity
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.android.synthetic.main.activity_profile.*
 
 class AccountProfileActivity : AppCompatActivity() {
 
-    private val TAG = "AccountProfileActivity"
-    lateinit var dbImage:String
-    var profileImage : Uri? = null
-    lateinit var db_name : String
-    lateinit var phoneNumber:String
-    lateinit var address:String
-    var uid: String? = null
+    private lateinit var dbImage:String
+    private var profileImage : Uri? = null
+    private lateinit var dbName : String
+    /*lateinit var address:String
+    var uid: String? = null*/
 
-    private lateinit var myData: UserEntity
     private val myUid = FirebaseAuth.getInstance().currentUser!!.uid
     private val db = FirebaseFirestore.getInstance()
     private var mStorageRef: StorageReference? = FirebaseStorage.getInstance().getReference("Profile")
@@ -50,7 +47,7 @@ class AccountProfileActivity : AppCompatActivity() {
 
         myData()
 
-        text_inpur_edit.helperText = "현재: $db_name"
+        text_inpur_edit.helperText = "현재: $dbName"
 
 
         proflie_imageView.setOnClickListener {
@@ -58,8 +55,8 @@ class AccountProfileActivity : AppCompatActivity() {
             permission()
         }
 
-        text_inpur_edit.setCounterEnabled(true)
-        text_inpur_edit.setCounterMaxLength(10)
+        text_inpur_edit.isCounterEnabled = true
+        text_inpur_edit.counterMaxLength = 10
 
         profile_name.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int ) {
@@ -67,12 +64,16 @@ class AccountProfileActivity : AppCompatActivity() {
 
             override fun onTextChanged( s: CharSequence, start: Int, before: Int, count: Int ) {
 
-                if (s.length == 0) {
-                    text_inpur_edit.setError(null)
-                } else if (s.length > 10) {
-                    text_inpur_edit.setError("10자 이하로 적어주세요.")
-                } else {
-                    text_inpur_edit.setError(null)
+                when {
+                    s.isEmpty() -> {
+                        text_inpur_edit.error=null
+                    }
+                    s.length > 10 -> {
+                        text_inpur_edit.error="10자 이하로 적어주세요."
+                    }
+                    else -> {
+                        text_inpur_edit.error = null
+                    }
                 }
             }
 
@@ -95,16 +96,15 @@ class AccountProfileActivity : AppCompatActivity() {
                /* if (name.length <= 0) {
                     Toast.makeText(this, " $db_name 으로 하시겠어요?", Toast.LENGTH_LONG).show()
                 } else */
-                if (name.length >= 11) {
-                    Toast.makeText(this, "10자 이하로 적어주세요.", Toast.LENGTH_LONG).show()
-                } else if (name.length >= 0 && name.length <= 10) {
-                    Log.e("imgPath 2222 ", " $name  $profileImage")
-                  /*  if (profileImage == null || profileImage.toString().length == 0 ) {
-                    } else {*/
+                if (name.length >= 11) Toast.makeText(this, "10자 이하로 적어주세요.", Toast.LENGTH_LONG).show() else {
+
+                        Log.e("imgPath 2222 ", " $name  $profileImage")
+                        /*  if (profileImage == null || profileImage.toString().length == 0 ) {
+                                                    } else {*/
                         try {
                             Log.e("imgPath 3333 ", " $name  $profileImage")
-                            if(name.replace(" ","").length <= 0){
-                                update(db_name, profileImage)
+                            if(name.replace(" ", "").isEmpty()){
+                                update(dbName, profileImage)
                             }else{
                                 update(name, profileImage)
                             }
@@ -112,7 +112,8 @@ class AccountProfileActivity : AppCompatActivity() {
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
-                    //}
+                        //}
+
                 }
                 true
             }
@@ -124,17 +125,17 @@ class AccountProfileActivity : AppCompatActivity() {
     }
 
     // 퍼미션 권한 설정
-    fun permission() {
+    private fun permission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                Log.d("TAG", "권한 설정 완료");
+                Log.d("TAG", "권한 설정 완료")
                 TedImagePicker.with(this)
                     .start { uriList -> getImageList(uriList) }
             } else {
-                Log.d("TAG", "권한 설정 요청");
+                Log.d("TAG", "권한 설정 요청")
                 ActivityCompat.requestPermissions( this, arrayOf(
                     Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.INTERNET), 1 )
@@ -146,7 +147,7 @@ class AccountProfileActivity : AppCompatActivity() {
 
     }
 
-    fun getImageList(image: Uri){
+    private fun getImageList(image: Uri){
         profileImage = image
         Glide.with(this).load(image)
             .apply(RequestOptions.bitmapTransform(CircleCrop())).into(proflie_imageView)
@@ -163,8 +164,8 @@ class AccountProfileActivity : AppCompatActivity() {
                     finish()
                 }
         }else {
-            val fileReference: StorageReference = mStorageRef!!.child(myUid!!)
-                .child(System.currentTimeMillis().toString() + "." + Files.getFileExtension(profileImage.toString()))
+            val fileReference: StorageReference = mStorageRef!!.child(myUid)
+                .child(System.currentTimeMillis().toString() + "." + getFileExtension(profileImage.toString()))
             fileReference.putFile(profileImage!!).continueWithTask { task ->
                 if (!task.isSuccessful) {
                     throw task.exception!!
@@ -195,29 +196,13 @@ class AccountProfileActivity : AppCompatActivity() {
     }
 
 
-    override fun onResume() {
-        super.onResume()
-       // myData()
-    }
-
-    fun myData() {
-        val intent_items = intent
-        dbImage= intent_items.getStringExtra("imgPath")
-        db_name = intent_items.getStringExtra("name")
+    private fun myData() {
+        val intent = intent
+        dbImage= intent.getStringExtra("imgPath")
+        dbName = intent.getStringExtra("name")
         Glide.with(this).load(dbImage)
             .apply(RequestOptions.bitmapTransform(CircleCrop())).into(proflie_imageView)
-        /*db.collection(resources.getString(R.string.db_user)).document(FirebaseAuth.getInstance().currentUser!!.uid).get()
-            .addOnCompleteListener{ task ->
-                if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
-                        UserEntity::class.java)
-                    Glide.with(this).load(userEntity!!.imgPath)
-                        .apply(RequestOptions.bitmapTransform(CircleCrop())).into(proflie_imageView)
-                    dbImage= userEntity.imgPath.toString()
-                    name = userEntity.name.toString()
 
-                }
-            }*/
     }
 
 

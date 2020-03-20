@@ -12,9 +12,7 @@
         android:id="@+id/addr_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:background="?attr/colorPrimary"
+        android:background="@color/SettingText"
         android:minHeight="?attr/actionBarSize"
         app:title="주소 검색"
         android:elevation="2dp"/>
@@ -29,20 +27,20 @@
             android:id="@+id/txt"
             android:layout_weight="9"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="3dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-<!--
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/btn"
+            android:textCursorDrawable="@color/btn"
+            android:importantForAutofill="no"
+            tools:targetApi="o"
+            tools:ignore="LabelFor"
+            android:inputType="text" />
+
         <Button
             android:id="@+id/bt"
             android:layout_weight="1"
-            android:text="검색하기"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />-->
-        <Button
-            android:id="@+id/bt"
-            android:layout_weight="1"
-            android:text="검색하기"
+            android:text="@string/searchStr"
+            android:background="@color/btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"

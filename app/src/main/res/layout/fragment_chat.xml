@@ -8,7 +8,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_chat"
             android:layout_width="match_parent"
@@ -16,7 +17,7 @@
             android:background="@android:color/background_light"
             android:elevation="1dp"
             app:contentInsetStart="0dp"
-            app:title="@string/toolbar_title_chat_fragement"
+            app:title="채팅"
             tools:ignore="MissingConstraints"/>
 
         <androidx.recyclerview.widget.RecyclerView
