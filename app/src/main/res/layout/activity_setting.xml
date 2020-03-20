@@ -12,7 +12,7 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:background="?attr/colorPrimary"
+        android:background="@color/SettingText"
         android:minHeight="?attr/actionBarSize"
         app:title="앱 설정"
         android:elevation="2dp"
