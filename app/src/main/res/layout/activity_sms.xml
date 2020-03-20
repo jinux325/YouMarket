@@ -12,7 +12,7 @@
         android:id="@+id/sms_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/SettingText"
         android:minHeight="?attr/actionBarSize"
         app:title="번호 인증"
         android:elevation="2dp"/>
@@ -72,22 +72,12 @@
         android:layout_marginTop="15dp"
         android:layout_marginRight="40dp"
         android:layout_marginLeft="40dp"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/btn"
         android:text="인증문자 받기"
         android:textAllCaps="false"
         android:textSize="18sp"
         android:textColor="@color/colorwhite"
         tools:ignore="HardcodedText"/>
-
-
-
-
-
-
-
-
-
-
 
 
     <EditText
@@ -114,7 +104,7 @@
         android:layout_marginTop="15dp"
         android:layout_marginRight="40dp"
         android:layout_marginLeft="40dp"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/btn"
         android:text="인증"
         android:visibility="gone"
         android:textAllCaps="false"
@@ -122,35 +112,6 @@
         android:textColor="@color/colorwhite"
         tools:ignore="HardcodedText"/>
 
-   <!-- <Button
-        android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/editTextMobile"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="40dp"
-        android:layout_marginLeft="40dp"
-        android:background="@color/colorPrimaryDark"
-        android:text="로그인"
-        android:textAllCaps="false"
-        android:textSize="18dp"
-        android:textColor="@color/colorPrimary" />
-    <Button
-        android:id="@+id/addrButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/editTextMobile"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="40dp"
-        android:layout_marginLeft="40dp"
-        android:background="@color/colorPrimaryDark"
-        android:text="주소"
-        android:textAllCaps="false"
-        android:textSize="18dp"
-        android:textColor="@color/colorPrimary" />
--->
 
 
 
