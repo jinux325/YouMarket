@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -32,6 +33,7 @@ class ReplyActivity : AppCompatActivity() {
 
     private lateinit var adapter: CommentRVAdapter
     private lateinit var binding: ActivityReplyBinding
+    private lateinit var document: DocumentSnapshot
     private lateinit var pid: String
     private var checkUseContext: Boolean = false
 
@@ -75,6 +77,7 @@ class ReplyActivity : AppCompatActivity() {
             override fun onClick(view: View, position: Int) {
                 Log.i(TAG, "More Click : $position")
                 if (adapter.getItem(position).toObject(CommentEntity::class.java)!!.user == FirebaseAuth.getInstance().currentUser!!.uid) checkUseContext = true
+                document = adapter.getItem(position)
                 registerForContextMenu(view)
                 openContextMenu(view)
             }
@@ -140,12 +143,23 @@ class ReplyActivity : AppCompatActivity() {
 
     // 데이터베이스 삭제
     private fun delComment() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment)).document(document.id).delete().addOnCompleteListener {
+            if (it.isSuccessful) {
+                Log.i(TAG, "Delete Comment!!")
+                updateCommentSize(-1)
+                delAdapterItem()
+            }
+        }
+    }
 
+    private fun delAdapterItem() {
+        adapter.removeItem(document)
     }
 
     private fun refresh() {
         adapter.clear()
-        addCommentSize()
+        updateCommentSize(1)
         setItemsData()
         clearEditText()
     }
@@ -187,9 +201,9 @@ class ReplyActivity : AppCompatActivity() {
         fcm.start()
     }
 
-    private fun addCommentSize() {
+    private fun updateCommentSize(num: Long) {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid).update("commentSize", FieldValue.increment(1)).addOnCompleteListener {
+        db.collection(resources.getString(R.string.db_product)).document(pid).update("commentSize", FieldValue.increment(num)).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "Added Comment Size!")
             }
@@ -239,6 +253,7 @@ class ReplyActivity : AppCompatActivity() {
             }
             R.id.action_delete -> {
                 Log.i(TAG, "action_delete!!")
+                delComment()
                 true
             }
             else -> {

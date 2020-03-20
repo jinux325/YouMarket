@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -45,6 +46,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityProductBinding
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private lateinit var commentAdapter : CommentRVAdapter
+    private lateinit var document: DocumentSnapshot
     private var checkUseContext: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -353,6 +355,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
             override fun onClick(view: View, position: Int) {
                 Log.i(TAG, "More Click : $position")
                 if (commentAdapter.getItem(position).toObject(CommentEntity::class.java)!!.user == FirebaseAuth.getInstance().currentUser!!.uid) checkUseContext = true
+                document = commentAdapter.getItem(position)
                 registerForContextMenu(view)
                 openContextMenu(view)
             }
@@ -385,6 +388,27 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                     }
                 }
             }
+    }
+
+    // 데이터베이스 삭제
+    private fun delComment() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment)).document(document.id).delete().addOnCompleteListener {
+            if (it.isSuccessful) {
+                Log.i(TAG, "Delete Comment!!")
+                updateCommentSize(-1)
+                getProductData()
+            }
+        }
+    }
+
+    private fun updateCommentSize(num: Long) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid).update("commentSize", FieldValue.increment(num)).addOnCompleteListener {
+            if (it.isSuccessful) {
+                Log.i(TAG, "Added Comment Size!")
+            }
+        }
     }
 
     // 댓글 상세 페이지 이동
@@ -484,6 +508,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.action_delete -> {
                 Log.i(TAG, "action_delete!!")
+                delComment()
                 true
             }
             else -> {

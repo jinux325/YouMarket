@@ -93,9 +93,16 @@ class CommentRVAdapter(val context: Context) : RecyclerView.Adapter<CommentRVAda
         return items[position]
     }
 
+    // 단일 제거
+    fun removeItem(documentSnapshot: DocumentSnapshot) {
+        items.remove(documentSnapshot)
+        notifyDataSetChanged()
+    }
+
     // 초기화
     fun clear() {
         items.clear()
+        notifyDataSetChanged()
     }
 
     class ViewHolder(private val binding: LayoutReplyBinding) : RecyclerView.ViewHolder(binding.root) {
