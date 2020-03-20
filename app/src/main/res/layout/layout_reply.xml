@@ -176,7 +176,7 @@
                     android:orientation="horizontal"
                     bindReplySize="@{comment.replySize}"
                     bindReplyLayout="@{comment.reply}"
-                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/text_view_add_reply"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     tools:ignore="UseCompoundDrawables">

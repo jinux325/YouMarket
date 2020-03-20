@@ -56,7 +56,6 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
             pid = intent.getStringExtra("id")
             Log.i(TAG, pid)
             getProductData()
-            initCommentView()
             button_chatting.setOnClickListener(this)
             text_view_comment_buttom.setOnClickListener(this)
             text_view_all_reply.setOnClickListener(this)
@@ -291,6 +290,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 setPagerAdater(item.imageArray)
                 checkLookup(item.lookup)
                 checkAttention(item.attention)
+                initCommentView()
             }
         }
     }
@@ -336,6 +336,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     private fun initCommentView() {
         setCommentRVLayoutManager()
         setCommentRVAdapter()
+        commentAdapter.clear()
         setCommentItemsData()
     }
 
@@ -375,9 +376,11 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         db.collection(resources.getString(R.string.db_product)).document(pid)
             .collection(resources.getString(R.string.db_comment)).orderBy("regDate", Query.Direction.ASCENDING).limit(5).get().addOnCompleteListener {
                 if (it.isSuccessful) {
+                    Log.i(TAG, "$pid -> Document Size : ${it.result?.documents!!.size}")
                     if (it.result?.documents!!.size > 0) {
                         checkCommentItemsData(true)
                         for (document in it.result?.documents!!) {
+                            Log.i(TAG, "Added Comment : ${document.id}")
                             commentAdapter.addItem(document)
                         }
                     } else {

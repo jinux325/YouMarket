@@ -38,8 +38,8 @@ fun bindViewFromUrl(view: ImageView, image: String?) {
 }
 
 @BindingAdapter("bindSize")
-fun bindViewFromSize(view: LinearLayout, size: Int?) {
-    if (size != null && size > 0) {
+fun bindViewFromSize(view: LinearLayout, size: Int) {
+    if (size > 0) {
         view.visibility = View.VISIBLE
     } else {
         view.visibility = View.GONE
@@ -47,8 +47,8 @@ fun bindViewFromSize(view: LinearLayout, size: Int?) {
 }
 
 @BindingAdapter("bindReplySize", "bindReplyLayout")
-fun bindViewFromReplySize(view: LinearLayout, size: Int?, isReply: Boolean) {
-    if (!isReply && size != null && size > 0) {
+fun bindViewFromReplySize(view: LinearLayout, size: Int, isReply: Boolean) {
+    if (!isReply && size > 0) {
         view.visibility = View.VISIBLE
     } else {
         view.visibility = View.GONE
@@ -65,8 +65,8 @@ fun bindViewFromReply(view: ImageView, isReply: Boolean) {
 }
 
 @BindingAdapter("bindReplyView")
-fun bindViewFromReplyView(view: View, size: Int?) {
-    if (size != null && size > 0) {
+fun bindViewFromReplyView(view: View, size: Int) {
+    if (size > 0) {
         view.visibility = View.VISIBLE
     } else {
         view.visibility = View.GONE

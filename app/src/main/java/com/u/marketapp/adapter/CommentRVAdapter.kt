@@ -93,6 +93,11 @@ class CommentRVAdapter(val context: Context) : RecyclerView.Adapter<CommentRVAda
         return items[position]
     }
 
+    // 초기화
+    fun clear() {
+        items.clear()
+    }
+
     class ViewHolder(private val binding: LayoutReplyBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: DocumentSnapshot, userItem: UserEntity) {
             binding.apply {

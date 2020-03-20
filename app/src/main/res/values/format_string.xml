@@ -4,7 +4,7 @@
     <string name="format_date">%1$tY년 %1$tm월 %1$td일</string>
     <string name="format_price">%,d원</string>
     <string name="format_picker">%d/10</string>
-    <string name="format_chatting">채팅 %d개</string>
+    <string name="format_chatting">채팅 %d</string>
     <string name="format_attention">관심 %d</string>
     <string name="format_lookup">조회 %d</string>
     <string name="format_comment">댓글 %d</string>
