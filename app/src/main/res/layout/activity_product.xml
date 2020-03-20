@@ -328,7 +328,7 @@
                         android:orientation="vertical"
                         bindReplyView="@{product.commentSize}"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/layout_comment"/>
+                        tools:listitem="@layout/layout_reply"/>
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/text_view_all_reply"

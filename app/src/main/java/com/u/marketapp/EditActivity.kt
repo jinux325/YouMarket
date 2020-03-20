@@ -64,6 +64,7 @@ class EditActivity : AppCompatActivity() {
     private fun setActionbar() {
         setSupportActionBar(toolbar)
         actionbar = supportActionBar!!
+        actionbar.title = resources.getString(R.string.edit_app_title)
         actionbar.setDisplayHomeAsUpEnabled(true)
     }
 
