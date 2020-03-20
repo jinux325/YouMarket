@@ -223,14 +223,17 @@ class ChatActivity : AppCompatActivity() {
                     token = userEntity!!.token.toString()
                     Log.d("@@ getToken token  ", userEntity.token)
                     //FCM(userEntity!!.token)
-                    val thread=FCM()
-                    thread.start()
+                    val fcm = FCM(token,myData.name,comment,chatRoomUid,tv_partner_nickname.text.toString())
+                    fcm.start()
+                    /*val thread=FCM()
+                    thread.start()*/
                     //FCM(userEntity!!.token)
                 }
             }
     }
 
 
+/*
 
     inner class FCM : Thread() {
         override fun run() {
@@ -280,5 +283,6 @@ class ChatActivity : AppCompatActivity() {
 
 
 
+*/
 
 }

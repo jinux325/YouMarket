@@ -8,7 +8,9 @@ import android.os.Handler
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.u.marketapp.chat.FCM
 import com.u.marketapp.signup.SmsActivity
+import kotlinx.android.synthetic.main.activity_chat.*
 
 class SplashActivity : AppCompatActivity() {
 
