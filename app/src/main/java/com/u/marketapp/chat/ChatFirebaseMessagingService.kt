@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.u.marketapp.R
+import com.u.marketapp.ReplyActivity
 
 class ChatFirebaseMessagingService : FirebaseMessagingService() {
     //var open: PendingIntent? = null
@@ -36,11 +37,21 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun sendNotification(remoteMessage: RemoteMessage) {
-        val intent = Intent(this, ChatActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra("chatRoomUid", remoteMessage.data["documentId"])
-            putExtra("name", remoteMessage.data["partnerName"])
+        val intent:Intent
+        if(remoteMessage.data["click_action"]!=null){
+            intent = Intent(this, ChatActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                putExtra("chatRoomUid", remoteMessage.data["documentId"])
+                putExtra("name", remoteMessage.data["partnerName"])
+            }
+        }else{
+            intent = Intent(this, ReplyActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                putExtra("pid", remoteMessage.data["documentId"])
+            }
         }
+
+
 
         val channelId = "CollocNotification"
         val NAME = "CollocChannel"
