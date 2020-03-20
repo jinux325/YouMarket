@@ -17,8 +17,11 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.u.marketapp.adapter.CommentRVAdapter
+import com.u.marketapp.chat.FCM
 import com.u.marketapp.databinding.ActivityReplyBinding
 import com.u.marketapp.entity.CommentEntity
+import com.u.marketapp.entity.ProductEntity
+import com.u.marketapp.entity.UserEntity
 import kotlinx.android.synthetic.main.activity_reply.*
 
 class ReplyActivity : AppCompatActivity() {
@@ -129,9 +132,15 @@ class ReplyActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment)).add(item).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "Added Comment ID : ${it.result!!.id}")
+                item.contents?.let { it1 -> getToken(it1) }
                 refresh()
             }
         }
+    }
+
+    // 데이터베이스 삭제
+    private fun delComment() {
+
     }
 
     private fun refresh() {
@@ -139,6 +148,43 @@ class ReplyActivity : AppCompatActivity() {
         addCommentSize()
         setItemsData()
         clearEditText()
+    }
+
+    private fun getToken(msg: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener {
+            if (it.isSuccessful) {
+                val item = it.result!!.toObject(ProductEntity::class.java)
+                item?.let {
+                    getTargetUser(item.seller, msg)
+                }
+            }
+        }
+    }
+
+    private fun getTargetUser(uid: String?, msg: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_user)).document(uid!!).get().addOnCompleteListener {
+            if (it.isSuccessful) {
+                val item = it.result!!.toObject(UserEntity::class.java)
+                item?.let { getCurrentUser(item.token, msg) }
+            }
+        }
+    }
+
+    private fun getCurrentUser(token: String?, msg: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_user)).document(FirebaseAuth.getInstance().currentUser!!.uid).get().addOnCompleteListener {
+            if (it.isSuccessful) {
+                val item = it.result!!.toObject(UserEntity::class.java)
+                item?.let { sendFCM(token, item.name, msg) }
+            }
+        }
+    }
+
+    private fun sendFCM(token: String?, name: String?, msg: String) {
+        val fcm = FCM(token!!, name, msg, pid, "")
+        fcm.start()
     }
 
     private fun addCommentSize() {

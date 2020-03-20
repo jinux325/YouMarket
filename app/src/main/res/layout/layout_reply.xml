@@ -103,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:textSize="12sp"
-                android:text="@{@string/format_date(comment.regData)}"
+                android:text="@{@string/format_date(comment.regDate)}"
                 app:layout_constraintLeft_toRightOf="@id/text_view_dot"
                 app:layout_constraintTop_toTopOf="@id/image_view_profile"
                 app:layout_constraintBottom_toBottomOf="@id/image_view_profile"

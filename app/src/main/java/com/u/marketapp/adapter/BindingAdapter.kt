@@ -1,12 +1,13 @@
 package com.u.marketapp.adapter
 
-import android.graphics.Color
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.google.android.material.textview.MaterialTextView
 import com.u.marketapp.R
 import java.util.*
 
@@ -70,5 +71,16 @@ fun bindViewFromReplyView(view: View, size: Int) {
         view.visibility = View.VISIBLE
     } else {
         view.visibility = View.GONE
+    }
+}
+
+@BindingAdapter("bindSuggestion")
+fun bindViewFromSuggestion(view: MaterialTextView, suggestion: Boolean) {
+    if (suggestion) {
+        view.text = view.resources.getString(R.string.product_price_proposal)
+        view.setTextColor(ContextCompat.getColor(view.context, R.color.hintcolor))
+    } else {
+        view.text = view.resources.getString(R.string.product_unable_to_offer_price)
+        view.setTextColor(ContextCompat.getColor(view.context, R.color.colorGray))
     }
 }
