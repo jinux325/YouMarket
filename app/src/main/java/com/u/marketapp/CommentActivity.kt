@@ -1,5 +1,6 @@
 package com.u.marketapp
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -30,6 +31,7 @@ class CommentActivity : AppCompatActivity() {
 
     companion object {
         private val TAG = CommentActivity::class.java.simpleName
+        private const val REQUEST_REPLY = 100
     }
 
     private lateinit var adapter: CommentRVAdapter
@@ -69,11 +71,6 @@ class CommentActivity : AppCompatActivity() {
     private fun setRVAdapter() {
         adapter = CommentRVAdapter(this)
         binding.recyclerView.adapter = adapter
-        adapter.setItemClickListener(object : CommentRVAdapter.ItemClickListener {
-            override fun onClick(view: View, position: Int) {
-                Log.i(TAG, "Item Click : $position")
-            }
-        })
         adapter.setMoreClickListener(object : CommentRVAdapter.MoreClickListener {
             override fun onClick(view: View, position: Int) {
                 Log.i(TAG, "More Click : $position")
@@ -109,7 +106,12 @@ class CommentActivity : AppCompatActivity() {
                         adapter.addItem(document)
                     }
                     binding.recyclerView.smoothScrollToPosition(adapter.itemCount-1)
+                    BaseApplication.instance.progressOFF()
+                } else {
+                    BaseApplication.instance.progressOFF()
                 }
+            } else {
+                BaseApplication.instance.progressOFF()
             }
         }
     }
@@ -120,6 +122,7 @@ class CommentActivity : AppCompatActivity() {
         text_view_add_input.setOnClickListener {
             val msg = edit_text_input.text.toString()
             Log.i(TAG, "input : $msg")
+            BaseApplication.instance.progressON(this, resources.getString(R.string.loading))
             addComment(getData(msg))
         }
     }
@@ -139,18 +142,37 @@ class CommentActivity : AppCompatActivity() {
                 Log.i(TAG, "Added Comment ID : ${it.result!!.id}")
 //                item.contents?.let { it1 -> getToken(it1) }
                 refresh()
+            } else {
+                BaseApplication.instance.progressOFF()
             }
         }
     }
 
     // 데이터베이스 삭제
     private fun delComment() {
-        val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment)).document(document.id).delete().addOnCompleteListener {
-            if (it.isSuccessful) {
+        document.reference.delete().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
                 Log.i(TAG, "Delete Comment!!")
                 updateCommentSize(-1)
                 delAdapterItem()
+                BaseApplication.instance.progressOFF()
+                val item = document.toObject(CommentEntity::class.java)
+                if (item!!.replySize > 0) {
+                    document.reference.collection(resources.getString(R.string.db_reply)).get().addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            for (document in it.result!!.documents) {
+                                document.reference.delete().addOnCompleteListener { it1 ->
+                                    if (it1.isSuccessful) {
+                                        updateCommentSize(-1)
+                                        Log.i(TAG, "Reply Deleted!")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                BaseApplication.instance.progressOFF()
             }
         }
     }
@@ -208,6 +230,8 @@ class CommentActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_product)).document(pid).update("commentSize", FieldValue.increment(num)).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "Added Comment Size!")
+            } else {
+                BaseApplication.instance.progressOFF()
             }
         }
     }
@@ -238,7 +262,19 @@ class CommentActivity : AppCompatActivity() {
         val intent = Intent(this, ReplyActivity::class.java)
         intent.putExtra("pid", pid)
         intent.putExtra("cid", document.id)
-        startActivity(intent)
+        startActivityForResult(intent, REQUEST_REPLY)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQUEST_REPLY -> {
+                    refresh()
+                    BaseApplication.instance.progressOFF()
+                }
+            }
+        }
     }
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
@@ -258,6 +294,7 @@ class CommentActivity : AppCompatActivity() {
             }
             R.id.action_delete -> {
                 Log.i(TAG, "action_delete!!")
+                BaseApplication.instance.progressON(this, resources.getString(R.string.loading))
                 delComment()
                 true
             }

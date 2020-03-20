@@ -1,5 +1,6 @@
 package com.u.marketapp
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -21,6 +22,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     companion object {
         private val TAG = HomeFragment::class.java.simpleName
+        private const val REQUEST_PRODUCT = 100
     }
 
     private lateinit var adapter : ProductRVAdapter
@@ -101,7 +103,19 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         Log.i(TAG, "Document ID : $id")
         val intent = Intent(context, ProductActivity::class.java)
         intent.putExtra("id", id)
-        startActivity(intent)
+        startActivityForResult(intent, REQUEST_PRODUCT)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQUEST_PRODUCT -> {
+                    adapter.clear()
+                    setItemsData()
+                }
+            }
+        }
     }
 
 }

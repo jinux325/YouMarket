@@ -9,7 +9,6 @@
         android:id="@+id/layout_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black_54"
         android:gravity="center"
         android:focusable="false"
         android:clickable="false"
