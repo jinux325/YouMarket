@@ -182,14 +182,17 @@ class ProfileActivity : AppCompatActivity() {
         }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val downloadUri = task.result
-
+                var token = FirebaseInstanceId.getInstance().token
+                while(token == null){
+                    token  = FirebaseInstanceId.getInstance().token
+                }
                 val user = hashMapOf(
                    // "uid" to uid,
                     "name" to name,
                     "address" to address,
                     "registDate" to Date(System.currentTimeMillis()),
                     "imgPath" to downloadUri.toString(),
-                    "token" to FirebaseInstanceId.getInstance().token
+                    "token" to token
                 )
 
                 db.collection(resources.getString(R.string.db_user)).document(uid!!)

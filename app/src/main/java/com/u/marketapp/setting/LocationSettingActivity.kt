@@ -2,6 +2,7 @@ package com.u.marketapp.setting
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -31,6 +32,27 @@ class LocationSettingActivity : AppCompatActivity() {
         setSupportActionBar(setting_toolbar)
 
         addr1_delete.setOnClickListener {
+            val dialog = AlertDialog.Builder(this)
+            dialog.setMessage(R.string.location_activity_addr1_delete).setCancelable(false)
+            fun pos(){
+                val intent =
+                    Intent(this@LocationSettingActivity, AddressActivity::class.java)
+                intent.putExtra("update", "update1")
+                intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
+                startActivity(intent)
+            }
+            val dialogListener = DialogInterface.OnClickListener { _, p1 ->
+                when(p1){
+                    DialogInterface.BUTTON_POSITIVE -> pos()
+                }
+            }
+            dialog.setPositiveButton("확인",dialogListener)
+            dialog.setNegativeButton("취소",dialogListener)
+            dialog.show()
+
+            /*
+
+
             val builder =
                 AlertDialog.Builder(this@LocationSettingActivity)
             builder.setMessage(R.string.location_activity_addr1_delete)
@@ -48,7 +70,7 @@ class LocationSettingActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
             val dialog = builder.create()
-            dialog.show()
+            dialog.show()*/
         }
 
         addr2_add.setOnClickListener {
@@ -59,7 +81,18 @@ class LocationSettingActivity : AppCompatActivity() {
         }
 
         addr2_delete.setOnClickListener {
-            val builder =
+            val dialog = AlertDialog.Builder(this)
+            dialog.setMessage(R.string.location_activity_addr2_delete).setCancelable(false)
+            val dialogListener = DialogInterface.OnClickListener { _, p1 ->
+                when(p1){
+                    DialogInterface.BUTTON_POSITIVE -> delete()
+                }
+            }
+            dialog.setPositiveButton("확인",dialogListener)
+            dialog.setNegativeButton("취소",dialogListener)
+            dialog.show()
+
+           /* val builder =
                 AlertDialog.Builder(this@LocationSettingActivity)
             builder.setMessage(R.string.location_activity_addr2_delete).setCancelable(false)
                 .setNegativeButton(
@@ -69,7 +102,7 @@ class LocationSettingActivity : AppCompatActivity() {
                     "예"
                 ) { dialogInterface, i -> delete() }
             val dialog = builder.create()
-            dialog.show()
+            dialog.show()*/
         }
 
     }

@@ -1,5 +1,6 @@
 package com.u.marketapp
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -25,7 +26,11 @@ class AccountFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
         val view = inflater.inflate(R.layout.fragment_account, container, false)
-
+       /* Thread(){
+            run(){
+                lodding()
+            }
+        }*/
         view.account_profile.setOnClickListener {
             startActivity(Intent(activity, AccountProfileActivity::class.java).putExtra("name",myData.name).putExtra("imgPath",myData.imgPath))
         }
@@ -39,6 +44,7 @@ class AccountFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
         (activity as MainActivity?)!!.setSupportActionBar(account_toolbar)
+        //loddingEnd()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -57,11 +63,17 @@ class AccountFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        /*Thread(){
+            run(){
+                lodding()
+            }
+        }*/
+
         myData()
 
     }
 
-    fun myData(){
+    private fun myData(){
         db.collection(resources.getString(R.string.db_user)).document(myUid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
@@ -75,6 +87,16 @@ class AccountFragment : Fragment() {
                 }
             }
     }
+/*
+    private val dialog = AlertDialog.Builder(activity)
+    private val ad = dialog.create()
 
+    private fun lodding(){
+        dialog.setMessage("잠시만 기다려주세요...").setCancelable(false)
+        ad.show()
+    }
 
+    private fun loddingEnd(){
+        ad.dismiss()
+    }*/
 }
