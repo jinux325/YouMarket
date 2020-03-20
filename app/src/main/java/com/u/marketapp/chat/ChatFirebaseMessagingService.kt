@@ -51,8 +51,6 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
             }
         }
 
-
-
         val channelId = "CollocNotification"
         val NAME = "CollocChannel"
         val description = "This is Colloc channel"
@@ -65,7 +63,7 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
             channel.description = description
             channel.enableLights(true)
             channel.lightColor = Color.RED
-            channel.enableVibration(true)
+            channel.enableVibration(false)
             channel.setShowBadge(false)
             notificationManager.createNotificationChannel(channel)
         }
