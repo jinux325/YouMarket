@@ -12,7 +12,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -45,6 +47,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityProductBinding
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private lateinit var commentAdapter : CommentRVAdapter
+    private lateinit var document: DocumentSnapshot
     private var checkUseContext: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -252,12 +255,61 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
 
     // 상품 삭제
     private fun deleteProduct() {
+        BaseApplication.instance.progressON(this, resources.getString(R.string.loading))
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid).delete().addOnCompleteListener { document ->
-            if (document.isSuccessful) {
-                Log.i(TAG, "상품 삭제!")
-                deleteImage()
-                finish() // 종료
+        db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val item = task.result!!.toObject(ProductEntity::class.java)!!
+                if (item.commentSize > 0) {
+                    task.result!!.reference.collection(resources.getString(R.string.db_comment)).get().addOnCompleteListener { task1 ->
+                        if (task1.isSuccessful) {
+                            for (document in task1.result!!.documents) {
+                                val item1 = document.toObject(CommentEntity::class.java)!!
+                                if (item1.replySize > 0) {
+                                    document.reference.collection(resources.getString(R.string.db_reply)).get().addOnCompleteListener { task2 ->
+                                        if (task2.isSuccessful) {
+                                            for (document1 in task2.result!!.documents) {
+                                                // 답글 삭제
+                                                document1.reference.delete().addOnCompleteListener {
+                                                    if (it.isSuccessful) {
+                                                        Log.i(TAG, "Deleted Replay!!")
+                                                    } else {
+                                                        BaseApplication.instance.progressOFF()
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            BaseApplication.instance.progressOFF()
+                                        }
+                                    }
+                                }
+                                // 댓글 삭제
+                                document.reference.delete().addOnCompleteListener {
+                                    if (it.isSuccessful) {
+                                        Log.i(TAG, "Deleted Comment!!")
+                                    } else {
+                                        BaseApplication.instance.progressOFF()
+                                    }
+                                }
+                            }
+                        } else {
+                            BaseApplication.instance.progressOFF()
+                        }
+                    }
+                }
+                // 상품 삭제
+                task.result!!.reference.delete().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.i(TAG, "상품 삭제!")
+                        deleteImage()
+                        setResult(Activity.RESULT_OK)
+                        finish() // 종료
+                    } else {
+                        BaseApplication.instance.progressOFF()
+                    }
+                }
+            } else {
+                BaseApplication.instance.progressOFF()
             }
         }
     }
@@ -278,6 +330,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
 
     // 상품 데이터 가져오기
     private fun getProductData() {
+        BaseApplication.instance.progressON(this, resources.getString(R.string.loading))
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener { document ->
             if (document.isSuccessful) {
@@ -286,12 +339,13 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 binding.setVariable(BR.product, item)
                 productEntity = item
                 uid = item.seller.toString()
-                getUserData()
                 setPagerAdater(item.imageArray)
                 checkLookup(item.lookup)
                 checkAttention(item.attention)
+                getUserData()
                 initCommentView()
             }
+            BaseApplication.instance.progressOFF()
         }
     }
 
@@ -344,22 +398,19 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     private fun setCommentRVAdapter() {
         commentAdapter = CommentRVAdapter(this)
         binding.recyclerViewComment.adapter = commentAdapter
-        commentAdapter.setItemClickListener(object : CommentRVAdapter.ItemClickListener {
-            override fun onClick(view: View, position: Int) {
-                Log.i(TAG, "Item Click : $position")
-            }
-        })
         commentAdapter.setMoreClickListener(object : CommentRVAdapter.MoreClickListener {
             override fun onClick(view: View, position: Int) {
                 Log.i(TAG, "More Click : $position")
                 if (commentAdapter.getItem(position).toObject(CommentEntity::class.java)!!.user == FirebaseAuth.getInstance().currentUser!!.uid) checkUseContext = true
+                document = commentAdapter.getItem(position)
                 registerForContextMenu(view)
                 openContextMenu(view)
             }
         })
         commentAdapter.setReplyClickListener(object : CommentRVAdapter.ReplyClickListener {
             override fun onClick(view: View, position: Int) {
-                moveReplyActivity()
+                document = commentAdapter.getItem(position)
+                moveReplyIntent()
             }
         })
     }
@@ -387,11 +438,89 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
             }
     }
 
+    // 데이터베이스 삭제
+    private fun delComment() {
+        document.reference.delete().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.i(TAG, "Delete Comment!!")
+                updateCommentSize()
+                val item = document.toObject(CommentEntity::class.java)
+                if (item!!.replySize > 0) {
+                    document.reference.collection(resources.getString(R.string.db_reply)).get().addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            for (document in it.result!!.documents) {
+                                document.reference.delete().addOnCompleteListener { it1 ->
+                                    if (it1.isSuccessful) {
+                                        updateCommentSize()
+                                        Log.i(TAG, "Reply Deleted!")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateCommentSize() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid).update("commentSize", FieldValue.increment(-1)).addOnCompleteListener {
+            if (it.isSuccessful) {
+                Log.i(TAG, "Added Comment Size!")
+            }
+        }
+    }
+
     // 댓글 상세 페이지 이동
-    private fun moveReplyActivity() {
-        val intent = Intent(this, ReplyActivity::class.java)
+    private fun moveCommentIntent() {
+        val intent = Intent(this, CommentActivity::class.java)
         intent.putExtra("pid", pid)
         startActivity(intent)
+    }
+
+    // 답글 상세 페이지 이동
+    private fun moveReplyIntent() {
+        val intent = Intent(this, ReplyActivity::class.java)
+        intent.putExtra("pid", pid)
+        intent.putExtra("cid", document.id)
+        startActivity(intent)
+    }
+
+    // 삭제 확인 팝업창
+    private fun showPopupForDelete() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("삭제하시겠습니까?")
+            .setPositiveButton("확인") { _, _ -> deleteProduct() }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+    // 수정 확인 팝업창
+    private fun showPopupForUpdate() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("수정하시겠습니까?")
+            .setPositiveButton("확인") { _, _ -> updateProduct() }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+    // 숨김 확인 팝업창
+    private fun showPopupForHide() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("상품을 숨기시겠습니까?")
+            .setPositiveButton("확인") { _, _ -> unActiveProduct() }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+    // 공유 확인 팝업창
+    private fun showPopupForShare() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("상품을 공유하시겠습니까?(카톡)")
+            .setPositiveButton("확인") { _, _ -> share() }
+            .setNegativeButton("취소", null)
+            .show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -415,7 +544,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 startActivity(intent)
             }
             R.id.text_view_comment_buttom, R.id.text_view_all_reply -> {
-                moveReplyActivity()
+                moveCommentIntent()
             }
         }
     }
@@ -428,7 +557,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_share -> { // 공유
-                share()
+                showPopupForShare()
                 true
             }
             R.id.action_refresh -> { // 새로고침
@@ -444,15 +573,15 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 true
             }
             R.id.action_hide -> { // 숨기기
-                unActiveProduct()
+                showPopupForHide()
                 true
             }
             R.id.action_update -> { // 수정
-                updateProduct()
+                showPopupForUpdate()
                 true
             }
             R.id.action_delete -> { // 삭제
-                deleteProduct()
+                showPopupForDelete()
                 true
             }
             android.R.id.home -> { // 뒤로가기
@@ -474,16 +603,13 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onContextItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
-            R.id.action_show_profile -> {
-                Log.i(TAG, "action_show_profile!!")
-                true
-            }
             R.id.action_declaration -> {
                 Log.i(TAG, "action_declaration!!")
                 true
             }
             R.id.action_delete -> {
                 Log.i(TAG, "action_delete!!")
+                delComment()
                 true
             }
             else -> {

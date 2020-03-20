@@ -285,6 +285,8 @@ class EditActivity : AppCompatActivity() {
                     updateActiveProduct(it.result!!.id)
                 }
                 addSellList(it.result!!.id)
+            } else {
+                BaseApplication.instance.progressOFF()
             }
         }
     }
@@ -303,6 +305,8 @@ class EditActivity : AppCompatActivity() {
                     updateActiveProduct(pid)
                 }
                 setResult(Activity.RESULT_OK)
+            } else {
+                BaseApplication.instance.progressOFF()
             }
         }
     }

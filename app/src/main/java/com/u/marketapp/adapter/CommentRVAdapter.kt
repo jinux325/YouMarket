@@ -23,17 +23,11 @@ class CommentRVAdapter(val context: Context) : RecyclerView.Adapter<CommentRVAda
 
     private val items : ArrayList<DocumentSnapshot> = ArrayList()
 
-    interface ItemClickListener { fun onClick(view: View, position: Int) }
     interface MoreClickListener { fun onClick(view: View, position: Int) }
     interface ReplyClickListener { fun onClick(view: View, position: Int) }
 
-    private lateinit var itemClickListener: ItemClickListener
     private lateinit var moreClickListener: MoreClickListener
     private lateinit var replyClickListener: ReplyClickListener
-
-    fun setItemClickListener(itemClickListener: ItemClickListener) {
-        this.itemClickListener = itemClickListener
-    }
 
     fun setMoreClickListener(moreClickListener: MoreClickListener) {
         this.moreClickListener = moreClickListener
@@ -76,7 +70,6 @@ class CommentRVAdapter(val context: Context) : RecyclerView.Adapter<CommentRVAda
         holder.apply {
             bind(item, userItem)
             itemView.tag = item
-            itemView.setOnClickListener { itemClickListener.onClick(it, position) }
             itemView.text_view_add_reply.setOnClickListener { replyClickListener.onClick(it, position) }
             itemView.image_view_more.setOnClickListener { moreClickListener.onClick(it, position) }
         }
@@ -93,9 +86,16 @@ class CommentRVAdapter(val context: Context) : RecyclerView.Adapter<CommentRVAda
         return items[position]
     }
 
+    // 단일 제거
+    fun removeItem(documentSnapshot: DocumentSnapshot) {
+        items.remove(documentSnapshot)
+        notifyDataSetChanged()
+    }
+
     // 초기화
     fun clear() {
         items.clear()
+        notifyDataSetChanged()
     }
 
     class ViewHolder(private val binding: LayoutReplyBinding) : RecyclerView.ViewHolder(binding.root) {

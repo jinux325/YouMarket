@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
@@ -62,6 +63,15 @@ fun bindViewFromReply(view: ImageView, isReply: Boolean) {
         view.visibility = View.VISIBLE
     } else {
         view.visibility = View.GONE
+    }
+}
+
+@BindingAdapter("bindReplyLayout")
+fun bindViewFromReplyLayout(view: ConstraintLayout, isReply: Boolean) {
+    if (isReply) {
+        view.visibility = View.GONE
+    } else {
+        view.visibility = View.VISIBLE
     }
 }
 
