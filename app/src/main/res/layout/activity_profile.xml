@@ -11,7 +11,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/SettingText"
         android:minHeight="?attr/actionBarSize"
         android:layout_marginBottom="50dp"
         app:title="프로필 설정"
@@ -38,10 +38,11 @@
             android:layout_height="wrap_content"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:hint="@string/tv_nickName"
+            android:hint="닉네임"
             app:helperText=""
             app:errorTextAppearance="@style/error_appearance"
             app:hintTextAppearance="@style/hint_color"
+            tools:ignore="HardcodedText"
             >
 
             <com.google.android.material.textfield.TextInputEditText
