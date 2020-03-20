@@ -1,7 +1,9 @@
 package com.u.marketapp.adapter
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
@@ -31,8 +33,18 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
 
     override fun getItemCount(): Int = chatList.size
 
+
+    private val dialog = AlertDialog.Builder(context)
+    var ad = dialog.create()
+
+
+   /* override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        lodding()
+    }*/
     @SuppressLint("LongLogTag", "SimpleDateFormat", "SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
 
 
         Log.e("chatting data: ", "  ${chatList[position].cId}  ${chatList[position].buyer}  ${chatList[position].comment}  ${chatList[position].seller}  ${chatList[position].pid}  ${chatList[position].registDate}")
@@ -108,8 +120,10 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
         } else {
             if (chatList.size >= 1) holder.time.text = year.format(chatList[position].registDate)
         }
-
-
+       // Log.e("로딩 TEST ", "${chatList.size-1}  ${position}")
+       /* if(chatList.size-1 == position){
+            loddingEnd()
+        }*/
     }
 
     inner class ViewHolder(parent: ViewGroup): RecyclerView.ViewHolder(
@@ -160,4 +174,15 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
             }
     }
 
+
+  /*  private fun lodding(){
+        Log.e(" 로딩... ", "중")
+        dialog.setMessage("잠시만 기다려주세요...").setCancelable(false)
+        ad.show()
+    }
+
+    private fun loddingEnd(){
+        Log.e(" 로딩... ", "끝")
+       // ad.dismiss()
+    }*/
 }

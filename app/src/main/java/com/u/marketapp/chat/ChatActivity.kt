@@ -242,6 +242,8 @@ class ChatActivity : AppCompatActivity() {
                 val URL = "https://fcm.googleapis.com/fcm/send"
                 val title = myData.name
                 val body = comment
+                val documentId = chatRoomUid
+                val partnerName = tv_partner_nickname.text
                 Log.e("@@ ChatActivity Thread", "$token  $title  $body")
                 // FMC 메시지 생성 start
                 val root = JSONObject()
@@ -249,8 +251,8 @@ class ChatActivity : AppCompatActivity() {
                 data.put("title", title)
                 data.put("body", body)
                 data.put("click_action", "ChatActivity")
-                data.put("documentId", chatRoomUid)
-                data.put("partnerName", tv_partner_nickname.text)
+                data.put("documentId", documentId)
+                data.put("partnerName", partnerName)
                 //root.put("notification", notification);
                 root.put("to", registrationToken)
                 root.put("data", data)
