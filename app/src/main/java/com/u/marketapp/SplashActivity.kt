@@ -17,6 +17,7 @@ class SplashActivity : AppCompatActivity() {
     private val TAG = "SplashActivity"
     private var number = "NoNumber"
 
+
     @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,12 +28,12 @@ class SplashActivity : AppCompatActivity() {
         val log = prefs.getString("log", "")
         Log.e("log $TAG", log)
 
+
         val hd = Handler()
 
         hd.postDelayed({
             val user = FirebaseAuth.getInstance().currentUser
             if (user != null) {
-
                 number = FirebaseAuth.getInstance().currentUser!!.phoneNumber!!
                 Log.d("유저 확인", number)
                 val intent = Intent(this@SplashActivity, MainActivity::class.java)

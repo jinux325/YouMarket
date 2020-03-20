@@ -1,6 +1,7 @@
 package com.u.marketapp.chat
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +15,7 @@ import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.vo.ChatRoomVO
 import com.u.marketapp.vo.ChattingVO
 import kotlinx.android.synthetic.main.activity_chat.*
+import kotlinx.android.synthetic.main.activity_setting.*
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -223,8 +225,12 @@ class ChatActivity : AppCompatActivity() {
                     token = userEntity!!.token.toString()
                     Log.d("@@ getToken token  ", userEntity.token)
                     //FCM(userEntity!!.token)
-                    val fcm = FCM(token,myData.name,comment,chatRoomUid,tv_partner_nickname.text.toString())
-                    fcm.start()
+                    val pref = getSharedPreferences("setting", Context.MODE_PRIVATE)
+                    val prefChatttingSwitch = pref.getString("chattingSwitch", "")
+                    if(prefChatttingSwitch=="true"){
+                        val fcm = FCM(token,myData.name,comment,chatRoomUid,tv_partner_nickname.text.toString())
+                        fcm.start()
+                    }
                     /*val thread=FCM()
                     thread.start()*/
                     //FCM(userEntity!!.token)

@@ -1,5 +1,6 @@
 package com.u.marketapp
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -22,7 +23,9 @@ import com.u.marketapp.databinding.ActivityReplyBinding
 import com.u.marketapp.entity.CommentEntity
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
+import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.activity_reply.*
+import kotlinx.android.synthetic.main.activity_reply.toolbar
 
 class ReplyActivity : AppCompatActivity() {
 
@@ -131,8 +134,12 @@ class ReplyActivity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment)).add(item).addOnCompleteListener {
             if (it.isSuccessful) {
-                Log.i(TAG, "Added Comment ID : ${it.result!!.id}")
-                item.contents?.let { it1 -> getToken(it1) }
+                val pref = getSharedPreferences("setting", Context.MODE_PRIVATE)
+                val replySwitch = pref.getString("replySwitch", "")
+                if(replySwitch=="true"){
+                    Log.i(TAG, "Added Comment ID : ${it.result!!.id}")
+                    item.contents?.let { it1 -> getToken(it1) }
+                }
                 refresh()
             }
         }
