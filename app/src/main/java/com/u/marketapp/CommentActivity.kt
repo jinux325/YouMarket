@@ -1,5 +1,6 @@
 package com.u.marketapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -19,31 +20,27 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.u.marketapp.adapter.CommentRVAdapter
 import com.u.marketapp.chat.FCM
-import com.u.marketapp.databinding.ActivityReplyBinding
+import com.u.marketapp.databinding.ActivityCommentBinding
 import com.u.marketapp.entity.CommentEntity
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
 import kotlinx.android.synthetic.main.activity_reply.*
 
-class ReplyActivity : AppCompatActivity() {
+class CommentActivity : AppCompatActivity() {
 
     companion object {
-        private val TAG = ReplyActivity::class.java.simpleName
+        private val TAG = CommentActivity::class.java.simpleName
     }
 
     private lateinit var adapter: CommentRVAdapter
-    private lateinit var binding: ActivityReplyBinding
+    private lateinit var binding: ActivityCommentBinding
     private lateinit var document: DocumentSnapshot
     private lateinit var pid: String
-    private lateinit var cid: String
     private var checkUseContext: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_reply)
-        if (intent.hasExtra("cid")) {
-            cid = intent.getStringExtra("cid")
-        }
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_comment)
         if (intent.hasExtra("pid")) {
             pid = intent.getStringExtra("pid")
             initView()
@@ -55,8 +52,7 @@ class ReplyActivity : AppCompatActivity() {
         setActionbar() // 액션바 설정
         setRVAdapter() // 어댑터 설정
         setRVLayoutManager() // 레이아웃 매니저 설정
-        if (::cid.isInitialized) getCurrentComment()
-        setItemsData(false)
+        setItemsData()
         setButtonListener() // 버튼 클릭 설정
         setEditTextChangedListener()
     }
@@ -65,8 +61,7 @@ class ReplyActivity : AppCompatActivity() {
     private fun setActionbar() {
         setSupportActionBar(toolbar)
         val actionbar = supportActionBar!!
-        if (::cid.isInitialized) actionbar.title = resources.getString(R.string.reply_app_title)
-        else actionbar.title = resources.getString(R.string.comment_app_title)
+        actionbar.title = resources.getString(R.string.comment_app_title)
         actionbar.setDisplayHomeAsUpEnabled(true)
     }
 
@@ -74,6 +69,11 @@ class ReplyActivity : AppCompatActivity() {
     private fun setRVAdapter() {
         adapter = CommentRVAdapter(this)
         binding.recyclerView.adapter = adapter
+        adapter.setItemClickListener(object : CommentRVAdapter.ItemClickListener {
+            override fun onClick(view: View, position: Int) {
+                Log.i(TAG, "Item Click : $position")
+            }
+        })
         adapter.setMoreClickListener(object : CommentRVAdapter.MoreClickListener {
             override fun onClick(view: View, position: Int) {
                 Log.i(TAG, "More Click : $position")
@@ -81,6 +81,13 @@ class ReplyActivity : AppCompatActivity() {
                 document = adapter.getItem(position)
                 registerForContextMenu(view)
                 openContextMenu(view)
+            }
+        })
+        adapter.setReplyClickListener(object : CommentRVAdapter.ReplyClickListener {
+            override fun onClick(view: View, position: Int) {
+                Log.i(TAG, "Reply Click : $position")
+                document = adapter.getItem(position)
+                moveReplyIntent()
             }
         })
     }
@@ -92,18 +99,16 @@ class ReplyActivity : AppCompatActivity() {
     }
 
     // 데이터 설정
-    private fun setItemsData(isScroll: Boolean) {
+    private fun setItemsData() {
         val db = FirebaseFirestore.getInstance()
-        val ref = db.collection(resources.getString(R.string.db_product)).document(pid)
-            .collection(resources.getString(R.string.db_comment)).document(cid)
-            .collection(resources.getString(R.string.db_reply)).orderBy("regDate", Query.Direction.ASCENDING).get().addOnCompleteListener {
+        db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment)).orderBy("regDate", Query.Direction.ASCENDING).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 if (it.result?.documents!!.size > 0) {
                     for(document in it.result?.documents!!) {
                         Log.i(TAG, "Added Comment : ${document.id}")
                         adapter.addItem(document)
                     }
-                    if (isScroll) binding.recyclerView.smoothScrollToPosition(adapter.itemCount-1)
+                    binding.recyclerView.smoothScrollToPosition(adapter.itemCount-1)
                 }
             }
         }
@@ -115,51 +120,21 @@ class ReplyActivity : AppCompatActivity() {
         text_view_add_input.setOnClickListener {
             val msg = edit_text_input.text.toString()
             Log.i(TAG, "input : $msg")
-            val isReply = ::cid.isInitialized
-            addComment(getData(msg, isReply))
-        }
-        image_view_more.setOnClickListener {
-            delComment()
+            addComment(getData(msg))
         }
     }
 
-    private fun getData(msg: String, reply: Boolean) : CommentEntity {
+    private fun getData(msg: String) : CommentEntity {
         val comment = CommentEntity()
         comment.user = FirebaseAuth.getInstance().currentUser!!.uid // 사용자 정보
         comment.contents = msg // 내용
-        comment.reply = reply
         return comment
-    }
-
-    // 현재 댓글 조회
-    private fun getCurrentComment() {
-        val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment)).document(cid).get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val item = task.result!!.toObject(CommentEntity::class.java)
-                getCurrentUser(item!!.user!!)
-                binding.setVariable(BR.reply, item)
-            }
-        }
-    }
-
-    // 현재 댓글 유저 조회
-    private fun getCurrentUser(uid: String) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_user)).document(uid).get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val item = task.result!!.toObject(UserEntity::class.java)
-                binding.setVariable(BR.user, item)
-            }
-        }
     }
 
     // 데이터베이스 추가
     private fun addComment(item: CommentEntity) {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid)
-            .collection(resources.getString(R.string.db_comment)).document(cid)
-            .collection(resources.getString(R.string.db_reply)).add(item).addOnCompleteListener {
+        db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment)).add(item).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "Added Comment ID : ${it.result!!.id}")
 //                item.contents?.let { it1 -> getToken(it1) }
@@ -171,25 +146,10 @@ class ReplyActivity : AppCompatActivity() {
     // 데이터베이스 삭제
     private fun delComment() {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid)
-            .collection(resources.getString(R.string.db_comment)).document(cid).delete().addOnCompleteListener {
+        db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment)).document(document.id).delete().addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "Delete Comment!!")
                 updateCommentSize(-1)
-                finish()
-            }
-        }
-    }
-
-    private fun delReply() {
-        val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid)
-            .collection(resources.getString(R.string.db_comment)).document(cid)
-            .collection(resources.getString(R.string.db_reply)).document(document.id).delete().addOnCompleteListener {
-            if (it.isSuccessful) {
-                Log.i(TAG, "Delete Reply!!")
-                updateCommentSize(-1)
-                updateReplySize(-1)
                 delAdapterItem()
             }
         }
@@ -201,9 +161,8 @@ class ReplyActivity : AppCompatActivity() {
 
     private fun refresh() {
         adapter.clear()
-        updateReplySize(1)
         updateCommentSize(1)
-        setItemsData(true)
+        setItemsData()
         clearEditText()
     }
 
@@ -253,16 +212,6 @@ class ReplyActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateReplySize(num: Long) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid)
-            .collection(resources.getString(R.string.db_comment)).document(cid).update("replySize", FieldValue.increment(num)).addOnCompleteListener {
-            if (it.isSuccessful) {
-                Log.i(TAG, "Added Reply Size!")
-            }
-        }
-    }
-
     // 입력에 따른 버튼 활성화
     private fun setEditTextChangedListener() {
         edit_text_input.addTextChangedListener(object: TextWatcher {
@@ -285,6 +234,13 @@ class ReplyActivity : AppCompatActivity() {
         edit_text_input.requestFocus()
     }
 
+    private fun moveReplyIntent() {
+        val intent = Intent(this, ReplyActivity::class.java)
+        intent.putExtra("pid", pid)
+        intent.putExtra("cid", document.id)
+        startActivity(intent)
+    }
+
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
         if (checkUseContext) {
             menuInflater.inflate(R.menu.context_current_reply, menu)
@@ -302,7 +258,7 @@ class ReplyActivity : AppCompatActivity() {
             }
             R.id.action_delete -> {
                 Log.i(TAG, "action_delete!!")
-                delReply()
+                delComment()
                 true
             }
             else -> {

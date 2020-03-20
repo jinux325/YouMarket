@@ -362,7 +362,8 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         })
         commentAdapter.setReplyClickListener(object : CommentRVAdapter.ReplyClickListener {
             override fun onClick(view: View, position: Int) {
-                moveReplyActivity()
+                document = commentAdapter.getItem(position)
+                moveReplyIntent()
             }
         })
     }
@@ -396,15 +397,15 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment)).document(document.id).delete().addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "Delete Comment!!")
-                updateCommentSize(-1)
+                updateCommentSize()
                 getProductData()
             }
         }
     }
 
-    private fun updateCommentSize(num: Long) {
+    private fun updateCommentSize() {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid).update("commentSize", FieldValue.increment(num)).addOnCompleteListener {
+        db.collection(resources.getString(R.string.db_product)).document(pid).update("commentSize", FieldValue.increment(-1)).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "Added Comment Size!")
             }
@@ -412,9 +413,17 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     // 댓글 상세 페이지 이동
-    private fun moveReplyActivity() {
+    private fun moveCommentIntent() {
+        val intent = Intent(this, CommentActivity::class.java)
+        intent.putExtra("pid", pid)
+        startActivity(intent)
+    }
+
+    // 답글 상세 페이지 이동
+    private fun moveReplyIntent() {
         val intent = Intent(this, ReplyActivity::class.java)
         intent.putExtra("pid", pid)
+        intent.putExtra("cid", document.id)
         startActivity(intent)
     }
 
@@ -439,7 +448,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 startActivity(intent)
             }
             R.id.text_view_comment_buttom, R.id.text_view_all_reply -> {
-                moveReplyActivity()
+                moveCommentIntent()
             }
         }
     }
@@ -498,10 +507,6 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onContextItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
-            R.id.action_show_profile -> {
-                Log.i(TAG, "action_show_profile!!")
-                true
-            }
             R.id.action_declaration -> {
                 Log.i(TAG, "action_declaration!!")
                 true

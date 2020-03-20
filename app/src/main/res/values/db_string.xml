@@ -4,4 +4,5 @@
     <string name="db_product">Product</string>
     <string name="db_chatting">Chatting</string>
     <string name="db_comment">Comment</string>
+    <string name="db_reply">Reply</string>
 </resources>

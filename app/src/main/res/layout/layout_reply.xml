@@ -145,7 +145,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center_vertical"
-                android:visibility="visible"
+                bindReplyLayout="@{comment.reply}"
                 android:orientation="horizontal"
                 app:layout_constraintLeft_toLeftOf="@id/text_view_name"
                 app:layout_constraintRight_toRightOf="parent"
