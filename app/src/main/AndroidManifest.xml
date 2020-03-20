@@ -27,6 +27,9 @@
             </intent-filter>
         </service>
         <activity
+            android:name=".ReplyActivity"
+            android:theme="@style/MaterialTheme" />
+        <activity
             android:name=".HomeFragment"
             android:theme="@style/MaterialTheme" />
         <activity
