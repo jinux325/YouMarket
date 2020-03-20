@@ -20,7 +20,7 @@
         tools:ignore="AllowBackup"
         tools:replace="allowBackup"
         tools:targetApi="m">
-        
+
         <service
             android:name=".chat.ChatFirebaseMessagingService"
             android:exported="false">

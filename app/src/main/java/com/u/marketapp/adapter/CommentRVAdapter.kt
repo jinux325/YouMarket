@@ -10,12 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.R
-import com.u.marketapp.databinding.LayoutCommentBinding
+import com.u.marketapp.databinding.LayoutReplyBinding
 import com.u.marketapp.entity.CommentEntity
 import com.u.marketapp.entity.UserEntity
-import kotlinx.android.synthetic.main.layout_comment.view.*
+import kotlinx.android.synthetic.main.layout_reply.view.*
 
-class CommentRVAdapter(val context: Context, private val isPreview: Boolean) : RecyclerView.Adapter<CommentRVAdapter.ViewHolder>() {
+class CommentRVAdapter(val context: Context) : RecyclerView.Adapter<CommentRVAdapter.ViewHolder>() {
 
     companion object {
         private val TAG = CommentRVAdapter::class.java.simpleName
@@ -23,11 +23,17 @@ class CommentRVAdapter(val context: Context, private val isPreview: Boolean) : R
 
     private val items : ArrayList<DocumentSnapshot> = ArrayList()
 
+    interface ItemClickListener { fun onClick(view: View, position: Int) }
     interface MoreClickListener { fun onClick(view: View, position: Int) }
     interface ReplyClickListener { fun onClick(view: View, position: Int) }
 
+    private lateinit var itemClickListener: ItemClickListener
     private lateinit var moreClickListener: MoreClickListener
     private lateinit var replyClickListener: ReplyClickListener
+
+    fun setItemClickListener(itemClickListener: ItemClickListener) {
+        this.itemClickListener = itemClickListener
+    }
 
     fun setMoreClickListener(moreClickListener: MoreClickListener) {
         this.moreClickListener = moreClickListener
@@ -39,7 +45,7 @@ class CommentRVAdapter(val context: Context, private val isPreview: Boolean) : R
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.layout_comment, parent, false)
+            DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.layout_reply, parent, false)
         )
     }
 
@@ -70,8 +76,9 @@ class CommentRVAdapter(val context: Context, private val isPreview: Boolean) : R
         holder.apply {
             bind(item, userItem)
             itemView.tag = item
-            itemView.image_view_more.setOnClickListener { moreClickListener.onClick(it, position) }
+            itemView.setOnClickListener { itemClickListener.onClick(it, position) }
             itemView.text_view_add_reply.setOnClickListener { replyClickListener.onClick(it, position) }
+            itemView.image_view_more.setOnClickListener { moreClickListener.onClick(it, position) }
         }
     }
 
@@ -86,19 +93,13 @@ class CommentRVAdapter(val context: Context, private val isPreview: Boolean) : R
         return items[position]
     }
 
-    // 데이터 초기화
-    fun clear() {
-        items.clear()
-        notifyDataSetChanged()
-    }
-
-    class ViewHolder(private val binding: LayoutCommentBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: LayoutReplyBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: DocumentSnapshot, userItem: UserEntity) {
             binding.apply {
                 comment = item.toObject(CommentEntity::class.java)
                 user = userItem
             }
         }
-
     }
+
 }

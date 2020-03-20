@@ -22,7 +22,6 @@
             android:background="@color/white"
             app:menu="@menu/toolbar_edit"
             app:titleTextColor="@color/black"
-            app:title="중고거래 글쓰기"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents.ActionBar"/>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -67,32 +66,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/image_view_photo" />
-
-<!--            <LinearLayout-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="horizontal"-->
-<!--                android:layout_marginStart="10dp"-->
-<!--                app:layout_constraintTop_toTopOf="parent"-->
-<!--                app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                app:layout_constraintLeft_toRightOf="@id/image_view_photo">-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/text_view_picker_count"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:textSize="15sp"-->
-<!--                    android:text="0"-->
-<!--                    tools:ignore="HardcodedText" />-->
-
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:textSize="15sp"-->
-<!--                    android:text="/10"-->
-<!--                    tools:ignore="HardcodedText" />-->
-
-<!--            </LinearLayout>-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

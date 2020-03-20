@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -24,6 +25,7 @@ import com.u.marketapp.adapter.CommentRVAdapter
 import com.u.marketapp.adapter.ViewPagerAdapter
 import com.u.marketapp.chat.ChatActivity
 import com.u.marketapp.databinding.ActivityProductBinding
+import com.u.marketapp.entity.CommentEntity
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
 import kotlinx.android.synthetic.main.activity_product.*
@@ -43,6 +45,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityProductBinding
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private lateinit var commentAdapter : CommentRVAdapter
+    private var checkUseContext: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +75,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         actionbar.setDisplayShowTitleEnabled(false)
     }
 
-    // 소유권 확인
+    // Option Menu 소유권 확인
     private fun userVerification(menu: Menu?) {
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener {
@@ -338,11 +341,19 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
 
     // 댓글 어댑터 설정
     private fun setCommentRVAdapter() {
-        commentAdapter = CommentRVAdapter(this, true)
+        commentAdapter = CommentRVAdapter(this)
         binding.recyclerViewComment.adapter = commentAdapter
+        commentAdapter.setItemClickListener(object : CommentRVAdapter.ItemClickListener {
+            override fun onClick(view: View, position: Int) {
+                Log.i(TAG, "Item Click : $position")
+            }
+        })
         commentAdapter.setMoreClickListener(object : CommentRVAdapter.MoreClickListener {
             override fun onClick(view: View, position: Int) {
                 Log.i(TAG, "More Click : $position")
+                if (commentAdapter.getItem(position).toObject(CommentEntity::class.java)!!.user == FirebaseAuth.getInstance().currentUser!!.uid) checkUseContext = true
+                registerForContextMenu(view)
+                openContextMenu(view)
             }
         })
         commentAdapter.setReplyClickListener(object : CommentRVAdapter.ReplyClickListener {
@@ -362,7 +373,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     private fun setCommentItemsData() {
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).document(pid)
-            .collection(resources.getString(R.string.db_comment)).orderBy("regDate", Query.Direction.ASCENDING).limit(10).get().addOnCompleteListener {
+            .collection(resources.getString(R.string.db_comment)).orderBy("regDate", Query.Direction.ASCENDING).limit(5).get().addOnCompleteListener {
                 if (it.isSuccessful) {
                     if (it.result?.documents!!.size > 0) {
                         checkCommentItemsData(true)
@@ -388,6 +399,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     // 댓글 상세 페이지 이동
     private fun moveReplyActivity() {
         val intent = Intent(this, ReplyActivity::class.java)
+        intent.putExtra("pid", pid)
         startActivity(intent)
     }
 
@@ -457,6 +469,35 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        if (checkUseContext) {
+            menuInflater.inflate(R.menu.context_current_reply, menu)
+        } else {
+            menuInflater.inflate(R.menu.context_reply, menu)
+        }
+        super.onCreateContextMenu(menu, v, menuInfo)
+    }
+
+    override fun onContextItemSelected(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            R.id.action_show_profile -> {
+                Log.i(TAG, "action_show_profile!!")
+                true
+            }
+            R.id.action_declaration -> {
+                Log.i(TAG, "action_declaration!!")
+                true
+            }
+            R.id.action_delete -> {
+                Log.i(TAG, "action_delete!!")
+                true
+            }
+            else -> {
+                false
+            }
         }
     }
 }

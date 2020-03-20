@@ -17,4 +17,20 @@
     <string name="option_delete">삭제</string>
     <string name="option_setting">설정</string>
     <string name="option_complete">완료</string>
+
+    <!-- Context Menu -->
+    <string name="context_show_profile">프로필 보기</string>
+    <string name="context_declaration">신고하기</string>
+    <string name="context_delete">삭제하기</string>
+
+    <string-array name="reply_array">
+        <item>프로필 보기</item>
+        <item>신고하기</item>
+    </string-array>
+
+    <string-array name="current_reply_array">
+        <item>프로필 보기</item>
+        <item>신고하기</item>
+        <item>삭제하기</item>
+    </string-array>
 </resources>
