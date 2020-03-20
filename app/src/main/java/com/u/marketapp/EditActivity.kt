@@ -223,10 +223,10 @@ class EditActivity : AppCompatActivity() {
             .setTitle("저장하시겠습니까?")
             .setPositiveButton("확인") { _, _ ->
                 BaseApplication.instance.progressON(this, resources.getString(R.string.loading))
-                if (!(::pid.isInitialized)) {
-                    saveProduct(getEditData())
-                } else {
+                if (::pid.isInitialized) {
                     updateProduct(pid, getNewEditData())
+                } else {
+                    saveProduct(getEditData())
                 }
             }
             .setNegativeButton("취소", null)

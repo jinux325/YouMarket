@@ -378,25 +378,13 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 if (it.isSuccessful) {
                     Log.i(TAG, "$pid -> Document Size : ${it.result?.documents!!.size}")
                     if (it.result?.documents!!.size > 0) {
-                        checkCommentItemsData(true)
                         for (document in it.result?.documents!!) {
                             Log.i(TAG, "Added Comment : ${document.id}")
                             commentAdapter.addItem(document)
                         }
-                    } else {
-                        checkCommentItemsData(false)
                     }
                 }
             }
-    }
-
-    // 댓글 존재 여부
-    private fun checkCommentItemsData(isCheck: Boolean) {
-        if (isCheck) {
-            recycler_view_comment.visibility = View.VISIBLE
-        } else {
-            recycler_view_comment.visibility = View.GONE
-        }
     }
 
     // 댓글 상세 페이지 이동

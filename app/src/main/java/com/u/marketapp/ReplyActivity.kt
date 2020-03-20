@@ -111,11 +111,16 @@ class ReplyActivity : AppCompatActivity() {
         text_view_add_input.setOnClickListener {
             val msg = edit_text_input.text.toString()
             Log.i(TAG, "input : $msg")
-            val comment = CommentEntity()
-            comment.user = FirebaseAuth.getInstance().currentUser!!.uid
-            comment.contents = msg
-            addComment(comment)
+            addComment(getData(msg, false))
         }
+    }
+
+    private fun getData(msg: String, reply: Boolean) : CommentEntity {
+        val comment = CommentEntity()
+        comment.user = FirebaseAuth.getInstance().currentUser!!.uid // 사용자 정보
+        comment.contents = msg // 내용
+        comment.reply = reply
+        return comment
     }
 
     // 데이터베이스 추가
@@ -193,6 +198,16 @@ class ReplyActivity : AppCompatActivity() {
             else -> {
                 false
             }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> { // 뒤로가기
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
