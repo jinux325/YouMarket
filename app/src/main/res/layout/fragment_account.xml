@@ -13,7 +13,8 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        app:title="@string/toolbar_title_account_fragement"
+        android:backgroundTint="@color/SettingText"
+        app:title="나의 정보"
         android:elevation="2dp"
         tools:ignore="HardcodedText"/>
 <ScrollView

@@ -202,18 +202,7 @@ class AccountProfileActivity : AppCompatActivity() {
         dbName = intent.getStringExtra("name")
         Glide.with(this).load(dbImage)
             .apply(RequestOptions.bitmapTransform(CircleCrop())).into(proflie_imageView)
-        /*db.collection(resources.getString(R.string.db_user)).document(FirebaseAuth.getInstance().currentUser!!.uid).get()
-            .addOnCompleteListener{ task ->
-                if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
-                        UserEntity::class.java)
-                    Glide.with(this).load(userEntity!!.imgPath)
-                        .apply(RequestOptions.bitmapTransform(CircleCrop())).into(proflie_imageView)
-                    dbImage= userEntity.imgPath.toString()
-                    name = userEntity.name.toString()
 
-                }
-            }*/
     }
 
 

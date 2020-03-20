@@ -35,7 +35,6 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
 
-
         Log.e("chatting data: ", "  ${chatList[position].cId}  ${chatList[position].buyer}  ${chatList[position].comment}  ${chatList[position].seller}  ${chatList[position].pid}  ${chatList[position].registDate}")
         //val chatFragment = ChatFragment()
         if(myUid == chatList[position].buyer){
@@ -58,31 +57,6 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
             }
         }
 
-        /*holder.time.text = chatList[position].registDate.toString()
-        holder.comment.text = chatList[position].comment*/
-        /*chatList[position].let { item ->
-            with(holder) {
-                time.text = item.registDate.toString()
-                comment.text = item.comment
-                cardView.setOnClickListener {
-                    Log.e("chatIntent: "," ${item.comment}  ${item.buyer}  ${item.seller}   ${chatUidList[position]}")
-                    if(myUid == item.buyer){
-                        //chatList[position].buyer?.let { it1 -> chatFragment.chattingIntent(it1, chatUidList[position], context!!) }
-                        item.seller?.let { it1 -> chattingIntent(it1, chatUidList[position]) }
-                    }else{
-                        //chatList[position].seller?.let { it1 -> chatFragment.chattingIntent(it1, chatUidList[position], context!!) }
-                        item.buyer?.let { it1 -> chattingIntent(it1, chatUidList[position]) }
-                    }
-                }
-            }
-        }*/
-
-
-        /*chatList[position].let { item ->
-                with(holder) {
-                    nickname.text = item.seller
-                }
-            }*/
         val day = SimpleDateFormat("a hh:mm")
         val year = SimpleDateFormat("yyyy년")
         if (chatList.size >= 1 && year.format(chatList[position].registDate) == year.format(
@@ -185,40 +159,5 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
                 }
             }
     }
-    /*private fun chattingRoomList(list:MutableList<String>, holder: ViewHolder){
-        for(i in list){
-            FirebaseFirestore.getInstance().collection("Chatting").document(i).get()
-                .addOnCompleteListener{ task ->
-                    if (task.isSuccessful) {
-                        val chatRoomVO: ChatRoomVO? = task.result!!.toObject<ChatRoomVO>(ChatRoomVO::class.java)
-                        Log.d(chatRoomVO?.buyer, chatRoomVO?.buyer)
-                        Log.d(chatRoomVO?.seller, chatRoomVO?.seller)
-                        Log.d(chatRoomVO?.pid, if (chatRoomVO != null) chatRoomVO.pid else null)
-                        Log.d(chatRoomVO?.registDate.toString(), chatRoomVO?.registDate.toString())
-                        Log.d(chatRoomVO?.comment, chatRoomVO?.comment)
 
-                        holder.comment.text = chatRoomVO?.comment
-                        if(myUid == chatRoomVO?.buyer){
-                            getName(chatRoomVO?.seller!!, holder)
-                        }else{
-                            getName(chatRoomVO?.buyer!!, holder)
-                        }
-                        getProductImage(chatRoomVO?.pid!!, holder)
-
-
-                        Log.d("chattingRoomList ", chatRoomVO!!.buyer)
-
-                        chatList.add(chatRoomVO)
-                        Log.d("chattingRoomList 111 ", chatList[0].buyer)
-
-                    }
-                    Log.d("chattingRoomList 444 ", chatList[0].buyer)
-
-                    if(list.size == chatList.size){
-                       *//* chat_recyclerView.layoutManager = LinearLayoutManager(context)
-                        chat_recyclerView.adapter = ChatAdapter(context, chattingRoomList, chattingRoomUidList)*//*
-                    }
-                }
-        }
-    }*/
 }

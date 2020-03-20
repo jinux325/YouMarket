@@ -34,13 +34,10 @@ class AddressActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_address)
 
-        // addressList = mutableListOf(AddressVO("1","1","1"),AddressVO("2","2","2"),AddressVO("3","3","3"),AddressVO("4","4","4"))
-
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         recycler_view.layoutManager = layoutManager
-        /* val addrAdapter = AddressAdapter(this, addressList)
-         recycler_view.setAdapter(addrAdapter)*/
+
 
         bt.setOnClickListener {
             page = 1
@@ -166,11 +163,6 @@ class AddressActivity : AppCompatActivity() {
             return null
         }
 
-   /*     override fun onPreExecute() {
-            super.onPreExecute()
-
-        }*/
-
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
             //어답터 연결
@@ -205,17 +197,6 @@ class AddressActivity : AppCompatActivity() {
             }
         }
     }
-
-    /*   override fun onDestroy() {
-           super.onDestroy()
-           val intent_items = intent
-           Log.d("@@ onDestroy  ", intent_items.getStringExtra("update"))
-           if(intent_items.getStringExtra("update") == null){
-               FirebaseAuth.getInstance().signOut()
-           }
-       }
-   */
-
 
 
 }

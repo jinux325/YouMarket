@@ -76,40 +76,4 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
 
 
 
-   /* private fun send(
-        title: String?,
-        content: String?,
-        clickAction: String?
-    ) {
-        var title = title
-        var pendingIntent: PendingIntent? = null
-        if (title == null) title = "제목없음"
-        if (clickAction != null) {
-            val intent = Intent(this, ChatActivity::class.java)
-            intent.putExtra("document", clickAction)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
-        }
-        val defaultSoundUri = RingtoneManager.getDefaultUri(
-            RingtoneManager.TYPE_NOTIFICATION
-        )
-        // 오레오(8.0) 이상일 경우 채널을 반드시 생성해야 한다.
-        val CHANNEL_ID = "123"
-        val notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        val builder =
-            NotificationCompat.Builder(this, CHANNEL_ID)
-        builder.setAutoCancel(true)
-        builder.setDefaults(Notification.DEFAULT_VIBRATE)
-        builder.setWhen(System.currentTimeMillis())
-        builder.setSmallIcon(R.drawable.ic_tree)
-        builder.setContentText(content)
-        builder.setContentIntent(pendingIntent)
-        Log.e(TAG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@2")
-        builder.setContentTitle(title)
-        builder.setSound(defaultSoundUri)
-        builder.setVibrate(longArrayOf(500, 500, 500, 500))
-        notificationManager.notify(0, builder.build())
-    }*/
 }

@@ -34,8 +34,6 @@ class SmsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sms)
 
-        // mAuth= FirebaseAuth.getInstance()
-
         buttonContinue.setOnClickListener {
             Toast.makeText(this,"잠시만 기다려 주세요.", Toast.LENGTH_SHORT).show()
             buttonContinue.isEnabled = false
@@ -45,20 +43,7 @@ class SmsActivity : AppCompatActivity() {
             Toast.makeText(this,"잠시만 기다려 주세요.", Toast.LENGTH_SHORT).show()
             verifySignIn()
         }
-       /*
-        바로 로그인 기능
-       button.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("phoneNumber", "01040166410")
-            userData()
-            startActivity(intent)
-        }
-         주소입력으로 가기
-        addrButton.setOnClickListener {
-            val intent = Intent(this, AddressActivity::class.java)
-            intent.putExtra("phoneNumber", "01040166410")
-            startActivity(intent)
-        }*/
+
     }
 
     private fun verifySignIn(){
@@ -71,27 +56,10 @@ class SmsActivity : AppCompatActivity() {
         mAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                ////    val intent_items = intent
-                   // val firebaseNumber = intent_items.getStringExtra("number")
-                    // var phoneNumber = phone.substring(1, 11)
                     val uid = FirebaseAuth.getInstance().currentUser!!.uid
                     Log.d(" userExist(uid) 유저 확인", uid)
 
                     userExist(uid)
-
-                    /*if(firebaseNumber == "NoNumber"){
-                        // 가입
-                        val intent = Intent(this, AddressActivity::class.java)
-                        intent.putExtra("phoneNumber", phone)
-                        startActivity(intent)
-                    }else{
-                        // 로그인
-                        val intent = Intent(this, MainActivity::class.java)
-                        intent.putExtra("phoneNumber", phone)
-                        userData()
-                        startActivity(intent)
-                    }*/
-                    //Toast.makeText(this, " 이동할 activity",Toast.LENGTH_SHORT).show()
                 } else {
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         Toast.makeText(this,"upload failed: " + task.exception!!.message, Toast.LENGTH_SHORT).show()
@@ -177,15 +145,7 @@ class SmsActivity : AppCompatActivity() {
     }
 
     fun userExist(uid:String){
-       /* FirebaseFirestore.getInstance().collection("Users").document(uid).get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
-                    Log.d("@@@@@@@@@@@  userExist "  , userEntity?.name+"  "+userEntity?.address+"  "+userEntity?.token)
-                    if(userEntity?.token == "") exist = false
-                    else exist =  true
-                }
-            }*/
+
         var count =0
         db.collection(resources.getString(R.string.db_user)).get().addOnSuccessListener { result ->
             for(document in result){
@@ -214,34 +174,7 @@ class SmsActivity : AppCompatActivity() {
 
         }
 
-       /* FirebaseFirestore.getInstance().collection("Users").whereEqualTo("uid", uid).get().addOnSuccessListener { result ->
-            for(document in result){
-                Log.d("@@@@@@@@@@@@@@@ ", document.id+"   "+uid)
-                if(document.id.equals(uid)){
-                    Log.d("@@@@@@@@@@@@@@@ ", "if문 ")
-                    // 로그인
-                    Log.d("유저 확인", "true  로그인")
-                    val intent = Intent(this, MainActivity::class.java)
-                    intent.putExtra("phoneNumber", phone)
-                    userData()
-                    startActivity(intent)
-                    break
-                }else{
-                    Log.d("유저 확인", "false  가입")
-                    val intent = Intent(this, AddressActivity::class.java)
-                    intent.putExtra("phoneNumber", phone)
-                    startActivity(intent)
-                }
-
-            }
-
-        }*/
 
     }
-
-  /*  override fun onDestroy() {
-        super.onDestroy()
-        FirebaseAuth.getInstance().signOut()
-    }*/
 
 }

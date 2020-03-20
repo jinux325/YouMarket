@@ -30,27 +30,6 @@ class LocationSettingActivity : AppCompatActivity() {
 
         setSupportActionBar(setting_toolbar)
 
-        //getAddressData()
-
-       /* db.collection("Users").document(uid).get()
-            .addOnCompleteListener{ task ->
-                if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
-                    Log.d(" userEntity address2 :  ", " [${userEntity?.address2}]")
-                    if (userEntity?.address2.equals(null)) {
-                        addr2.visibility = View.GONE
-                        addr2_add.visibility = View.VISIBLE
-                    } else {
-                        tv_addr2.text = userEntity?.address2
-                        addr2.visibility = View.VISIBLE
-                        addr2_add.visibility = View.GONE
-                    }
-                    tv_addr1.text = userEntity?.address
-                } else {
-                    Log.d(TAG, "Error getting LocationSetting", task.exception)
-                }
-            }*/
-
         addr1_delete.setOnClickListener {
             val builder =
                 AlertDialog.Builder(this@LocationSettingActivity)
@@ -121,28 +100,6 @@ class LocationSettingActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_user)).document(uid).update(delete)
         addr2.visibility = View.GONE
         addr2_add.visibility = View.VISIBLE
-
-        /*db.collection("Users").document(uid).get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
-                    val user = hashMapOf(
-                        "name" to userEntity?.name,
-                        "address" to userEntity?.address,
-                        "address2" to FieldValue.delete(),
-                        "registDate" to userEntity?.registDate,
-                        "imgPath" to userEntity?.imgPath,
-                        "chatting" to userEntity?.chatting,
-                        "token" to userEntity?.token
-                    )
-                    db.collection("Users").document(uid).delete()
-                    db.collection("Users").document(uid).set(user)
-                    addr2.visibility = View.GONE
-                    addr2_add.visibility = View.VISIBLE
-                } else {
-                    Log.d(TAG, "Error getting ChatRoom", task.exception)
-                }
-            }*/
     }
 
     @SuppressLint("LongLogTag")
@@ -166,48 +123,7 @@ class LocationSettingActivity : AppCompatActivity() {
             }
     }
 
-   /* fun addressDialog(context: Context, lAddr:String, phoneNumber: String, location:String){
-        val dialog = AlertDialog.Builder(context)
-        dialog.setMessage("주소가 '$lAddr' 이(가) 맞습니까?").setCancelable(false)
 
-        val db = FirebaseFirestore.getInstance()
-        fun pos(){
-            if (location != "" && location == "update1") {
-                if (FirebaseAuth.getInstance().currentUser != null) {
-                    val uid = FirebaseAuth.getInstance().currentUser!!.uid
-                    db.collection(context.resources.getString(R.string.db_user)).document(uid).update("address", addrSubString(lAddr))
-                    val intent = Intent(context, LocationSettingActivity::class.java)
-                    context.startActivity(intent)
-                }
-            } else if (location != "" && location == "update2") {
-                if (FirebaseAuth.getInstance().currentUser != null) {
-                    val uid = FirebaseAuth.getInstance().currentUser!!.uid
-                    db.collection(context.resources.getString(R.string.db_user)).document(uid).update("address2", addrSubString(lAddr))
-                    val intent = Intent(context, LocationSettingActivity::class.java)
-                    context.startActivity(intent)
-                }
-            } else {
-                val intent = Intent(context, ProfileActivity::class.java)
-                //Toast.makeText(context," $lAddr  ",Toast.LENGTH_SHORT).show()
-                intent.putExtra("phoneNumber", phoneNumber)
-                intent.putExtra("address",  addrSubString(lAddr))
-                context.startActivity(intent)
-            }
-
-        }
-        val dialog_listener = object: DialogInterface.OnClickListener{
-            override fun onClick(dialog: DialogInterface?, p1: Int) {
-                when(p1){
-                    DialogInterface.BUTTON_POSITIVE -> pos()
-                }
-            }
-        }
-        dialog.setPositiveButton("확인",dialog_listener)
-        dialog.setNegativeButton("취소",dialog_listener)
-        dialog.show()
-
-    }
-*/
     override fun onResume() {
         super.onResume()
         getAddressData()
