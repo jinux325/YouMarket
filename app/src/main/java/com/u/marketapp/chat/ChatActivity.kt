@@ -235,7 +235,7 @@ class ChatActivity : AppCompatActivity() {
     inner class FCM : Thread() {
         override fun run() {
             try {
-                Log.d("@@ FCM ", "token: $token")
+                Log.d("@@ FCM ", "token: $token  chatRoomUid: $chatRoomUid")
                 val serverKey =
                     "AAAACA4EsA0:APA91bGdb7Oxa49X6z23tXjCn48DiosjzqYFZXM6G67I_gH5sFI_AKuoFJ6ayLyqBHGAmckEkMSO8UU5qD8XFesWRSlDKBVdx6zHI_cCEaz6xCTg4CbgWkKCNxVBzM3SupUJXio41w6a"
                 val registrationToken: String = token
@@ -250,6 +250,7 @@ class ChatActivity : AppCompatActivity() {
                 data.put("body", body)
                 data.put("click_action", "ChatActivity")
                 data.put("documentId", chatRoomUid)
+                data.put("partnerName", tv_partner_nickname.text)
                 //root.put("notification", notification);
                 root.put("to", registrationToken)
                 root.put("data", data)

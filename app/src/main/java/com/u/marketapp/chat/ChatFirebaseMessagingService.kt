@@ -39,6 +39,7 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
         val intent = Intent(this, ChatActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra("chatRoomUid", remoteMessage.data["documentId"])
+            putExtra("name", remoteMessage.data["partnerName"])
         }
 
         val channelId = "CollocNotification"
