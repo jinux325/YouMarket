@@ -38,7 +38,7 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun sendNotification(remoteMessage: RemoteMessage) {
         val intent:Intent
-        if(remoteMessage.data["click_action"]!=null){
+        if(remoteMessage.data["partnerName"] != ""){
             intent = Intent(this, ChatActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 putExtra("chatRoomUid", remoteMessage.data["documentId"])
