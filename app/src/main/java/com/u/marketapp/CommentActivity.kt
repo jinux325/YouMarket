@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
@@ -25,6 +26,7 @@ import com.u.marketapp.databinding.ActivityCommentBinding
 import com.u.marketapp.entity.CommentEntity
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
+import com.u.marketapp.listener.EndlessRecyclerViewScrollListener
 import kotlinx.android.synthetic.main.activity_reply.*
 
 class CommentActivity : AppCompatActivity() {
@@ -32,11 +34,13 @@ class CommentActivity : AppCompatActivity() {
     companion object {
         private val TAG = CommentActivity::class.java.simpleName
         private const val REQUEST_REPLY = 100
+        private const val REQUEST_ITEM_LIMIT = 30L
     }
 
     private lateinit var adapter: CommentRVAdapter
     private lateinit var binding: ActivityCommentBinding
     private lateinit var document: DocumentSnapshot
+    private lateinit var scrollListener: EndlessRecyclerViewScrollListener
     private lateinit var pid: String
     private var checkUseContext: Boolean = false
 
@@ -113,10 +117,56 @@ class CommentActivity : AppCompatActivity() {
         }
     }
 
-    // 리사이클뷰 설정
+    // 리사이클뷰 레이아웃 매니저 설정
     private fun setRVLayoutManager() {
-        binding.recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        binding.recyclerView.setHasFixedSize(true)
+        binding.recyclerView.apply {
+            setHasFixedSize(true)
+            val linearlayout = LinearLayoutManager(context)
+            layoutManager = linearlayout
+            scrollListener = object : EndlessRecyclerViewScrollListener(linearlayout) {
+                override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                    requestPagingItems(totalItemsCount-1)
+                }
+            }
+            addOnScrollListener(scrollListener)
+        }
+    }
+
+    // 데이터 로드
+    private fun requestItems() {
+        scrollListener.resetState()
+
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment))
+            .orderBy("regDate", Query.Direction.DESCENDING)
+            .limit(REQUEST_ITEM_LIMIT)
+            .get()
+            .addOnSuccessListener { documentSnapshots ->
+                val items = documentSnapshots.documents
+                for (item in items) {
+                    adapter.addItem(item)
+                }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
+    }
+
+    // 데이터 로드
+    private fun requestPagingItems(next: Int) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment))
+            .orderBy("regDate", Query.Direction.DESCENDING)
+            .startAfter(adapter.getItem(next))
+            .limit(REQUEST_ITEM_LIMIT)
+            .get()
+            .addOnSuccessListener { documentSnapshots ->
+                val items = documentSnapshots.documents
+                for (item in items) {
+                    adapter.addItem(item)
+                }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
     }
 
     // 데이터 설정
@@ -130,12 +180,7 @@ class CommentActivity : AppCompatActivity() {
                         adapter.addItem(document)
                     }
                     binding.recyclerView.smoothScrollToPosition(adapter.itemCount-1)
-                    BaseApplication.instance.progressOFF()
-                } else {
-                    BaseApplication.instance.progressOFF()
-                }
-            } else {
-                BaseApplication.instance.progressOFF()
+               }
             }
         }
     }
@@ -146,7 +191,6 @@ class CommentActivity : AppCompatActivity() {
         text_view_add_input.setOnClickListener {
             val msg = edit_text_input.text.toString()
             Log.i(TAG, "input : $msg")
-            BaseApplication.instance.progressON(this, resources.getString(R.string.loading))
             addComment(getData(msg))
         }
     }
@@ -166,8 +210,6 @@ class CommentActivity : AppCompatActivity() {
                 Log.i(TAG, "Added Comment ID : ${it.result!!.id}")
 //                item.contents?.let { it1 -> getToken(it1) }
                 refresh()
-            } else {
-                BaseApplication.instance.progressOFF()
             }
         }
     }
@@ -179,7 +221,6 @@ class CommentActivity : AppCompatActivity() {
                 Log.i(TAG, "Delete Comment!!")
                 updateCommentSize(-1)
                 delAdapterItem()
-                BaseApplication.instance.progressOFF()
                 val item = document.toObject(CommentEntity::class.java)
                 if (item!!.replySize > 0) {
                     document.reference.collection(resources.getString(R.string.db_reply)).get().addOnCompleteListener {
@@ -195,8 +236,6 @@ class CommentActivity : AppCompatActivity() {
                         }
                     }
                 }
-            } else {
-                BaseApplication.instance.progressOFF()
             }
         }
     }
@@ -254,8 +293,6 @@ class CommentActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_product)).document(pid).update("commentSize", FieldValue.increment(num)).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "Added Comment Size!")
-            } else {
-                BaseApplication.instance.progressOFF()
             }
         }
     }
@@ -295,7 +332,6 @@ class CommentActivity : AppCompatActivity() {
             when (requestCode) {
                 REQUEST_REPLY -> {
                     refresh()
-                    BaseApplication.instance.progressOFF()
                 }
             }
         }
@@ -318,7 +354,6 @@ class CommentActivity : AppCompatActivity() {
             }
             R.id.action_delete -> {
                 Log.i(TAG, "action_delete!!")
-                BaseApplication.instance.progressON(this, resources.getString(R.string.loading))
                 delComment()
                 true
             }

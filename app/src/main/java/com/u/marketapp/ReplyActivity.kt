@@ -129,12 +129,7 @@ class ReplyActivity : AppCompatActivity() {
                         adapter.addItem(document)
                     }
                     if (isScroll) binding.recyclerView.smoothScrollToPosition(adapter.itemCount-1)
-                    BaseApplication.instance.progressOFF()
-                } else {
-                    BaseApplication.instance.progressOFF()
                 }
-            } else {
-                BaseApplication.instance.progressOFF()
             }
         }
     }
@@ -143,7 +138,6 @@ class ReplyActivity : AppCompatActivity() {
     private fun setButtonListener() {
         // 작성 버튼
         text_view_add_input.setOnClickListener {
-            BaseApplication.instance.progressON(this, resources.getString(R.string.loading))
             val msg = edit_text_input.text.toString()
             Log.i(TAG, "input : $msg")
             val isReply = ::cid.isInitialized
@@ -210,8 +204,6 @@ class ReplyActivity : AppCompatActivity() {
                 Log.i(TAG, "Added Comment ID : ${it.result!!.id}")
 //                item.contents?.let { it1 -> getToken(it1) }
                 refresh()
-            } else {
-                BaseApplication.instance.progressOFF()
             }
         }
     }
@@ -241,13 +233,9 @@ class ReplyActivity : AppCompatActivity() {
                             updateCommentSize(-1)
                             setResult(Activity.RESULT_OK)
                             finish()
-                        } else {
-                            BaseApplication.instance.progressOFF()
                         }
                     }
                 }
-            } else {
-                BaseApplication.instance.progressOFF()
             }
         }
     }
@@ -259,9 +247,6 @@ class ReplyActivity : AppCompatActivity() {
                 updateCommentSize(-1)
                 updateReplySize(-1)
                 delAdapterItem()
-                BaseApplication.instance.progressOFF()
-            } else {
-                BaseApplication.instance.progressOFF()
             }
         }
     }
@@ -320,8 +305,6 @@ class ReplyActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_product)).document(pid).update("commentSize", FieldValue.increment(num)).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "Added Comment Size!")
-            } else {
-                BaseApplication.instance.progressOFF()
             }
         }
     }
@@ -332,8 +315,6 @@ class ReplyActivity : AppCompatActivity() {
             .collection(resources.getString(R.string.db_comment)).document(cid).update("replySize", FieldValue.increment(num)).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "Added Reply Size!")
-            } else {
-                BaseApplication.instance.progressOFF()
             }
         }
     }
@@ -377,7 +358,6 @@ class ReplyActivity : AppCompatActivity() {
             }
             R.id.action_delete -> {
                 Log.i(TAG, "action_delete!!")
-                BaseApplication.instance.progressON(this, resources.getString(R.string.loading))
                 if (checkCurrentComment) delComment()
                 else delReply()
                 true

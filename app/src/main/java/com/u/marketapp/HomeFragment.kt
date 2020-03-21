@@ -10,13 +10,13 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.u.marketapp.adapter.ProductRVAdapter
 import com.u.marketapp.databinding.FragmentHomeBinding
-import com.u.marketapp.listener.InfiniteScrollListener
+import com.u.marketapp.listener.EndlessRecyclerViewScrollListener
 import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
@@ -24,17 +24,17 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     companion object {
         private val TAG = HomeFragment::class.java.simpleName
         private const val REQUEST_PRODUCT = 100
+        private const val REQUEST_ITEM_LIMIT = 30L
     }
 
     private lateinit var adapter : ProductRVAdapter
     private lateinit var binding : FragmentHomeBinding
-    private lateinit var lastVisible: DocumentSnapshot
+    private lateinit var scrollListener: EndlessRecyclerViewScrollListener
 
     // 새로고침
     override fun onRefresh() {
         adapter.clear()
-//        setItemsData()
-        requestItemsData(null)
+        requestItems()
         binding.swipRefreshLayout.isRefreshing = false
     }
 
@@ -43,8 +43,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         setRVAdapter()
         setRVLayoutManager()
-//        setItemsData()
-        requestItemsData(null)
+        requestItems()
         return binding.root
     }
 
@@ -59,8 +58,12 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             setHasFixedSize(true)
             val linearlayout = LinearLayoutManager(context)
             layoutManager = linearlayout
-            clearOnScrollListeners()
-            addOnScrollListener(InfiniteScrollListener({ requestItemsData(lastVisible) }, linearlayout))
+            scrollListener = object : EndlessRecyclerViewScrollListener(linearlayout) {
+                override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                    requestPagingItems(totalItemsCount-1)
+                }
+            }
+            addOnScrollListener(scrollListener)
         }
     }
 
@@ -78,51 +81,48 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     // 데이터 로드
-    private fun requestItemsData(documentSnapshot: DocumentSnapshot?) {
+    private fun requestItems() {
+        scrollListener.resetState()
+
         val db = FirebaseFirestore.getInstance()
-        val query = db.collection(resources.getString(R.string.db_product))
+        db.collection(resources.getString(R.string.db_product))
             .whereEqualTo("status", true)
             .orderBy("regDate", Query.Direction.DESCENDING)
-            .limit(10)
-
-        if (documentSnapshot != null) {
-            query.startAfter(documentSnapshot)
-        }
-
-        query.get().addOnSuccessListener { documentSnapshots ->
-            val items = documentSnapshots.documents
-            lastVisible = items[items.size-1]
-            for (item in items) {
-                adapter.addItem(item)
+            .limit(REQUEST_ITEM_LIMIT)
+            .get()
+            .addOnSuccessListener { documentSnapshots ->
+                val items = documentSnapshots.documents
+                checkItemsData(items.size == 0)
+                for (item in items) {
+                    adapter.addItem(item)
+                }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
             }
-        }.addOnFailureListener { e ->
-            Log.i(TAG, e.toString())
-        }
     }
 
-    // 데이터 설정
-    private fun setItemsData() {
+    // 데이터 로드
+    private fun requestPagingItems(next: Int) {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).whereEqualTo("status", true).orderBy("regDate", Query.Direction.DESCENDING)
-//            .startAfter(lastVisible)
-            .limit(30).get().addOnCompleteListener {
-            if (it.isSuccessful) {
-                if (it.result?.documents!!.size > 0) {
-                    checkItemsData(true)
-                    lastVisible = it.result?.documents!![it.result?.documents!!.size-1]
-                    for(document in it.result?.documents!!) {
-                        adapter.addItem(document)
-                    }
-                } else {
-                    checkItemsData(false)
+        db.collection(resources.getString(R.string.db_product))
+            .whereEqualTo("status", true)
+            .orderBy("regDate", Query.Direction.DESCENDING)
+            .startAfter(adapter.getItem(next))
+            .limit(REQUEST_ITEM_LIMIT)
+            .get()
+            .addOnSuccessListener { documentSnapshots ->
+                val items = documentSnapshots.documents
+                for (item in items) {
+                    adapter.addItem(item)
                 }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
             }
-        }
     }
 
     // 상품 존재 여부
     private fun checkItemsData(isCheck: Boolean) {
-        if (isCheck) {
+        if (!isCheck) {
             recycler_view.visibility = View.VISIBLE
             text_view_empty.visibility = View.GONE
         } else {
@@ -145,7 +145,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             when (requestCode) {
                 REQUEST_PRODUCT -> {
                     adapter.clear()
-                    requestItemsData(null)
+                    requestItems()
                 }
             }
         }
