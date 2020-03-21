@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
@@ -29,12 +30,12 @@ import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.listener.EndlessRecyclerViewScrollListener
 import kotlinx.android.synthetic.main.activity_reply.*
 
-class CommentActivity : AppCompatActivity() {
+class CommentActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     companion object {
         private val TAG = CommentActivity::class.java.simpleName
         private const val REQUEST_REPLY = 100
-        private const val REQUEST_ITEM_LIMIT = 30L
+        private const val REQUEST_ITEM_LIMIT = 13L
     }
 
     private lateinit var adapter: CommentRVAdapter
@@ -44,9 +45,17 @@ class CommentActivity : AppCompatActivity() {
     private lateinit var pid: String
     private var checkUseContext: Boolean = false
 
+    // 새로고침
+    override fun onRefresh() {
+        adapter.clear()
+        requestItems()
+        binding.swipRefreshLayout.isRefreshing = false
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_comment)
+        binding.swipRefreshLayout.setOnRefreshListener(this)
         if (intent.hasExtra("pid")) {
             pid = intent.getStringExtra("pid")
             initView()
@@ -58,7 +67,7 @@ class CommentActivity : AppCompatActivity() {
         setActionbar() // 액션바 설정
         setRVAdapter() // 어댑터 설정
         setRVLayoutManager() // 레이아웃 매니저 설정
-        setItemsData()
+        requestItems()
         setButtonListener() // 버튼 클릭 설정
         setEditTextChangedListener()
     }
@@ -125,7 +134,7 @@ class CommentActivity : AppCompatActivity() {
             layoutManager = linearlayout
             scrollListener = object : EndlessRecyclerViewScrollListener(linearlayout) {
                 override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-                    requestPagingItems(totalItemsCount-1)
+                    requestPagingItems(totalItemsCount-1, false)
                 }
             }
             addOnScrollListener(scrollListener)
@@ -138,7 +147,7 @@ class CommentActivity : AppCompatActivity() {
 
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment))
-            .orderBy("regDate", Query.Direction.DESCENDING)
+            .orderBy("regDate", Query.Direction.ASCENDING)
             .limit(REQUEST_ITEM_LIMIT)
             .get()
             .addOnSuccessListener { documentSnapshots ->
@@ -152,10 +161,10 @@ class CommentActivity : AppCompatActivity() {
     }
 
     // 데이터 로드
-    private fun requestPagingItems(next: Int) {
+    private fun requestPagingItems(next: Int, isScroll: Boolean) {
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment))
-            .orderBy("regDate", Query.Direction.DESCENDING)
+            .orderBy("regDate", Query.Direction.ASCENDING)
             .startAfter(adapter.getItem(next))
             .limit(REQUEST_ITEM_LIMIT)
             .get()
@@ -164,25 +173,14 @@ class CommentActivity : AppCompatActivity() {
                 for (item in items) {
                     adapter.addItem(item)
                 }
+                if (isScroll) {
+                    if (items.size <= 0) BaseApplication.instance.progressOFF()
+                    requestPagingItems(adapter.itemCount-1, (items.size > 0))
+                    binding.recyclerView.smoothScrollToPosition(adapter.itemCount-1)
+                }
             }.addOnFailureListener { e ->
                 Log.i(TAG, e.toString())
             }
-    }
-
-    // 데이터 설정
-    private fun setItemsData() {
-        val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment)).orderBy("regDate", Query.Direction.ASCENDING).get().addOnCompleteListener {
-            if (it.isSuccessful) {
-                if (it.result?.documents!!.size > 0) {
-                    for(document in it.result?.documents!!) {
-                        Log.i(TAG, "Added Comment : ${document.id}")
-                        adapter.addItem(document)
-                    }
-                    binding.recyclerView.smoothScrollToPosition(adapter.itemCount-1)
-               }
-            }
-        }
     }
 
     // 추가 버튼 설정
@@ -205,13 +203,54 @@ class CommentActivity : AppCompatActivity() {
     // 데이터베이스 추가
     private fun addComment(item: CommentEntity) {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment)).add(item).addOnCompleteListener {
-            if (it.isSuccessful) {
-                Log.i(TAG, "Added Comment ID : ${it.result!!.id}")
+        db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment)).add(item).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.i(TAG, "Added Comment ID : ${task.result!!.id}")
+                updateCommentSize(1)
+                clearEditText()
+                addAdapterComment(task.result!!.id)
+
 //                item.contents?.let { it1 -> getToken(it1) }
-                refresh()
             }
         }
+    }
+
+    // 어댑터에 추가
+    private fun addAdapterComment(documentId: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid)
+            .collection(resources.getString(R.string.db_comment)).document(documentId)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                endPageScroll(documentSnapshot)
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
+    }
+
+    private fun endPageScroll(documentSnapshot: DocumentSnapshot) {
+        if (adapter.itemCount >= REQUEST_ITEM_LIMIT) {
+            BaseApplication.instance.progressON(this, resources.getString(R.string.loading))
+            requestPagingItems(adapter.itemCount-1, true)
+        } else {
+            adapter.addItem(documentSnapshot)
+            binding.recyclerView.smoothScrollToPosition(adapter.itemCount-1)
+        }
+    }
+
+    // 리플 상위 댓글 삭제
+    private fun delComment(cid: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid)
+            .collection(resources.getString(R.string.db_comment)).document(cid)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                Log.i(TAG, "Delete Comment!!")
+                adapter.removeItem(documentSnapshot)
+                updateCommentSize(-1)
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
     }
 
     // 데이터베이스 삭제
@@ -219,8 +258,8 @@ class CommentActivity : AppCompatActivity() {
         document.reference.delete().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Log.i(TAG, "Delete Comment!!")
-                updateCommentSize(-1)
                 delAdapterItem()
+                updateCommentSize(-1)
                 val item = document.toObject(CommentEntity::class.java)
                 if (item!!.replySize > 0) {
                     document.reference.collection(resources.getString(R.string.db_reply)).get().addOnCompleteListener {
@@ -242,13 +281,6 @@ class CommentActivity : AppCompatActivity() {
 
     private fun delAdapterItem() {
         adapter.removeItem(document)
-    }
-
-    private fun refresh() {
-        adapter.clear()
-        updateCommentSize(1)
-        setItemsData()
-        clearEditText()
     }
 
     private fun getToken(msg: String) {
@@ -331,7 +363,8 @@ class CommentActivity : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 REQUEST_REPLY -> {
-                    refresh()
+                    val cid = data!!.getStringExtra("cid")
+                    delComment(cid)
                 }
             }
         }
