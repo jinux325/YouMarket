@@ -8,9 +8,8 @@ import android.os.Handler
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.u.marketapp.chat.FCM
 import com.u.marketapp.signup.SmsActivity
-import kotlinx.android.synthetic.main.activity_chat.*
+
 
 class SplashActivity : AppCompatActivity() {
 
@@ -28,6 +27,53 @@ class SplashActivity : AppCompatActivity() {
         val log = prefs.getString("log", "")
         Log.e("log $TAG", log)
 
+       /* val mUser = FirebaseAuth.getInstance().currentUser
+        mUser!!.getIdToken(true)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val idToken = task.result!!.token
+                    Log.e("spl token ", idToken)
+                    Log.e("spl token ", FirebaseInstanceId.getInstance().token)
+                    FirebaseInstanceId.getInstance().instanceId
+                        .addOnCompleteListener(OnCompleteListener { task ->
+                            if (!task.isSuccessful) {
+                                Log.w(TAG, "getInstanceId failed", task.exception)
+                                return@OnCompleteListener
+                            }
+
+                            // Get new Instance ID token
+                            val token = task.result?.token
+                            Log.e("spl token ", token)
+
+                        })
+
+
+                    // Send token to your backend via HTTPS
+                    // ...
+                } else { // Handle error -> task.getException();
+                }
+            }*/
+
+        /*  val mUser = FirebaseAuth.getInstance().currentUser
+          mUser!!.getIdToken(true)
+              .addOnCompleteListener { task ->
+                  if (task.isSuccessful) {
+                      val idToken = task.result!!.token
+                      Log.e("spl TOken", " $idToken")
+                      // Send token to your backend via HTTPS
+                      // ...
+                  } else { // Handle error -> task.getException();
+                  }
+              }*/
+
+/*
+        FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener { task ->
+            if(task.isSuccessful){
+                //로그아웃처리
+                FirebaseAuth.getInstance().signOut()
+                finish()
+            }
+        }*/
 
         val hd = Handler()
 

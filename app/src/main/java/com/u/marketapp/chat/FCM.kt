@@ -1,11 +1,10 @@
 package com.u.marketapp.chat
 
 import android.util.Log
-import kotlinx.android.synthetic.main.activity_chat.*
 import org.json.JSONObject
 import java.net.HttpURLConnection
 
-class FCM(val token:String, val myName:String?, val comment:String?, val docId:String, val partnerName:String?) : Thread() {
+class FCM(private val token:String, private val myName:String?, private val comment:String?, private val docId:String, private val partnerName:String?) : Thread() {
     override fun run() {
         try {
             Log.e("@@ FCM class ", "token: $token  chatRoomUid: $docId")
@@ -30,23 +29,31 @@ class FCM(val token:String, val myName:String?, val comment:String?, val docId:S
             root.put("to", registrationToken)
             root.put("data", data)
             // FMC 메시지 생성 end
-            Log.d("Main_ Thread", "@@@")
-            val url = java.net.URL(URL)
-            val conn =
-                url.openConnection() as HttpURLConnection
-            conn.requestMethod = "POST"
-            conn.doOutput = true
-            conn.doInput = true
-            conn.addRequestProperty("Authorization", "key=$serverKey")
-            conn.setRequestProperty("Accept", "application/json")
-            conn.setRequestProperty("Content-type", "application/json")
-            val os = conn.outputStream
-            os.write(root.toString().toByteArray(charset("utf-8")))
-            os.flush()
-            conn.responseCode
+            Log.e("Main_ Thread", "@@@")
+          //  val thread = Thread {
+                Log.e("Main_ Thread", "@@@111")
+                val url = java.net.URL(URL)
+                val conn =
+                    url.openConnection() as HttpURLConnection
+                conn.requestMethod = "POST"
+                conn.doOutput = true
+                conn.doInput = true
+                conn.addRequestProperty("Authorization", "key=$serverKey")
+                conn.setRequestProperty("Accept", "application/json")
+                conn.setRequestProperty("Content-type", "application/json")
+                Log.e("Main_ Thread", "@@@222")
+                val os = conn.outputStream
+                os.write(root.toString().toByteArray(charset("utf-8")))
+                os.flush()
+                conn.responseCode
+                Log.e("Main_ Thread", "@@@333")
+           // }
+           // thread.start()
+
+
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.d("Main_ Thread", "@@")
+            Log.e("Main_ Thread", "@@")
         }
     }
 }

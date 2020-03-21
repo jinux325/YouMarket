@@ -21,7 +21,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.common.io.Files.getFileExtension
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.u.marketapp.MainActivity
@@ -182,10 +181,8 @@ class ProfileActivity : AppCompatActivity() {
         }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val downloadUri = task.result
-                var token = FirebaseInstanceId.getInstance().token
-                while(token == null){
-                    token  = FirebaseInstanceId.getInstance().token
-                }
+                val pref = getSharedPreferences("user", Context.MODE_PRIVATE)
+                val token = pref.getString("token", "")
                 val user = hashMapOf(
                    // "uid" to uid,
                     "name" to name,

@@ -225,12 +225,8 @@ class ChatActivity : AppCompatActivity() {
                     token = userEntity!!.token.toString()
                     Log.d("@@ getToken token  ", userEntity.token)
                     //FCM(userEntity!!.token)
-                    val pref = getSharedPreferences("setting", Context.MODE_PRIVATE)
-                    val prefChatttingSwitch = pref.getString("chattingSwitch", "")
-                    if(prefChatttingSwitch=="true"){
-                        val fcm = FCM(token,myData.name,comment,chatRoomUid,tv_partner_nickname.text.toString())
-                        fcm.start()
-                    }
+                    val fcm = FCM(token,myData.name,comment,chatRoomUid,tv_partner_nickname.text.toString())
+                    fcm.start()
                     /*val thread=FCM()
                     thread.start()*/
                     //FCM(userEntity!!.token)

@@ -18,6 +18,7 @@ import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.MainActivity
 import com.u.marketapp.R
+import com.u.marketapp.SplashActivity
 import com.u.marketapp.entity.UserEntity
 import kotlinx.android.synthetic.main.activity_sms.*
 import java.util.concurrent.TimeUnit
@@ -27,7 +28,7 @@ class SmsActivity : AppCompatActivity() {
     private val TAG = "SmsActivity"
     private val mAuth= FirebaseAuth.getInstance()
     var codeSent : String = ""
-    var phone=""
+    private var phone=""
     private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +59,11 @@ class SmsActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val uid = FirebaseAuth.getInstance().currentUser!!.uid
                     Log.d(" userExist(uid) 유저 확인", uid)
+
+                    val intentItems = intent
+                    if(intentItems.getStringExtra("delete")!=null){
+                        userDelete()
+                    }
 
                     userExist(uid)
                 } else {
@@ -144,7 +150,7 @@ class SmsActivity : AppCompatActivity() {
             }
     }
 
-    fun userExist(uid:String){
+    private fun userExist(uid:String){
 
         var count =0
         db.collection(resources.getString(R.string.db_user)).get().addOnSuccessListener { result ->
@@ -152,7 +158,7 @@ class SmsActivity : AppCompatActivity() {
                 count++
                 Log.d("@@@@@@@@@@@@@@@ ", document.id+"   "+uid)
                 Log.d("@@@@@@@@@@@@@@@ ", count.toString()+"   "+result.size())
-                if(document.id.equals(uid)){
+                if(document.id == uid){
                     Log.d("@@@@@@@@@@@@@@@ ", "if문 ")
                     // 로그인
                     Log.d("유저 확인", "true  로그인")
@@ -160,6 +166,7 @@ class SmsActivity : AppCompatActivity() {
                     intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
                     intent.putExtra("phoneNumber", phone)
                     userData()
+                    tokenUpdate()
                     startActivity(intent)
                     break
                 }else if(count ==  result.size()){
@@ -175,6 +182,25 @@ class SmsActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    private fun userDelete(){
+        FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener { task ->
+            if(task.isSuccessful){
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(this, SplashActivity::class.java)
+                intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
+        }
+    }
+
+    private fun tokenUpdate(){
+        val pref = getSharedPreferences("user", Context.MODE_PRIVATE)
+        val token = pref.getString("token", "")
+        val uid = mAuth.currentUser!!.uid
+        db.collection(resources.getString(R.string.db_user)).document(uid)
+            .update("token", token)
     }
 
 }
