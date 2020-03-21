@@ -11,7 +11,7 @@ class FCM(private val token:String, private val myName:String?, private val comm
             val serverKey =
                 "AAAACA4EsA0:APA91bGdb7Oxa49X6z23tXjCn48DiosjzqYFZXM6G67I_gH5sFI_AKuoFJ6ayLyqBHGAmckEkMSO8UU5qD8XFesWRSlDKBVdx6zHI_cCEaz6xCTg4CbgWkKCNxVBzM3SupUJXio41w6a"
             val registrationToken: String = token
-            val URL = "https://fcm.googleapis.com/fcm/send"
+            val fcmUrl = "https://fcm.googleapis.com/fcm/send"
             val title = myName
             val body = comment
             val documentId = docId
@@ -32,7 +32,7 @@ class FCM(private val token:String, private val myName:String?, private val comm
             Log.e("Main_ Thread", "@@@")
           //  val thread = Thread {
                 Log.e("Main_ Thread", "@@@111")
-                val url = java.net.URL(URL)
+                val url = java.net.URL(fcmUrl)
                 val conn =
                     url.openConnection() as HttpURLConnection
                 conn.requestMethod = "POST"

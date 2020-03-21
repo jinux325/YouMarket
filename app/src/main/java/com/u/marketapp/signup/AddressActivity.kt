@@ -19,10 +19,9 @@ import org.xmlpull.v1.XmlPullParserFactory
 import java.io.InputStreamReader
 import java.net.URL
 
-
 class AddressActivity : AppCompatActivity() {
 
-    val TAG = "AddressActivity"
+    val tag = "AddressActivity"
     var addressList : MutableList<AddressVO> = mutableListOf()
     var requestUrl: String? = null
     var page = 0
@@ -43,7 +42,7 @@ class AddressActivity : AppCompatActivity() {
             page = 1
                        // loading()
 
-            val async = asyncTask()
+            val async = AscynTask()
             async.execute()
 
         }
@@ -58,7 +57,7 @@ class AddressActivity : AppCompatActivity() {
                         (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
                     val itemTotalCount = recyclerView.adapter!!.itemCount
                     Log.d(
-                        TAG,
+                        tag,
                         "$lastVisibleItemPosition $itemTotalCount"
                     )
                 }
@@ -72,13 +71,10 @@ class AddressActivity : AppCompatActivity() {
                 if (isScrolling && lastVisibleItemPosition == itemTotalCount - 1) {
                     page += 1
                     isScrolling = false
-                    /*if (loadData.isCancelled){
-
-                    }*/
-                    val async = asyncTask()
+                    val async = AscynTask()
                     async.execute()
                     Log.d(
-                        TAG,
+                        tag,
                         "$lastVisibleItemPosition $itemTotalCount"
                     )
                 }
@@ -89,7 +85,7 @@ class AddressActivity : AppCompatActivity() {
 
 
     @SuppressLint("StaticFieldLeak")
-    inner class asyncTask : AsyncTask<Unit, Unit, String>() {
+    inner class AscynTask : AsyncTask<Unit, Unit, String>() {
         override fun doInBackground(vararg params: Unit?): String? {
             requestUrl =
                 "http://openapi.epost.go.kr/postal/retrieveNewAdressAreaCdSearchAllService/retrieveNewAdressAreaCdSearchAllService/getNewAddressListAreaCdSearchAll?" +
@@ -127,9 +123,6 @@ class AddressActivity : AppCompatActivity() {
                             lnmAddrVal=""
                         }
                         XmlPullParser.START_TAG -> {
-                           /* if (parser.name == "newAddressListAreaCdSearchAll") {
-                                // item =
-                            }*/
                             if (parser.name == "zipNo") zipNo = true
                             if (parser.name == "rnAdres") rnAddr = true
                             if (parser.name == "lnmAdres") lnmAddr = true
@@ -168,7 +161,7 @@ class AddressActivity : AppCompatActivity() {
             //어답터 연결
             val intentItems = intent
             if (intentItems.getStringExtra("update") != null) {
-                Log.e(TAG, "location1: " + intentItems.getStringExtra("update"))
+                Log.e(tag, "location1: " + intentItems.getStringExtra("update"))
                 val location = intentItems.getStringExtra("update")
                 val addrAdapter =
                     AddressAdapter(this@AddressActivity, addressList, "", location)
@@ -184,7 +177,7 @@ class AddressActivity : AppCompatActivity() {
                 phoneNumber = intentItem.getStringExtra("phoneNumber")
                 Log.d("@adapter@ activity ", " $phoneNumber ")
 
-                Log.e(TAG, "location2: ")
+                Log.e(tag, "location2: ")
                 val adapter = AddressAdapter(this@AddressActivity, addressList, phoneNumber, "")
 
 

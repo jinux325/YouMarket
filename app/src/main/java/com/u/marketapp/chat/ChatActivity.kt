@@ -1,7 +1,6 @@
 package com.u.marketapp.chat
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -15,24 +14,20 @@ import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.vo.ChatRoomVO
 import com.u.marketapp.vo.ChattingVO
 import kotlinx.android.synthetic.main.activity_chat.*
-import kotlinx.android.synthetic.main.activity_setting.*
-import org.json.JSONObject
-import java.net.HttpURLConnection
-import java.net.URL
 import java.util.*
 
 
 class ChatActivity : AppCompatActivity() {
 
-    private val db = FirebaseFirestore.getInstance()
+    val db = FirebaseFirestore.getInstance()
     private val myUid = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var chatRoom : HashMap<String,Any>
     private lateinit var chatRoomUid : String
     private lateinit var chattingList : MutableList<ChattingVO>
     var comment:String=""
     lateinit var name:String
-    lateinit var myData: UserEntity
-    lateinit var pid:String
+    private lateinit var myData: UserEntity
+    private lateinit var pid:String
     lateinit var seller:String
     private lateinit var token:String
 

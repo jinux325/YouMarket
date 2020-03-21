@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit
 
 class SmsActivity : AppCompatActivity() {
 
-    private val TAG = "SmsActivity"
+    private val tag = "SmsActivity"
     private val mAuth= FirebaseAuth.getInstance()
     var codeSent : String = ""
     private var phone=""
@@ -87,11 +87,11 @@ class SmsActivity : AppCompatActivity() {
             phoneNumber = phone.substring(1, 11)
         }
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-            "+82$phoneNumber", // Phone number to verify
-            60, // Timeout duration
-            TimeUnit.SECONDS, // Unit of timeout
-            this, // Activity (for callback binding)
-            callbacks) // OnVerificationStateChangedCallbacks
+            "+82$phoneNumber",
+            60,
+            TimeUnit.SECONDS,
+            this,
+            callbacks)
 
     }
 
@@ -133,7 +133,7 @@ class SmsActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
                         UserEntity::class.java)
-                    Log.d(TAG, userEntity?.name+"  "+userEntity?.address)
+                    Log.d(tag, userEntity?.name+"  "+userEntity?.address)
                     val prefs = getSharedPreferences("User", Context.MODE_PRIVATE)
                     val edit = prefs.edit()
                     edit.putString("uid", uid)
@@ -145,21 +145,17 @@ class SmsActivity : AppCompatActivity() {
                     edit.putString("log", "IN")
                     edit.apply()
                 } else {
-                    Log.d(TAG, "Error getting Users", task.exception)
+                    Log.d(tag, "Error getting Users", task.exception)
                 }
             }
     }
 
     private fun userExist(uid:String){
-
         var count =0
         db.collection(resources.getString(R.string.db_user)).get().addOnSuccessListener { result ->
             for(document in result){
                 count++
-                Log.d("@@@@@@@@@@@@@@@ ", document.id+"   "+uid)
-                Log.d("@@@@@@@@@@@@@@@ ", count.toString()+"   "+result.size())
                 if(document.id == uid){
-                    Log.d("@@@@@@@@@@@@@@@ ", "if문 ")
                     // 로그인
                     Log.d("유저 확인", "true  로그인")
                     val intent = Intent(this, MainActivity::class.java)

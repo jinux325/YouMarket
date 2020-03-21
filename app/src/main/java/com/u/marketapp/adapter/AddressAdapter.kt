@@ -86,11 +86,9 @@ fun addressDialog( context: Context, lAddr:String, phoneNumber: String,location:
         }
 
     }
-    val dialogListener = object: DialogInterface.OnClickListener{
-        override fun onClick(dialog: DialogInterface?, p1: Int) {
-            when(p1){
-                DialogInterface.BUTTON_POSITIVE -> pos()
-            }
+    val dialogListener = DialogInterface.OnClickListener { _, p1 ->
+        when(p1){
+            DialogInterface.BUTTON_POSITIVE -> pos()
         }
     }
     dialog.setPositiveButton("확인",dialogListener)

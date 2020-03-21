@@ -31,7 +31,7 @@ import java.util.*
 
 class ProfileActivity : AppCompatActivity() {
 
-    private val TAG = "ProfileActivity"
+    private val tag = "ProfileActivity"
     private var profileImage : Uri? =null
     private lateinit var phoneNumber:String
     lateinit var address:String
@@ -194,8 +194,8 @@ class ProfileActivity : AppCompatActivity() {
 
                 db.collection(resources.getString(R.string.db_user)).document(uid!!)
                     .set(user)
-                    .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
-                    .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
+                    .addOnSuccessListener { Log.d(tag, "DocumentSnapshot successfully written!") }
+                    .addOnFailureListener { e -> Log.w(tag, "Error writing document", e) }
 
                 edit.putString("uid", uid)
                 edit.putString("name", name)

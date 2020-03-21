@@ -22,7 +22,7 @@ class LocationSettingActivity : AppCompatActivity() {
 
     private val db = FirebaseFirestore.getInstance()
     private val uid = FirebaseAuth.getInstance().currentUser!!.uid
-    private val TAG = "LocationSettingAcitivity"
+    private val tag = "LocationSettingAcitivity"
 
     @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -151,7 +151,7 @@ class LocationSettingActivity : AppCompatActivity() {
                     }
                     tv_addr1.text = userEntity?.address
                 } else {
-                    Log.d(TAG, "Error getting LocationSetting", task.exception)
+                    Log.d(tag, "Error getting LocationSetting", task.exception)
                 }
             }
     }

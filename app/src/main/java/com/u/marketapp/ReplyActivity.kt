@@ -202,7 +202,7 @@ class ReplyActivity : AppCompatActivity() {
             .collection(resources.getString(R.string.db_reply)).add(item).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "Added Comment ID : ${it.result!!.id}")
-//                item.contents?.let { it1 -> getToken(it1) }
+         //       item.contents?.let { it1 -> getToken(it1) }
                 refresh()
             }
         }
