@@ -74,10 +74,7 @@ class CommentActivity : AppCompatActivity() {
         adapter.setMoreClickListener(object : CommentRVAdapter.MoreClickListener {
             override fun onClick(view: View, position: Int) {
                 Log.i(TAG, "More Click : $position")
-                if (adapter.getItem(position).toObject(CommentEntity::class.java)!!.user == FirebaseAuth.getInstance().currentUser!!.uid) checkUseContext = true
-                document = adapter.getItem(position)
-                registerForContextMenu(view)
-                openContextMenu(view)
+                checkLicense(view, position)
             }
         })
         adapter.setReplyClickListener(object : CommentRVAdapter.ReplyClickListener {
@@ -87,6 +84,33 @@ class CommentActivity : AppCompatActivity() {
                 moveReplyIntent()
             }
         })
+    }
+
+    // 권한 확인
+    private fun checkLicense(view: View, position: Int) {
+        if (adapter.getItem(position).toObject(CommentEntity::class.java)!!.user == FirebaseAuth.getInstance().currentUser!!.uid) {
+            checkUseContext = true
+            document = adapter.getItem(position)
+            registerForContextMenu(view)
+            openContextMenu(view)
+        } else {
+            val db = FirebaseFirestore.getInstance()
+            db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val item = task.result!!.toObject(ProductEntity::class.java)!!
+                    if (item.seller == FirebaseAuth.getInstance().currentUser!!.uid) {
+                        checkUseContext = true
+                        document = adapter.getItem(position)
+                        registerForContextMenu(view)
+                        openContextMenu(view)
+                    } else {
+                        document = adapter.getItem(position)
+                        registerForContextMenu(view)
+                        openContextMenu(view)
+                    }
+                }
+            }
+        }
     }
 
     // 리사이클뷰 설정

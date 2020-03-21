@@ -265,7 +265,7 @@ class EditActivity : AppCompatActivity() {
         map["contents"] = edit_text_contents.text.toString() // 내용
         map["suggestion"] = check_box_suggestion.isChecked // 가격 제안 여부
         map["modDate"] = Date() // 수정일
-       map["status"] = "unactive" // 비활성화
+        map["status"] = false // 비활성화
         if (edit_text_price.text.toString().isNotEmpty()) {
             map["price"] = edit_text_price.text.toString().replace(",", "").toInt() // 가격
         }
@@ -384,7 +384,7 @@ class EditActivity : AppCompatActivity() {
     // 상품 활성화
     private fun updateActiveProduct(item: String?) {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(item!!).update("status", "active").addOnCompleteListener {
+        db.collection(resources.getString(R.string.db_product)).document(item!!).update("status", true).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "상품 업데이트 성공 : ${it.result}")
                 BaseApplication.instance.progressOFF()

@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.kakao.kakaolink.v2.KakaoLinkResponse
 import com.kakao.kakaolink.v2.KakaoLinkService
 import com.kakao.network.ErrorResult
@@ -246,7 +247,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     // 상품 비활성화
     private fun unActiveProduct() {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid).update("status", "unactive").addOnCompleteListener { document ->
+        db.collection(resources.getString(R.string.db_product)).document(pid).update("status", false).addOnCompleteListener { document ->
             if (document.isSuccessful) {
                 Log.i(TAG, "상품 비활성화!")
             }
@@ -318,13 +319,24 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     private fun deleteImage() {
         val storage = FirebaseStorage.getInstance()
         if (!productEntity.imageArray.isNullOrEmpty()) {
+            var count = 0
+            var ref = storage.getReferenceFromUrl(productEntity.imageArray!![0]).parent
             for (uri in productEntity.imageArray!!) {
                 storage.getReferenceFromUrl(uri).delete().addOnCompleteListener {
                     if (it.isSuccessful) {
                         Log.i(TAG, "이미지 삭제 성공 (저장소) : $uri")
+                        count++
                     }
                 }
             }
+            Log.i(TAG, "Folder Name : ${ref.toString()}")
+//            if (productEntity.imageArray!!.size == count) {
+//                ref!!.delete().addOnCompleteListener { task ->
+//                    if (task.isSuccessful) {
+//                        Log.i(TAG, "상품 폴더 삭제 성공 (저장소)")
+//                    }
+//                }
+//            }
         }
     }
 

@@ -16,6 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.u.marketapp.adapter.ProductRVAdapter
 import com.u.marketapp.databinding.FragmentHomeBinding
+import com.u.marketapp.listener.InfiniteScrollListener
 import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
@@ -32,7 +33,8 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     // 새로고침
     override fun onRefresh() {
         adapter.clear()
-        setItemsData()
+//        setItemsData()
+        requestItemsData(null)
         binding.swipRefreshLayout.isRefreshing = false
     }
 
@@ -41,7 +43,8 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         setRVAdapter()
         setRVLayoutManager()
-        setItemsData()
+//        setItemsData()
+        requestItemsData(null)
         return binding.root
     }
 
@@ -52,25 +55,55 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     // 리사이클뷰 레이아웃 매니저 설정
     private fun setRVLayoutManager() {
-        binding.recyclerView.layoutManager = LinearLayoutManager(context)
-        binding.recyclerView.setHasFixedSize(true)
+        binding.recyclerView.apply {
+            setHasFixedSize(true)
+            val linearlayout = LinearLayoutManager(context)
+            layoutManager = linearlayout
+            clearOnScrollListeners()
+            addOnScrollListener(InfiniteScrollListener({ requestItemsData(lastVisible) }, linearlayout))
+        }
     }
 
     // 리사이클뷰 어댑터 설정
     private fun setRVAdapter() {
-        adapter = ProductRVAdapter()
-        binding.recyclerView.adapter = adapter
-        adapter.setItemClickListener(object : ProductRVAdapter.ItemClickListener {
-            override fun onClick(view: View, position: Int) {
-                moveActivity(adapter.getItem(position).id)
+        if (binding.recyclerView.adapter == null) {
+            adapter = ProductRVAdapter()
+            binding.recyclerView.adapter = adapter
+            adapter.setItemClickListener(object : ProductRVAdapter.ItemClickListener {
+                override fun onClick(view: View, position: Int) {
+                    moveActivity(adapter.getItem(position).id)
+                }
+            })
+        }
+    }
+
+    // 데이터 로드
+    private fun requestItemsData(documentSnapshot: DocumentSnapshot?) {
+        val db = FirebaseFirestore.getInstance()
+        val query = db.collection(resources.getString(R.string.db_product))
+            .whereEqualTo("status", true)
+            .orderBy("regDate", Query.Direction.DESCENDING)
+            .limit(10)
+
+        if (documentSnapshot != null) {
+            query.startAfter(documentSnapshot)
+        }
+
+        query.get().addOnSuccessListener { documentSnapshots ->
+            val items = documentSnapshots.documents
+            lastVisible = items[items.size-1]
+            for (item in items) {
+                adapter.addItem(item)
             }
-        })
+        }.addOnFailureListener { e ->
+            Log.i(TAG, e.toString())
+        }
     }
 
     // 데이터 설정
     private fun setItemsData() {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).whereEqualTo("status", "active").orderBy("regDate", Query.Direction.DESCENDING)
+        db.collection(resources.getString(R.string.db_product)).whereEqualTo("status", true).orderBy("regDate", Query.Direction.DESCENDING)
 //            .startAfter(lastVisible)
             .limit(30).get().addOnCompleteListener {
             if (it.isSuccessful) {
@@ -112,7 +145,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             when (requestCode) {
                 REQUEST_PRODUCT -> {
                     adapter.clear()
-                    setItemsData()
+                    requestItemsData(null)
                 }
             }
         }

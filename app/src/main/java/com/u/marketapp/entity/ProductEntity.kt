@@ -18,8 +18,9 @@ data class ProductEntity (
     val attention: ArrayList<String>?, // 관심 유저 목록
     val commentSize: Int, // 댓글 수
     val regDate: Date, // 등록일
-    var modDate: Date?, // 수정일
-    var status: String // 상태( unactive : 비활성화, active : 활성화, done : 거래완료)
+    val modDate: Date?, // 수정일
+    val transactionStatus: Int, // 거래상태 ( 0: 일반, 1: 거래중, 2: 예약중, 3: 거래완료 )
+    val status: Boolean // 상태
 ) : Serializable {
-    constructor() : this("", "", "", "", 0, false, "", ArrayList(), ArrayList(), ArrayList(), ArrayList(), 0, Date(), Date(), "unactive")
+    constructor() : this("", "", "", "", 0, false, "", ArrayList(), ArrayList(), ArrayList(), ArrayList(), 0, Date(), Date(), 0, false)
 }
