@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NO_HISTORY
 import android.graphics.BitmapFactory
-import android.media.RingtoneManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.auth.FirebaseAuth
@@ -16,7 +15,6 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.u.marketapp.CommentActivity
 import com.u.marketapp.R
-import com.u.marketapp.ReplyActivity
 
 
 class ChatFirebaseMessagingService : FirebaseMessagingService() {
@@ -75,18 +73,18 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
 
         //val channelId = "Notification"
         val channelId:String
-        val name = "Channel"
+        val name :String
         val description :String
 
         val pref = getSharedPreferences("setting", Context.MODE_PRIVATE)
           val prefVibrationSwitch = pref.getString("vibrationSwitch", "")
 
          channelId = if(prefVibrationSwitch=="true"){
-              Log.e("FCM ", " 진동")
-              "Notification"
+              Log.e("FCM ", " Vibration")
+              "Vibration"
           }else{
-              Log.e("FCM ", " no 진동")
-              "NotificationId"
+              Log.e("FCM ", " no Vibration")
+              "NoVibration"
           }
 
         val notificationManager: NotificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -94,18 +92,29 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
         if( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             val importance:Int
 
-            if(channelId ==  "NotificationId"){
-                description = "This is channel1"
+            if(channelId ==  "NoVibration"){
+                name = "No vibration channel"
+                description = "No vibration channel"
                 importance = NotificationManager.IMPORTANCE_HIGH
                 Log.e("send no Vibration "," $channelId, $name, $importance")
 
                 val channel = NotificationChannel(channelId, name, importance)
+
                 channel.description = description
                 channel.setShowBadge(false)
+                channel.enableVibration(false)
+
+                /*val notificationSound = RingtoneManager.getDefaultUri(NotificationManager.IMPORTANCE_DEFAULT)
+                val audioAttributes = AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build()*/
+                channel.setSound(null,null)
 
                 notificationManager.createNotificationChannel(channel)
             }else{
-                description = "This is channel2"
+                name = "Vibration channel"
+                description = "Vibration channel"
                 importance = NotificationManager.IMPORTANCE_HIGH
                 Log.e("send Vibration "," $channelId, $name, $importance")
 
@@ -165,7 +174,6 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
         }
 
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
-        val notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
             .setSmallIcon(R.drawable.ic_tree)
@@ -173,7 +181,6 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
             .setContentText(remoteMessage.data["body"])
             .setContentIntent(pendingIntent)
             .setShowWhen(true)
-            .setSound(notificationSound)
 
         notificationManager.notify(0, notificationBuilder.build())
     }
