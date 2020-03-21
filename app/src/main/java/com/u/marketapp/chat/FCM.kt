@@ -1,10 +1,20 @@
 package com.u.marketapp.chat
 
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.u.marketapp.R
+import com.u.marketapp.entity.UserEntity
+import com.u.marketapp.vo.ChatRoomVO
+import kotlinx.android.synthetic.main.activity_chat.*
 import org.json.JSONObject
 import java.net.HttpURLConnection
 
 class FCM(private val token:String, private val myName:String?, private val comment:String?, private val docId:String, private val partnerName:String?) : Thread() {
+
+    val db = FirebaseFirestore.getInstance()
+    private val myUid = FirebaseAuth.getInstance().currentUser!!.uid
+
     override fun run() {
         try {
             Log.e("@@ FCM class ", "token: $token  chatRoomUid: $docId")
@@ -30,25 +40,22 @@ class FCM(private val token:String, private val myName:String?, private val comm
             root.put("data", data)
             // FMC 메시지 생성 end
             Log.e("Main_ Thread", "@@@")
-          //  val thread = Thread {
-                Log.e("Main_ Thread", "@@@111")
-                val url = java.net.URL(fcmUrl)
-                val conn =
-                    url.openConnection() as HttpURLConnection
-                conn.requestMethod = "POST"
-                conn.doOutput = true
-                conn.doInput = true
-                conn.addRequestProperty("Authorization", "key=$serverKey")
-                conn.setRequestProperty("Accept", "application/json")
-                conn.setRequestProperty("Content-type", "application/json")
-                Log.e("Main_ Thread", "@@@222")
-                val os = conn.outputStream
-                os.write(root.toString().toByteArray(charset("utf-8")))
-                os.flush()
-                conn.responseCode
-                Log.e("Main_ Thread", "@@@333")
-           // }
-           // thread.start()
+            Log.e("Main_ Thread", "@@@111")
+            val url = java.net.URL(fcmUrl)
+            val conn =
+                url.openConnection() as HttpURLConnection
+            conn.requestMethod = "POST"
+            conn.doOutput = true
+            conn.doInput = true
+            conn.addRequestProperty("Authorization", "key=$serverKey")
+            conn.setRequestProperty("Accept", "application/json")
+            conn.setRequestProperty("Content-type", "application/json")
+            Log.e("Main_ Thread", "@@@222")
+            val os = conn.outputStream
+            os.write(root.toString().toByteArray(charset("utf-8")))
+            os.flush()
+            conn.responseCode
+            Log.e("Main_ Thread", "@@@333")
 
 
         } catch (e: Exception) {
@@ -56,4 +63,6 @@ class FCM(private val token:String, private val myName:String?, private val comm
             Log.e("Main_ Thread", "@@")
         }
     }
+
+
 }

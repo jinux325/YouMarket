@@ -187,7 +187,7 @@ class ProfileActivity : AppCompatActivity() {
                    // "uid" to uid,
                     "name" to name,
                     "address" to address,
-                    "registDate" to Date(System.currentTimeMillis()),
+                    "regDate" to Date(System.currentTimeMillis()),
                     "imgPath" to downloadUri.toString(),
                     "token" to token
                 )

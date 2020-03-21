@@ -210,6 +210,7 @@ class ChatActivity : AppCompatActivity() {
                 }
             }
     }
+
     private fun getToken(uid:String){
         Log.d("@@ getToken ", "uid: $uid")
         db.collection(resources.getString(R.string.db_user)).document(uid).get()

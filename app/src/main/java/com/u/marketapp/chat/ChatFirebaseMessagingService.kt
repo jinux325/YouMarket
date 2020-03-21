@@ -5,13 +5,16 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NO_HISTORY
 import android.graphics.BitmapFactory
+import android.media.RingtoneManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.u.marketapp.CommentActivity
 import com.u.marketapp.R
 import com.u.marketapp.ReplyActivity
 
@@ -45,34 +48,27 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
         val prefChatttingSwitch = pref.getString("chattingSwitch", "")
 
         if(remoteMessage.data["partnerName"] != ""){
-            Log.e("FCM ", " chat")
             if(prefChatttingSwitch=="true"){
-                Log.e("FCM if ", " chat")
                 sendNotification(remoteMessage)
             }
         }else{
-            Log.e("FCM ", " reply")
             if(prefReplySwitch=="true"){
-                Log.e("FCM if ", " reply")
                 sendNotification(remoteMessage)
             }
         }
-
-
-       // sendNotification(remoteMessage)
     }
 
     private fun sendNotification(remoteMessage: RemoteMessage) {
         val intent:Intent
         if(remoteMessage.data["partnerName"] != ""){
             intent = Intent(this, ChatActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                flags = FLAG_ACTIVITY_NO_HISTORY
                 putExtra("chatRoomUid", remoteMessage.data["documentId"])
                 putExtra("name", remoteMessage.data["partnerName"])
             }
         }else{
-            intent = Intent(this, ReplyActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent = Intent(this, CommentActivity::class.java).apply {
+                flags = FLAG_ACTIVITY_NO_HISTORY
                 putExtra("pid", remoteMessage.data["documentId"])
             }
         }
@@ -99,29 +95,24 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
             val importance:Int
 
             if(channelId ==  "NotificationId"){
-                Log.e("FCM channel ", " no 진동")
                 description = "This is channel1"
                 importance = NotificationManager.IMPORTANCE_HIGH
-
-                Log.e("send Notifi 1 "," $channelId, $name, $importance")
+                Log.e("send no Vibration "," $channelId, $name, $importance")
 
                 val channel = NotificationChannel(channelId, name, importance)
                 channel.description = description
                 channel.setShowBadge(false)
-                channel.setShowBadge(false)
-
 
                 notificationManager.createNotificationChannel(channel)
             }else{
-                Log.e("FCM channel ", " 진동")
                 description = "This is channel2"
                 importance = NotificationManager.IMPORTANCE_HIGH
-
-                Log.e("send Notifi 2 "," $channelId, $name, $importance")
+                Log.e("send Vibration "," $channelId, $name, $importance")
 
                 val channel = NotificationChannel(channelId, name, importance)
                 channel.description = description
                 channel.enableVibration(true)
+                channel.setShowBadge(false)
 
                 notificationManager.createNotificationChannel(channel)
 
@@ -174,7 +165,7 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
         }
 
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
-        //val notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
             .setSmallIcon(R.drawable.ic_tree)
@@ -182,14 +173,7 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
             .setContentText(remoteMessage.data["body"])
             .setContentIntent(pendingIntent)
             .setShowWhen(true)
-            //.setSound(notificationSound)
-
-
-            //.setVibrate(longArrayOf(0))
-
-
-            //.setDefaults(Notification.DEFAULT_SOUND)
-
+            .setSound(notificationSound)
 
         notificationManager.notify(0, notificationBuilder.build())
     }
