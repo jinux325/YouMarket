@@ -24,7 +24,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     companion object {
         private val TAG = HomeFragment::class.java.simpleName
         private const val REQUEST_PRODUCT = 100
-        private const val REQUEST_ITEM_LIMIT = 30L
+        private const val REQUEST_ITEM_LIMIT = 20L
     }
 
     private lateinit var adapter : ProductRVAdapter

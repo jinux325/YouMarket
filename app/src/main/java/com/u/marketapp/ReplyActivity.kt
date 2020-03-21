@@ -1,6 +1,7 @@
 package com.u.marketapp
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -13,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
@@ -24,12 +27,14 @@ import com.u.marketapp.databinding.ActivityReplyBinding
 import com.u.marketapp.entity.CommentEntity
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
+import com.u.marketapp.listener.EndlessRecyclerViewScrollListener
 import kotlinx.android.synthetic.main.activity_reply.*
 
-class ReplyActivity : AppCompatActivity() {
+class ReplyActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     companion object {
         private val TAG = ReplyActivity::class.java.simpleName
+        private const val REQUEST_ITEM_LIMIT = 30L
     }
 
     private lateinit var adapter: CommentRVAdapter
@@ -37,12 +42,21 @@ class ReplyActivity : AppCompatActivity() {
     private lateinit var document: DocumentSnapshot
     private lateinit var pid: String
     private lateinit var cid: String
+    private lateinit var scrollListener: EndlessRecyclerViewScrollListener
     private var checkCurrentComment: Boolean = false
     private var checkUseContext: Boolean = false
+
+    // 새로고침
+    override fun onRefresh() {
+        adapter.clear()
+        requestItems()
+        binding.swipRefreshLayout.isRefreshing = false
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_reply)
+        binding.swipRefreshLayout.setOnRefreshListener(this)
         if (intent.hasExtra("cid")) {
             cid = intent.getStringExtra("cid")
         }
@@ -58,7 +72,7 @@ class ReplyActivity : AppCompatActivity() {
         setRVAdapter() // 어댑터 설정
         setRVLayoutManager() // 레이아웃 매니저 설정
         getCurrentComment()
-        setItemsData(false)
+        requestItems()
         setButtonListener() // 버튼 클릭 설정
         setEditTextChangedListener()
     }
@@ -81,6 +95,21 @@ class ReplyActivity : AppCompatActivity() {
                 checkLicense(view, position)
             }
         })
+    }
+
+    // 리사이클뷰 설정
+    private fun setRVLayoutManager() {
+        binding.recyclerView.apply {
+            setHasFixedSize(true)
+            val linearlayout = LinearLayoutManager(context)
+            layoutManager = linearlayout
+            scrollListener = object : EndlessRecyclerViewScrollListener(linearlayout) {
+                override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                    requestPagingItems(totalItemsCount-1, false)
+                }
+            }
+            addOnScrollListener(scrollListener)
+        }
     }
 
     // 권한 확인
@@ -110,28 +139,50 @@ class ReplyActivity : AppCompatActivity() {
         }
     }
 
-    // 리사이클뷰 설정
-    private fun setRVLayoutManager() {
-        binding.recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        binding.recyclerView.setHasFixedSize(true)
-    }
+    // 데이터 로드
+    private fun requestItems() {
+        scrollListener.resetState()
 
-    // 데이터 설정
-    private fun setItemsData(isScroll: Boolean) {
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).document(pid)
             .collection(resources.getString(R.string.db_comment)).document(cid)
-            .collection(resources.getString(R.string.db_reply)).orderBy("regDate", Query.Direction.ASCENDING).get().addOnCompleteListener {
-            if (it.isSuccessful) {
-                if (it.result?.documents!!.size > 0) {
-                    for(document in it.result?.documents!!) {
-                        Log.i(TAG, "Added Comment : ${document.id}")
-                        adapter.addItem(document)
-                    }
-                    if (isScroll) binding.recyclerView.smoothScrollToPosition(adapter.itemCount-1)
+            .collection(resources.getString(R.string.db_reply))
+            .orderBy("regDate", Query.Direction.ASCENDING)
+            .limit(REQUEST_ITEM_LIMIT)
+            .get()
+            .addOnSuccessListener { documentSnapshots ->
+                val items = documentSnapshots.documents
+                for (item in items) {
+                    adapter.addItem(item)
                 }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
             }
-        }
+    }
+
+    // 데이터 로드
+    private fun requestPagingItems(next: Int, isScroll: Boolean) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid)
+            .collection(resources.getString(R.string.db_comment)).document(cid)
+            .collection(resources.getString(R.string.db_reply))
+            .orderBy("regDate", Query.Direction.ASCENDING)
+            .startAfter(adapter.getItem(next))
+            .limit(REQUEST_ITEM_LIMIT)
+            .get()
+            .addOnSuccessListener { documentSnapshots ->
+                val items = documentSnapshots.documents
+                for (item in items) {
+                    adapter.addItem(item)
+                }
+                if (isScroll) {
+                    if (items.size <= 0) BaseApplication.instance.progressOFF()
+                    requestPagingItems(adapter.itemCount-1, (items.size > 0))
+                    binding.recyclerView.smoothScrollToPosition(adapter.itemCount-1)
+                }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
     }
 
     // 추가 버튼 설정
@@ -199,12 +250,40 @@ class ReplyActivity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).document(pid)
             .collection(resources.getString(R.string.db_comment)).document(cid)
-            .collection(resources.getString(R.string.db_reply)).add(item).addOnCompleteListener {
-            if (it.isSuccessful) {
-                Log.i(TAG, "Added Comment ID : ${it.result!!.id}")
+            .collection(resources.getString(R.string.db_reply)).add(item).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.i(TAG, "Added Comment ID : ${task.result!!.id}")
+                updateCommentSize(1)
+                updateReplySize(1)
+                clearEditText()
+                addAdapterComment(task.result!!.id)
+
 //                item.contents?.let { it1 -> getToken(it1) }
-                refresh()
             }
+        }
+    }
+
+    // 어댑터에 추가
+    private fun addAdapterComment(documentId: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product)).document(pid)
+            .collection(resources.getString(R.string.db_comment)).document(cid)
+            .collection(resources.getString(R.string.db_reply)).document(documentId)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                endPageScroll(documentSnapshot)
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
+    }
+
+    private fun endPageScroll(documentSnapshot: DocumentSnapshot) {
+        if (adapter.itemCount >= REQUEST_ITEM_LIMIT) {
+            BaseApplication.instance.progressON(this, resources.getString(R.string.loading))
+            requestPagingItems(adapter.itemCount-1, true)
+        } else {
+            adapter.addItem(documentSnapshot)
+            binding.recyclerView.smoothScrollToPosition(adapter.itemCount-1)
         }
     }
 
@@ -216,25 +295,21 @@ class ReplyActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 val item = task.result!!.toObject(CommentEntity::class.java)!!
                 if (item.replySize > 0) {
-                    task.result!!.reference.collection(resources.getString(R.string.db_reply)).get()
-                        .addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                for (document in it.result!!.documents) {
-                                    document.reference.delete().addOnCompleteListener { it1 ->
-                                        if (it1.isSuccessful) {
-                                            updateCommentSize(-1)
-                                        }
+                    task.result!!.reference.collection(resources.getString(R.string.db_reply)).get().addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            for (document in it.result!!.documents) {
+                                document.reference.delete().addOnCompleteListener { it1 ->
+                                    if (it1.isSuccessful) {
+                                        updateCommentSize(-1)
                                     }
                                 }
                             }
                         }
-                    task.result!!.reference.delete().addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            updateCommentSize(-1)
-                            setResult(Activity.RESULT_OK)
-                            finish()
-                        }
                     }
+                    val intent = Intent()
+                    intent.putExtra("cid", cid)
+                    setResult(Activity.RESULT_OK, intent)
+                    finish()
                 }
             }
         }
@@ -253,14 +328,6 @@ class ReplyActivity : AppCompatActivity() {
 
     private fun delAdapterItem() {
         adapter.removeItem(document)
-    }
-
-    private fun refresh() {
-        adapter.clear()
-        updateReplySize(1)
-        updateCommentSize(1)
-        setItemsData(true)
-        clearEditText()
     }
 
     private fun getToken(msg: String) {

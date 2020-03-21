@@ -157,17 +157,25 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Comment -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swip_refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:clipToPadding="false"
-            android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@id/layout_root"
-            app:layout_constraintBottom_toTopOf="@id/layout_input"
-            tools:listitem="@layout/layout_reply"/>
+            app:layout_constraintBottom_toTopOf="@id/layout_input">
+
+            <!-- Comment -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/layout_reply"/>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <!-- Keyboard -->
         <LinearLayout
