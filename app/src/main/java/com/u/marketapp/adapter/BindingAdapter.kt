@@ -3,7 +3,6 @@ package com.u.marketapp.adapter
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
@@ -92,5 +91,39 @@ fun bindViewFromSuggestion(view: MaterialTextView, suggestion: Boolean) {
     } else {
         view.text = view.resources.getString(R.string.product_unable_to_offer_price)
         view.setTextColor(ContextCompat.getColor(view.context, R.color.colorGray))
+    }
+}
+
+@BindingAdapter("bindDate")
+fun bindViewFromDate(view: MaterialTextView?, regDate: Date?) {
+    val time = System.currentTimeMillis() - (regDate?.time ?: 0)
+    val second = 1000L
+    val minute = second * 60
+    val hour = minute * 60
+    val day = hour * 24
+    val month = day * 30
+    val year = month * 12
+
+    view?.let {
+        when {
+            time < minute -> {
+                it.text = String.format(it.resources.getString(R.string.format_second), time/second)
+            }
+            time < hour -> {
+                it.text = String.format(it.resources.getString(R.string.format_minute), time/minute)
+            }
+            time < day -> {
+                it.text = String.format(it.resources.getString(R.string.format_hour), time/hour)
+            }
+            time < month -> {
+                it.text = String.format(it.resources.getString(R.string.format_day), time/day)
+            }
+            time < year -> {
+                it.text = String.format(it.resources.getString(R.string.format_month), time/month)
+            }
+            else -> {
+                it.text = String.format(it.resources.getString(R.string.format_date), regDate)
+            }
+        }
     }
 }

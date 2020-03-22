@@ -19,7 +19,6 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import com.kakao.kakaolink.v2.KakaoLinkResponse
 import com.kakao.kakaolink.v2.KakaoLinkService
 import com.kakao.network.ErrorResult
@@ -38,6 +37,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     companion object {
         private val TAG = ProductActivity::class.java.simpleName
         private const val REQUEST_UPDATE = 100
+        private const val REQUEST_ITEM_LIMIT = 5L
     }
 
     private lateinit var pid: String // 상품 문서 ID
@@ -437,11 +437,14 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     private fun setCommentItemsData() {
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).document(pid)
-            .collection(resources.getString(R.string.db_comment)).orderBy("regDate", Query.Direction.ASCENDING).limit(5).get().addOnCompleteListener {
-                if (it.isSuccessful) {
-                    Log.i(TAG, "$pid -> Document Size : ${it.result?.documents!!.size}")
-                    if (it.result?.documents!!.size > 0) {
-                        for (document in it.result?.documents!!) {
+            .collection(resources.getString(R.string.db_comment)).orderBy("regDate", Query.Direction.ASCENDING)
+            .limit(REQUEST_ITEM_LIMIT)
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.i(TAG, "$pid -> Document Size : ${task.result?.documents!!.size}")
+                    if (task.result?.documents!!.size > 0) {
+                        for (document in task.result?.documents!!) {
                             Log.i(TAG, "Added Comment : ${document.id}")
                             commentAdapter.addItem(document)
                         }

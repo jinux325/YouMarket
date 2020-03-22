@@ -2,6 +2,12 @@
 <resources>
     <!-- Format -->
     <string name="format_date">%1$tY년 %1$tm월 %1$td일</string>
+    <string name="format_second">%d초 전</string>
+    <string name="format_minute">%d분 전</string>
+    <string name="format_hour">%d시간 전</string>
+    <string name="format_day">%d일 전</string>
+    <string name="format_month">%d개월 전</string>
+
     <string name="format_price">%,d원</string>
     <string name="format_picker">%d/10</string>
     <string name="format_chatting">채팅 %d</string>

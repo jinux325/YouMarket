@@ -10,9 +10,6 @@
         <variable
             name="reply"
             type="com.u.marketapp.entity.CommentEntity" />
-        <variable
-            name="comment"
-            type="com.u.marketapp.entity.CommentEntity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

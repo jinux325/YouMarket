@@ -103,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:textSize="12sp"
-                android:text="@{@string/format_date(comment.regDate)}"
+                bindDate="@{comment.regDate}"
                 app:layout_constraintLeft_toRightOf="@id/text_view_dot"
                 app:layout_constraintTop_toTopOf="@id/image_view_profile"
                 app:layout_constraintBottom_toBottomOf="@id/image_view_profile"
@@ -187,7 +187,7 @@
                         android:src="@drawable/ic_communication"
                         android:contentDescription="@string/empty_image_view" />
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/text_view_comment_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
