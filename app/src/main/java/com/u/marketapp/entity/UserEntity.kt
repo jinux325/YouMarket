@@ -15,7 +15,7 @@ data class UserEntity (
     val attentionArray: ArrayList<String>, // 관심 목록
     val chatting: ArrayList<String>, // 채팅방 목록
     val regDate: Date, // 등록일
-    val state: Int // 상태( 0 : 탈퇴, 1 : 활성화, 2 : 비활성화, 3 : 휴면)
+    val status: Int // 상태( 0 : 탈퇴, 1 : 활성화, 2 : 비활성화, 3 : 휴면)
 ) : Serializable {
     constructor() : this ("", "", "", "", "", ArrayList(), ArrayList(), ArrayList(), ArrayList(), Date(), 1)
 }
