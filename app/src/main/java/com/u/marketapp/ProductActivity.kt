@@ -128,7 +128,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 val item = it.result!!.toObject(ProductEntity::class.java)
-                item?.let { a -> text_view_lookup.text = String.format(resources.getString(R.string.format_lookup), a.lookup?.size) }
+                item?.let { a -> text_view_lookup.text = String.format(resources.getString(R.string.format_lookup), a.lookup.size) }
             }
         }
     }
@@ -217,7 +217,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 val item = it.result!!.toObject(ProductEntity::class.java)
-                item?.let { a -> text_view_attention.text = String.format(resources.getString(R.string.format_attention), a.attention?.size) }
+                item?.let { a -> text_view_attention.text = String.format(resources.getString(R.string.format_attention), a.attention.size) }
             }
         }
     }
@@ -227,23 +227,23 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         val templateId = "21927"
 
         val templateArgs = HashMap<String, String>()
-        templateArgs["title"] = productEntity.title.toString()
+        templateArgs["title"] = productEntity.title
         templateArgs["contents"] = String.format(resources.getString(R.string.format_price), productEntity.price)
-        templateArgs["attention"] = productEntity.attention?.size.toString()
+        templateArgs["attention"] = productEntity.attention.size.toString()
         templateArgs["comment"] = productEntity.commentSize.toString()
-        templateArgs["lookup"] = productEntity.lookup?.size.toString()
-        when (productEntity.imageArray?.size!!) {
+        templateArgs["lookup"] = productEntity.lookup.size.toString()
+        when (productEntity.imageArray.size) {
             1 -> {
-                templateArgs["url1"] = productEntity.imageArray!![0]
+                templateArgs["url1"] = productEntity.imageArray[0]
             }
             2 -> {
-                templateArgs["url1"] = productEntity.imageArray!![0]
-                templateArgs["url2"] = productEntity.imageArray!![1]
+                templateArgs["url1"] = productEntity.imageArray[0]
+                templateArgs["url2"] = productEntity.imageArray[1]
             }
             else -> {
-                templateArgs["url1"] = productEntity.imageArray!![0]
-                templateArgs["url2"] = productEntity.imageArray!![1]
-                templateArgs["url3"] = productEntity.imageArray!![2]
+                templateArgs["url1"] = productEntity.imageArray[0]
+                templateArgs["url2"] = productEntity.imageArray[1]
+                templateArgs["url3"] = productEntity.imageArray[2]
             }
         }
 
@@ -358,8 +358,8 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         val storage = FirebaseStorage.getInstance()
         if (!productEntity.imageArray.isNullOrEmpty()) {
             var count = 0
-            val ref = storage.getReferenceFromUrl(productEntity.imageArray!![0]).parent
-            for (uri in productEntity.imageArray!!) {
+            val ref = storage.getReferenceFromUrl(productEntity.imageArray[0]).parent
+            for (uri in productEntity.imageArray) {
                 storage.getReferenceFromUrl(uri).delete().addOnCompleteListener {
                     if (it.isSuccessful) {
                         Log.i(TAG, "이미지 삭제 성공 (저장소) : $uri")
@@ -368,7 +368,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
             Log.i(TAG, "Folder Name : ${ref.toString()}")
-            if (productEntity.imageArray!!.size == count) {
+            if (productEntity.imageArray.size == count) {
                 ref!!.delete().addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.i(TAG, "상품 폴더 삭제 성공 (저장소)")
@@ -388,7 +388,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 val item = document.result!!.toObject(ProductEntity::class.java)!!
                 binding.setVariable(BR.product, item)
                 productEntity = item
-                uid = item.seller.toString()
+                uid = item.seller
                 setPagerAdater(item.imageArray)
                 checkLookup(item.lookup)
                 checkAttention(item.attention)

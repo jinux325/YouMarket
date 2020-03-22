@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.u.marketapp.adapter.PreviewRVAdapter
 import com.u.marketapp.entity.ProductEntity
+import com.u.marketapp.entity.UserEntity
 import gun0912.tedimagepicker.builder.TedImagePicker
 import gun0912.tedimagepicker.builder.type.MediaType
 import kotlinx.android.synthetic.main.activity_edit.*
@@ -38,6 +39,7 @@ class EditActivity : AppCompatActivity() {
     private lateinit var actionbar: ActionBar
     private lateinit var adapter: PreviewRVAdapter
     private lateinit var pid: String
+    private lateinit var userData: UserEntity
     private val currentArray: ArrayList<Uri> = ArrayList()
     private val delImageArray: ArrayList<Uri> = ArrayList()
 
@@ -49,6 +51,7 @@ class EditActivity : AppCompatActivity() {
 
     // 화면 초기화
     private fun initView() {
+        setLoadUserData()
         setActionbar() // 액션바 설정
         setRVAdapter() // 어댑터 설정
         setRVLayoutManager() // 레이아웃 매니저 설정
@@ -135,8 +138,8 @@ class EditActivity : AppCompatActivity() {
     // 데이터 로드
     private fun loadData(item: ProductEntity) {
         text_view_category.text = item.category // 카테고리
-        edit_text_title.text = item.title!!.toEditable() // 제목
-        edit_text_contents.text = item.contents!!.toEditable() // 내용
+        edit_text_title.text = item.title.toEditable() // 제목
+        edit_text_contents.text = item.contents.toEditable() // 내용
         edit_text_price.text = item.price.toEditable() // 가격
         check_box_suggestion.isChecked = item.suggestion // 가격 제안 여부
         if (!item.imageArray.isNullOrEmpty()) {
@@ -144,6 +147,18 @@ class EditActivity : AppCompatActivity() {
                 addBeforePreviewLayout(Uri.parse(path))
             }
         }
+    }
+
+    // 유저 데이터 로드
+    private fun setLoadUserData() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_user)).document(FirebaseAuth.getInstance().currentUser!!.uid).get()
+            .addOnSuccessListener { documentSnapshot ->
+                userData = documentSnapshot.toObject(UserEntity::class.java)!!
+            }
+            .addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
     }
 
     // 카테고리 변경
@@ -248,7 +263,7 @@ class EditActivity : AppCompatActivity() {
         item.seller = FirebaseAuth.getInstance().currentUser!!.uid // 판매자 정보
         item.category = text_view_category.text.toString() // 카테고리
         item.title = edit_text_title.text.toString() // 제목
-        item.address = "망포동"
+        item.address = userData.address
         if (edit_text_price.text.toString().isNotEmpty()) {
             item.price = edit_text_price.text.toString().replace(",", "").toInt() // 가격
         }
@@ -262,6 +277,7 @@ class EditActivity : AppCompatActivity() {
         val map : HashMap<String, Any> = hashMapOf()
         map["catgory"] = text_view_category.text // 카테고리
         map["title"] = edit_text_title.text.toString() // 제목
+        map["address"] = userData.address
         map["contents"] = edit_text_contents.text.toString() // 내용
         map["suggestion"] = check_box_suggestion.isChecked // 가격 제안 여부
         map["modDate"] = Date() // 수정일

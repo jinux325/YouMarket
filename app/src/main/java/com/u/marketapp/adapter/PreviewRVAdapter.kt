@@ -33,11 +33,6 @@ class PreviewRVAdapter : RecyclerView.Adapter<PreviewRVAdapter.ViewHolder>() {
         return imageList.size
     }
 
-    // 전체 조회
-    fun getAllData(): ArrayList<Uri> {
-        return imageList
-    }
-
     // 조회
     fun getData(position: Int): Uri {
         return imageList[position]

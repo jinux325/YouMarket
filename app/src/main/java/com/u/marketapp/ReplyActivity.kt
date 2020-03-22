@@ -228,7 +228,7 @@ class ReplyActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
         db.collection(resources.getString(R.string.db_product)).document(pid).collection(resources.getString(R.string.db_comment)).document(cid).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val item = task.result!!.toObject(CommentEntity::class.java)
-                getCurrentUser(item!!.user!!)
+                getCurrentUser(item!!.user)
                 binding.setVariable(BR.reply, item)
             }
         }

@@ -56,7 +56,7 @@ class CommentRVAdapter(val context: Context) : RecyclerView.Adapter<CommentRVAda
 
     // 유저 정보 조회
     private fun getUserInfo(holder: ViewHolder, position: Int, item: DocumentSnapshot) {
-        val uid = item.toObject(CommentEntity::class.java)!!.user!!
+        val uid = item.toObject(CommentEntity::class.java)!!.user
         val db = FirebaseFirestore.getInstance()
         db.collection(context.resources.getString(R.string.db_user)).document(uid).get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
