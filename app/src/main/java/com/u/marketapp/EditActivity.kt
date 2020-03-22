@@ -1,6 +1,7 @@
 package com.u.marketapp
 
 import android.app.Activity
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -259,11 +260,12 @@ class EditActivity : AppCompatActivity() {
 
     // 데이터 수집
     private fun getEditData() : ProductEntity {
+        val pref = getSharedPreferences("user", Context.MODE_PRIVATE)
         val item = ProductEntity()
         item.seller = FirebaseAuth.getInstance().currentUser!!.uid // 판매자 정보
         item.category = text_view_category.text.toString() // 카테고리
         item.title = edit_text_title.text.toString() // 제목
-        item.address = userData.address
+        item.address = pref.getString(resources.getString(R.string.edit_address), userData.address)!!
         if (edit_text_price.text.toString().isNotEmpty()) {
             item.price = edit_text_price.text.toString().replace(",", "").toInt() // 가격
         }
@@ -274,10 +276,11 @@ class EditActivity : AppCompatActivity() {
 
     // 데이터 수집 - 수정
     private fun getNewEditData() : Map<String, Any> {
+        val pref = getSharedPreferences("user", Context.MODE_PRIVATE)
         val map : HashMap<String, Any> = hashMapOf()
         map["catgory"] = text_view_category.text // 카테고리
         map["title"] = edit_text_title.text.toString() // 제목
-        map["address"] = userData.address
+        map["address"] = pref.getString(resources.getString(R.string.edit_address), userData.address)!!
         map["contents"] = edit_text_contents.text.toString() // 내용
         map["suggestion"] = check_box_suggestion.isChecked // 가격 제안 여부
         map["modDate"] = Date() // 수정일

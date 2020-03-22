@@ -9,4 +9,6 @@
     <string name="edit_category">디지털/가전</string>
     <string name="edit_picker">0/10</string>
     <string name="edit_price">%,d</string>
+
+    <string name="edit_address">address</string>
 </resources>
