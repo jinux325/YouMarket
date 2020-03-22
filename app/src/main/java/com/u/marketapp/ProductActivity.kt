@@ -166,23 +166,49 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     // 관심 추가
     private fun addAttention() {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid).update("attention", FieldValue.arrayUnion(currentUid)).addOnCompleteListener {
-            if (it.isSuccessful) {
+        db.collection(resources.getString(R.string.db_product)).document(pid).update("attention", FieldValue.arrayUnion(currentUid))
+            .addOnSuccessListener {
                 Log.i(TAG, "관심 추가 : $currentUid")
                 setAttentionSize()
+                addUserAttention()
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
             }
-        }
+    }
+
+    // 유저 관심목록 추가
+    private fun addUserAttention() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_user)).document(currentUid).update("attentionArray", FieldValue.arrayUnion(pid))
+            .addOnSuccessListener {
+                Log.i(TAG, "유저 관심목록 추가 : $pid")
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
     }
 
     // 관심 제거
     private fun delAttention() {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid).update("attention", FieldValue.arrayRemove(currentUid)).addOnCompleteListener {
-            if (it.isSuccessful) {
+        db.collection(resources.getString(R.string.db_product)).document(pid).update("attention", FieldValue.arrayRemove(currentUid))
+            .addOnSuccessListener {
                 Log.i(TAG, "관심 제거 : $currentUid")
                 setAttentionSize()
+                delUserAttention()
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
             }
-        }
+    }
+
+    // 유저 관심목록 제거
+    private fun delUserAttention() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_user)).document(currentUid).update("attentionArray", FieldValue.arrayRemove(pid))
+            .addOnSuccessListener {
+                Log.i(TAG, "유저 관심목록 제거 : $pid")
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
     }
 
     // 조회 수 입력
@@ -303,6 +329,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                     if (it.isSuccessful) {
                         Log.i(TAG, "상품 삭제!")
                         deleteImage()
+                        delSellList()
                         setResult(Activity.RESULT_OK)
                         finish() // 종료
                     } else {
@@ -315,12 +342,23 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    // 판매내역 제거
+    private fun delSellList() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_user)).document(currentUid).update("salesArray", FieldValue.arrayRemove(pid))
+            .addOnSuccessListener {
+                Log.i(TAG, "판매내역 제거 성공! : $pid")
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
+    }
+
     // 이미지 삭제
     private fun deleteImage() {
         val storage = FirebaseStorage.getInstance()
         if (!productEntity.imageArray.isNullOrEmpty()) {
             var count = 0
-            var ref = storage.getReferenceFromUrl(productEntity.imageArray!![0]).parent
+            val ref = storage.getReferenceFromUrl(productEntity.imageArray!![0]).parent
             for (uri in productEntity.imageArray!!) {
                 storage.getReferenceFromUrl(uri).delete().addOnCompleteListener {
                     if (it.isSuccessful) {
@@ -330,13 +368,13 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
             Log.i(TAG, "Folder Name : ${ref.toString()}")
-//            if (productEntity.imageArray!!.size == count) {
-//                ref!!.delete().addOnCompleteListener { task ->
-//                    if (task.isSuccessful) {
-//                        Log.i(TAG, "상품 폴더 삭제 성공 (저장소)")
-//                    }
-//                }
-//            }
+            if (productEntity.imageArray!!.size == count) {
+                ref!!.delete().addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.i(TAG, "상품 폴더 삭제 성공 (저장소)")
+                    }
+                }
+            }
         }
     }
 

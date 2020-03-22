@@ -317,7 +317,7 @@ class EditActivity : AppCompatActivity() {
         val uid = FirebaseAuth.getInstance().currentUser!!.uid
         uid.let {
             documentId.let { item ->
-                db.collection(resources.getString(R.string.db_user)).document(it).update("salesHistory", FieldValue.arrayUnion(item)).addOnCompleteListener { task ->
+                db.collection(resources.getString(R.string.db_user)).document(it).update("salesArray", FieldValue.arrayUnion(item)).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.i(TAG, "판매내역 업데이트 성공! : $item")
                     }
