@@ -257,8 +257,7 @@ class ReplyActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
                 updateReplySize(1)
                 clearEditText()
                 addAdapterComment(task.result!!.id)
-
-//                item.contents?.let { it1 -> getToken(it1) }
+                getToken(item.contents)
             }
         }
     }
@@ -332,38 +331,47 @@ class ReplyActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
 
     private fun getToken(msg: String) {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener {
-            if (it.isSuccessful) {
-                val item = it.result!!.toObject(ProductEntity::class.java)
+        db.collection(resources.getString(R.string.db_product)).document(pid).get()
+            .addOnSuccessListener { documentSnapshot ->
+                val item = documentSnapshot.toObject(ProductEntity::class.java)
                 item?.let {
-                    getTargetUser(item.seller, msg)
+                    if (item.seller != FirebaseAuth.getInstance().currentUser!!.uid) {
+                        getTargetUser(item.seller, msg)
+                    }
                 }
             }
-        }
+            .addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
+
     }
 
-    private fun getTargetUser(uid: String?, msg: String) {
+    private fun getTargetUser(uid: String, msg: String) {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_user)).document(uid!!).get().addOnCompleteListener {
-            if (it.isSuccessful) {
-                val item = it.result!!.toObject(UserEntity::class.java)
+        db.collection(resources.getString(R.string.db_user)).document(uid).get()
+            .addOnSuccessListener { documentSnapshot ->
+                val item = documentSnapshot.toObject(UserEntity::class.java)
                 item?.let { getCurrentUser(item.token, msg) }
             }
-        }
+            .addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
     }
 
-    private fun getCurrentUser(token: String?, msg: String) {
+    private fun getCurrentUser(token: String, msg: String) {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_user)).document(FirebaseAuth.getInstance().currentUser!!.uid).get().addOnCompleteListener {
-            if (it.isSuccessful) {
-                val item = it.result!!.toObject(UserEntity::class.java)
+        db.collection(resources.getString(R.string.db_user)).document(FirebaseAuth.getInstance().currentUser!!.uid).get()
+            .addOnSuccessListener { documentSnapshot ->
+                val item = documentSnapshot.toObject(UserEntity::class.java)
                 item?.let { sendFCM(token, item.name, msg) }
             }
-        }
+            .addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
     }
 
-    private fun sendFCM(token: String?, name: String?, msg: String) {
-        val fcm = FCM(token!!, name, msg, pid, "")
+    private fun sendFCM(token: String, name: String, msg: String) {
+        val fcm = FCM(token, name, msg, pid, "")
         fcm.start()
     }
 
