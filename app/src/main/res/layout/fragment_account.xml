@@ -210,8 +210,8 @@
             <LinearLayout
                 android:id="@+id/location"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:background="@drawable/background_right_thin_bottom_thin"
+                android:layout_height="90dp"
+                android:background="@drawable/background_bottom_right_thin"
                 android:layout_weight="1"
                 >
 
@@ -222,6 +222,7 @@
                     android:layout_gravity="center"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
+                    android:layout_marginBottom="5dp"
                     android:src="@drawable/ic_gps"
 
 
@@ -233,6 +234,7 @@
                     android:text="내 동네 설정"
                     android:layout_marginEnd="-19dp"
                     android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
                     android:textSize="15sp"
                     tools:ignore="HardcodedText"
 
@@ -241,8 +243,8 @@
             <LinearLayout
                 android:id="@+id/location_verify"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:background="@drawable/background_bottomline_thin"
+                android:layout_height="90dp"
+                android:background="@drawable/background_bottomline"
                 android:layout_weight="1"
                 >
                 <ImageView
@@ -252,6 +254,7 @@
                     android:layout_gravity="center"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
+                    android:layout_marginBottom="5dp"
                     android:src="@drawable/ic_gps_2"
 
 
@@ -261,68 +264,13 @@
                     android:layout_height="wrap_content"
                     android:text="동네 인증"
                     android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
                     android:textSize="15sp"
 
                     tools:ignore="HardcodedText" />
             </LinearLayout>
         </TableRow>
-
-       <!--<TableRow>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:background="@drawable/background_right_thin_bottom_thin"
-                android:layout_weight="1"
-                >
-
-                <ImageView
-                    android:id="@+id/account_bookmark"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_gravity="center"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-
-
-                    />
-                <TextView
-
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="키워드 알림"
-                    android:layout_marginEnd="-50dp"
-                    android:layout_gravity="center"
-                    android:textSize="15dp"
-
-                    />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:background="@drawable/background_bottomline_thin"
-                android:layout_weight="1"
-                >
-                <ImageView
-                    android:id="@+id/account_letter"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_gravity="center"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-
-
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="초대하기"
-                    android:layout_gravity="center"
-                    android:textSize="15dp"
-                    />
-            </LinearLayout>
-        </TableRow>
--->
-        <TableRow>
+       <!-- <TableRow>
             <LinearLayout
                 android:id="@+id/keyword"
                 android:layout_width="wrap_content"
@@ -364,7 +312,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/background_bottomline"
                 >
-                <!--<ImageView
+                &lt;!&ndash;<ImageView
                     android:id="@+id/account_letter"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
@@ -373,7 +321,7 @@
                     android:layout_height="35dp"
 
 
-                    />-->
+                    />&ndash;&gt;
                 <ImageView
                     android:id="@+id/account_letter"
                     android:layout_marginStart="15dp"
@@ -398,7 +346,7 @@
                     />
             </LinearLayout>
         </TableRow>
-
+-->
 
         <LinearLayout
             android:layout_width="match_parent"

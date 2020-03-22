@@ -210,7 +210,7 @@ class CommentActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
                 clearEditText()
                 addAdapterComment(task.result!!.id)
 
-//                item.contents?.let { it1 -> getToken(it1) }
+                item.contents?.let { it1 -> getToken(it1) }
             }
         }
     }

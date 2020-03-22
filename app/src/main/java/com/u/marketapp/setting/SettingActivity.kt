@@ -1,6 +1,8 @@
 package com.u.marketapp.setting
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,15 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.u.marketapp.R
 import com.u.marketapp.SplashActivity
+import com.u.marketapp.signup.SmsActivity
 import kotlinx.android.synthetic.main.activity_setting.*
 
 class SettingActivity : AppCompatActivity() {
-/*
-
-    private var user = FirebaseAuth.getInstance().currentUser
-    private val db = FirebaseFirestore.getInstance()
-*/
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +38,8 @@ class SettingActivity : AppCompatActivity() {
         chattingSwitch.isChecked = prefChatttingSwitch=="true"
         val prefReplySwitch = pref.getString("replySwitch", "")
         replySwitch.isChecked = prefReplySwitch=="true"
+        val prefVibrationSwitch = pref.getString("vibrationSwitch", "")
+        vibrationSwitch.isChecked = prefVibrationSwitch=="true"
 
         Log.e("pref ", " $prefChatttingSwitch  $prefReplySwitch")
 
@@ -54,22 +53,37 @@ class SettingActivity : AppCompatActivity() {
             Log.e("replySwitch ", isChecked.toString())
             editor.putString("replySwitch", isChecked.toString()).apply()
         }
+        vibrationSwitch.setOnCheckedChangeListener { _, isChecked ->
 
+            editor.putString("vibrationSwitch", isChecked.toString()).apply()
+        }
         withdrawal.setOnClickListener {
-           // val myUid = FirebaseAuth.getInstance().currentUser!!.uid
-          /*  Log.e("dfsf", myUid)
-            FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener { task ->
-                if(task.isSuccessful){
-                    FirebaseAuth.getInstance().signOut()
-                    db.collection(resources.getString(R.string.db_user)).document(myUid).delete()
-
-                    val intent = Intent(this@SettingActivity, SplashActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                }
-            }*/
-
+            deleteDialog()
         }
 
     }
+
+    private fun deleteDialog(){
+        val dialog = AlertDialog.Builder(this)
+        dialog.setMessage("탈퇴는 재인증이 필요합니다. 탈퇴하시겠습니까?").setCancelable(false)
+        fun pos(){
+            val intent = Intent(this, SmsActivity::class.java)
+            intent.putExtra("delete","delete")
+            startActivity(intent)
+        }
+        val dialogListener = object: DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, p1: Int) {
+                when(p1){
+                    DialogInterface.BUTTON_POSITIVE -> pos()
+                }
+            }
+        }
+        dialog.setPositiveButton("확인",dialogListener)
+        dialog.setNegativeButton("취소",dialogListener)
+        dialog.show()
+
+    }
+
+
+
 }

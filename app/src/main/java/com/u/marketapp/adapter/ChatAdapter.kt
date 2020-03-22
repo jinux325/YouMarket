@@ -1,9 +1,7 @@
 package com.u.marketapp.adapter
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
@@ -34,8 +32,8 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
     override fun getItemCount(): Int = chatList.size
 
 
-    private val dialog = AlertDialog.Builder(context)
-    var ad = dialog.create()
+   // private val dialog = AlertDialog.Builder(context)
+   // var ad = dialog.create()
 
 
    /* override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {

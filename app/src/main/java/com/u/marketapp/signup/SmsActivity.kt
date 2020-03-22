@@ -18,16 +18,17 @@ import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.MainActivity
 import com.u.marketapp.R
+import com.u.marketapp.SplashActivity
 import com.u.marketapp.entity.UserEntity
 import kotlinx.android.synthetic.main.activity_sms.*
 import java.util.concurrent.TimeUnit
 
 class SmsActivity : AppCompatActivity() {
 
-    private val TAG = "SmsActivity"
+    private val tag = "SmsActivity"
     private val mAuth= FirebaseAuth.getInstance()
     var codeSent : String = ""
-    var phone=""
+    private var phone=""
     private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +60,11 @@ class SmsActivity : AppCompatActivity() {
                     val uid = FirebaseAuth.getInstance().currentUser!!.uid
                     Log.d(" userExist(uid) 유저 확인", uid)
 
+                    val intentItems = intent
+                    if(intentItems.getStringExtra("delete")!=null){
+                        userDelete()
+                    }
+
                     userExist(uid)
                 } else {
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
@@ -81,11 +87,11 @@ class SmsActivity : AppCompatActivity() {
             phoneNumber = phone.substring(1, 11)
         }
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-            "+82$phoneNumber", // Phone number to verify
-            60, // Timeout duration
-            TimeUnit.SECONDS, // Unit of timeout
-            this, // Activity (for callback binding)
-            callbacks) // OnVerificationStateChangedCallbacks
+            "+82$phoneNumber",
+            60,
+            TimeUnit.SECONDS,
+            this,
+            callbacks)
 
     }
 
@@ -127,7 +133,7 @@ class SmsActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
                         UserEntity::class.java)
-                    Log.d(TAG, userEntity?.name+"  "+userEntity?.address)
+                    Log.d(tag, userEntity?.name+"  "+userEntity?.address)
                     val prefs = getSharedPreferences("User", Context.MODE_PRIVATE)
                     val edit = prefs.edit()
                     edit.putString("uid", uid)
@@ -139,27 +145,24 @@ class SmsActivity : AppCompatActivity() {
                     edit.putString("log", "IN")
                     edit.apply()
                 } else {
-                    Log.d(TAG, "Error getting Users", task.exception)
+                    Log.d(tag, "Error getting Users", task.exception)
                 }
             }
     }
 
-    fun userExist(uid:String){
-
+    private fun userExist(uid:String){
         var count =0
         db.collection(resources.getString(R.string.db_user)).get().addOnSuccessListener { result ->
             for(document in result){
                 count++
-                Log.d("@@@@@@@@@@@@@@@ ", document.id+"   "+uid)
-                Log.d("@@@@@@@@@@@@@@@ ", count.toString()+"   "+result.size())
-                if(document.id.equals(uid)){
-                    Log.d("@@@@@@@@@@@@@@@ ", "if문 ")
+                if(document.id == uid){
                     // 로그인
                     Log.d("유저 확인", "true  로그인")
                     val intent = Intent(this, MainActivity::class.java)
                     intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
                     intent.putExtra("phoneNumber", phone)
                     userData()
+                    tokenUpdate()
                     startActivity(intent)
                     break
                 }else if(count ==  result.size()){
@@ -175,6 +178,25 @@ class SmsActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    private fun userDelete(){
+        FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener { task ->
+            if(task.isSuccessful){
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(this, SplashActivity::class.java)
+                intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
+        }
+    }
+
+    private fun tokenUpdate(){
+        val pref = getSharedPreferences("user", Context.MODE_PRIVATE)
+        val token = pref.getString("token", "")
+        val uid = mAuth.currentUser!!.uid
+        db.collection(resources.getString(R.string.db_user)).document(uid)
+            .update("token", token)
     }
 
 }

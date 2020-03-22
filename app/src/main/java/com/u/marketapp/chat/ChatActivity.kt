@@ -1,7 +1,6 @@
 package com.u.marketapp.chat
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -15,24 +14,20 @@ import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.vo.ChatRoomVO
 import com.u.marketapp.vo.ChattingVO
 import kotlinx.android.synthetic.main.activity_chat.*
-import kotlinx.android.synthetic.main.activity_setting.*
-import org.json.JSONObject
-import java.net.HttpURLConnection
-import java.net.URL
 import java.util.*
 
 
 class ChatActivity : AppCompatActivity() {
 
-    private val db = FirebaseFirestore.getInstance()
+    val db = FirebaseFirestore.getInstance()
     private val myUid = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var chatRoom : HashMap<String,Any>
     private lateinit var chatRoomUid : String
     private lateinit var chattingList : MutableList<ChattingVO>
     var comment:String=""
     lateinit var name:String
-    lateinit var myData: UserEntity
-    lateinit var pid:String
+    private lateinit var myData: UserEntity
+    private lateinit var pid:String
     lateinit var seller:String
     private lateinit var token:String
 
@@ -215,6 +210,7 @@ class ChatActivity : AppCompatActivity() {
                 }
             }
     }
+
     private fun getToken(uid:String){
         Log.d("@@ getToken ", "uid: $uid")
         db.collection(resources.getString(R.string.db_user)).document(uid).get()
@@ -225,12 +221,8 @@ class ChatActivity : AppCompatActivity() {
                     token = userEntity!!.token.toString()
                     Log.d("@@ getToken token  ", userEntity.token)
                     //FCM(userEntity!!.token)
-                    val pref = getSharedPreferences("setting", Context.MODE_PRIVATE)
-                    val prefChatttingSwitch = pref.getString("chattingSwitch", "")
-                    if(prefChatttingSwitch=="true"){
-                        val fcm = FCM(token,myData.name,comment,chatRoomUid,tv_partner_nickname.text.toString())
-                        fcm.start()
-                    }
+                    val fcm = FCM(token,myData.name,comment,chatRoomUid,tv_partner_nickname.text.toString())
+                    fcm.start()
                     /*val thread=FCM()
                     thread.start()*/
                     //FCM(userEntity!!.token)

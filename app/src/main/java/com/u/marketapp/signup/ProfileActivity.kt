@@ -21,7 +21,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.common.io.Files.getFileExtension
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.u.marketapp.MainActivity
@@ -32,7 +31,7 @@ import java.util.*
 
 class ProfileActivity : AppCompatActivity() {
 
-    private val TAG = "ProfileActivity"
+    private val tag = "ProfileActivity"
     private var profileImage : Uri? =null
     private lateinit var phoneNumber:String
     lateinit var address:String
@@ -182,23 +181,21 @@ class ProfileActivity : AppCompatActivity() {
         }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val downloadUri = task.result
-                var token = FirebaseInstanceId.getInstance().token
-                while(token == null){
-                    token  = FirebaseInstanceId.getInstance().token
-                }
+                val pref = getSharedPreferences("user", Context.MODE_PRIVATE)
+                val token = pref.getString("token", "")
                 val user = hashMapOf(
                    // "uid" to uid,
                     "name" to name,
                     "address" to address,
-                    "registDate" to Date(System.currentTimeMillis()),
+                    "regDate" to Date(System.currentTimeMillis()),
                     "imgPath" to downloadUri.toString(),
                     "token" to token
                 )
 
                 db.collection(resources.getString(R.string.db_user)).document(uid!!)
                     .set(user)
-                    .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
-                    .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
+                    .addOnSuccessListener { Log.d(tag, "DocumentSnapshot successfully written!") }
+                    .addOnFailureListener { e -> Log.w(tag, "Error writing document", e) }
 
                 edit.putString("uid", uid)
                 edit.putString("name", name)
