@@ -119,12 +119,19 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private fun requestItems() {
         scrollListener.resetState()
 
+        val list = SharedPreferencesUtils.instance.getStringArrayPref(requireContext(), "category")
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product))
+        var query = db.collection(resources.getString(R.string.db_product))
             .whereEqualTo("status", true)
             .orderBy("regDate", Query.Direction.DESCENDING)
             .limit(REQUEST_ITEM_LIMIT)
-            .get()
+
+        if (!list.isNullOrEmpty()) {
+            Log.i(TAG, "COUNT : ${list.size} -> $list")
+            query = query.whereIn("category", list)
+        }
+
+        query.get()
             .addOnSuccessListener { documentSnapshots ->
                 val items = documentSnapshots.documents
                 checkItemsData(items.size == 0)
@@ -138,13 +145,20 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     // 데이터 로드
     private fun requestPagingItems(next: Int) {
+        val list = SharedPreferencesUtils.instance.getStringArrayPref(requireContext(), "category")
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product))
+        var query = db.collection(resources.getString(R.string.db_product))
             .whereEqualTo("status", true)
             .orderBy("regDate", Query.Direction.DESCENDING)
             .startAfter(adapter.getItem(next))
             .limit(REQUEST_ITEM_LIMIT)
-            .get()
+
+        if (!list.isNullOrEmpty()) {
+            Log.i(TAG, "COUNT : ${list.size} -> $list")
+            query = query.whereIn("category", list)
+        }
+
+        query.get()
             .addOnSuccessListener { documentSnapshots ->
                 val items = documentSnapshots.documents
                 for (item in items) {
@@ -191,6 +205,8 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 REQUEST_FILTER -> { // 필터 페이지에서 리턴
                     val list = SharedPreferencesUtils.instance.getStringArrayPref(requireContext(), "category")
                     Log.i(TAG, list.toString())
+                    adapter.clear()
+                    requestItems()
                 }
             }
         }

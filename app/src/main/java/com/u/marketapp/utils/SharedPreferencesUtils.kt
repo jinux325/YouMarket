@@ -38,8 +38,8 @@ class SharedPreferencesUtils {
 
         if (json != null) {
             val a = JSONArray(json)
-            for (i in 0 .. a.length()) {
-                val url = a.optString(i)
+            for (i in 1 .. a.length()) {
+                val url = a.optString(i-1)
                 urls.add(url)
             }
         }
