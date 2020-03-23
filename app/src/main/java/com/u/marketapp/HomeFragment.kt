@@ -24,6 +24,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     companion object {
         private val TAG = HomeFragment::class.java.simpleName
         private const val REQUEST_PRODUCT = 100
+        private const val REQUEST_FILTER = 200
         private const val REQUEST_ITEM_LIMIT = 20L
     }
 
@@ -59,6 +60,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 true
             }
             R.id.action_filter -> {
+                moveFilterAcitity()
                 true
             }
             R.id.action_notification -> {
@@ -106,7 +108,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             binding.recyclerView.adapter = adapter
             adapter.setItemClickListener(object : ProductRVAdapter.ItemClickListener {
                 override fun onClick(view: View, position: Int) {
-                    moveActivity(adapter.getItem(position).id)
+                    moveProductActivity(adapter.getItem(position).id)
                 }
             })
         }
@@ -164,18 +166,28 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     // 상품 상세 정보 페이지 이동
-    private fun moveActivity(id: String) {
+    private fun moveProductActivity(id: String) {
         Log.i(TAG, "Document ID : $id")
         val intent = Intent(context, ProductActivity::class.java)
         intent.putExtra("id", id)
         startActivityForResult(intent, REQUEST_PRODUCT)
     }
 
+    // 필터 페이지 이동
+    private fun moveFilterAcitity() {
+        val intent = Intent(context, FilterActivity::class.java)
+        startActivityForResult(intent, REQUEST_FILTER)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-                REQUEST_PRODUCT -> {
+                REQUEST_PRODUCT -> { // 상품 페이지에서 리턴
+                    adapter.clear()
+                    requestItems()
+                }
+                REQUEST_FILTER -> { // 필터 페이지에서 리턴
                     adapter.clear()
                     requestItems()
                 }
