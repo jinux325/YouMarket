@@ -8,6 +8,7 @@ import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -58,6 +59,7 @@ class EditActivity : AppCompatActivity() {
         setRVLayoutManager() // 레이아웃 매니저 설정
         setButtonListener() // 버튼 클릭 설정
         setEditTextPrice() // 가격 콤마 처리
+        setEditContents() // 키보드 설정
         if (intent.hasExtra("pid")) {
             pid = intent.getStringExtra("pid")
             loadBeforeData()
@@ -99,6 +101,16 @@ class EditActivity : AppCompatActivity() {
         layout_category.setOnClickListener {
             changeCategory()
         }
+    }
+
+    // 키보드 엔터 설정
+    private fun setEditContents() {
+        edit_text_contents.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
+                return@OnKeyListener true
+            }
+            false
+        })
     }
 
     // 가격 콤마 처리

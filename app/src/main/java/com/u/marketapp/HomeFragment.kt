@@ -4,9 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,6 +27,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         private const val REQUEST_ITEM_LIMIT = 20L
     }
 
+    private lateinit var actionbar: ActionBar
     private lateinit var adapter : ProductRVAdapter
     private lateinit var binding : FragmentHomeBinding
     private lateinit var scrollListener: EndlessRecyclerViewScrollListener
@@ -47,9 +48,40 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         return binding.root
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.toolbar_home, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_search -> {
+                true
+            }
+            R.id.action_filter -> {
+                true
+            }
+            R.id.action_notification -> {
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        setHasOptionsMenu(true)
+        setActionbar()
         binding.swipRefreshLayout.setOnRefreshListener(this)
+    }
+
+    // 액션바
+    private fun setActionbar() {
+        if (activity is AppCompatActivity) {
+            (activity as AppCompatActivity).setSupportActionBar(toolbar)
+            actionbar = (activity as AppCompatActivity).supportActionBar!!
+            actionbar.setDisplayShowTitleEnabled(false)
+        }
     }
 
     // 리사이클뷰 레이아웃 매니저 설정

@@ -324,7 +324,7 @@ class CommentActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
     }
 
     private fun sendFCM(token: String, name: String, msg: String) {
-        val fcm = FCM(token!!, name, msg, pid, "")
+        val fcm = FCM(token, name, msg, pid, "")
         fcm.start()
     }
 
