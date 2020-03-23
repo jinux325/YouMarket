@@ -64,6 +64,15 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         return true
     }
 
+    override fun onBackPressed() {
+        if (fragmentHOME.isVisible) {
+            super.onBackPressed()
+        } else {
+            bottom_navigation.selectedItemId = R.id.navigation_home
+        }
+    }
+
+    // Fragment 변경
     private fun changeFragment(key: Int) {
         when (key) {
             1 -> {

@@ -17,6 +17,7 @@ import com.google.firebase.firestore.Query
 import com.u.marketapp.adapter.ProductRVAdapter
 import com.u.marketapp.databinding.FragmentHomeBinding
 import com.u.marketapp.listener.EndlessRecyclerViewScrollListener
+import com.u.marketapp.utils.SharedPreferencesUtils
 import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
@@ -188,8 +189,8 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                     requestItems()
                 }
                 REQUEST_FILTER -> { // 필터 페이지에서 리턴
-                    adapter.clear()
-                    requestItems()
+                    val list = SharedPreferencesUtils.instance.getStringArrayPref(requireContext(), "category")
+                    Log.i(TAG, list.toString())
                 }
             }
         }
