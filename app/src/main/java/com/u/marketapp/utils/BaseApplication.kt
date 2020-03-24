@@ -1,4 +1,4 @@
-package com.u.marketapp
+package com.u.marketapp.utils
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -9,6 +9,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDialog
+import com.u.marketapp.R
 
 @SuppressLint("Registered")
 class BaseApplication : Application() {

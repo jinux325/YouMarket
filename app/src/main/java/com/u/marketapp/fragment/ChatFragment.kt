@@ -1,4 +1,4 @@
-package com.u.marketapp
+package com.u.marketapp.fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.u.marketapp.activity.MainActivity
+import com.u.marketapp.R
 import com.u.marketapp.adapter.ChatAdapter
 import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.vo.ChatRoomVO
