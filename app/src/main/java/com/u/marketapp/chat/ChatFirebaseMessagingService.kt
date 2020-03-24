@@ -15,6 +15,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.u.marketapp.activity.CommentActivity
 import com.u.marketapp.R
+import com.u.marketapp.activity.ReplyActivity
 
 
 class ChatFirebaseMessagingService : FirebaseMessagingService() {
@@ -58,16 +59,25 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun sendNotification(remoteMessage: RemoteMessage) {
         val intent:Intent
-        if(remoteMessage.data["partnerName"] != ""){
-            intent = Intent(this, ChatActivity::class.java).apply {
-                flags = FLAG_ACTIVITY_NO_HISTORY
-                putExtra("chatRoomUid", remoteMessage.data["documentId"])
-                putExtra("name", remoteMessage.data["partnerName"])
+        when {
+            remoteMessage.data["click_action"] != resources.getString(R.string.ChatActivity) -> {
+                intent = Intent(this, ChatActivity::class.java).apply {
+                    flags = FLAG_ACTIVITY_NO_HISTORY
+                    putExtra("chatRoomUid", remoteMessage.data["documentId"])
+                    putExtra("name", remoteMessage.data["partnerName"])
+                }
             }
-        }else{
-            intent = Intent(this, CommentActivity::class.java).apply {
-                flags = FLAG_ACTIVITY_NO_HISTORY
-                putExtra("pid", remoteMessage.data["documentId"])
+            remoteMessage.data["click_action"] != resources.getString(R.string.CommentActivity) -> {
+                intent = Intent(this, CommentActivity::class.java).apply {
+                    flags = FLAG_ACTIVITY_NO_HISTORY
+                    putExtra("pid", remoteMessage.data["documentId"])
+                }
+            }
+            else -> {
+                intent = Intent(this, ReplyActivity::class.java).apply {
+                    flags = FLAG_ACTIVITY_NO_HISTORY
+                    putExtra("pid", remoteMessage.data["documentId"])
+                }
             }
         }
 

@@ -15,4 +15,8 @@
     <string name="searchStr">검색</string>
     <string name="chatting_delete">나가기</string>
 
+    <string name="ChatActivity">ChatActivity</string>
+    <string name="ReplyActivity">ReplyActivity</string>
+    <string name="CommentActivity">CommentActivity</string>
+
 </resources>

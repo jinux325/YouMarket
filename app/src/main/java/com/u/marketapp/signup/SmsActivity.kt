@@ -181,9 +181,11 @@ class SmsActivity : AppCompatActivity() {
     }
 
     private fun userDelete(){
+        val uid = mAuth.currentUser!!.uid
         FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener { task ->
             if(task.isSuccessful){
                 FirebaseAuth.getInstance().signOut()
+                db.collection(resources.getString(R.string.db_user)).document(uid).update("status", 0)
                 val intent = Intent(this, SplashActivity::class.java)
                 intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
