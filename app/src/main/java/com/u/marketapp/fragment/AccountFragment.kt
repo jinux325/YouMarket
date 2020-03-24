@@ -3,6 +3,7 @@ package com.u.marketapp.fragment
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -70,27 +71,26 @@ class AccountFragment : Fragment() {
                 lodding()
             }
         }*/
-
+        Log.d("AccountFragment ", "onResume")
         myData()
 
     }
 
     private fun myData(){
         db.collection(resources.getString(R.string.db_user)).document(myUid).get()
-            .addOnCompleteListener{ task ->
-                if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
-                        UserEntity::class.java)
-                    Glide.with(this).load(userEntity!!.imgPath)
-                        .apply(RequestOptions.bitmapTransform(CircleCrop())).into(account_profile)
-                    account_name.text = userEntity.name
+            .addOnSuccessListener { documentSnapshot ->
+                val userEntity: UserEntity? = documentSnapshot.toObject<UserEntity>(
+                    UserEntity::class.java)
+                Glide.with(this).load(userEntity!!.imgPath)
+                    .apply(RequestOptions.bitmapTransform(CircleCrop())).into(account_profile)
+                account_name.text = userEntity.name
 
-                    val prefs = activity!!.getSharedPreferences("User", Context.MODE_PRIVATE)
-                    /*Log.e("선택 주소 getAddress : "," ${prefs.getString("address", "")}")
-                    selectAddr.text = "선택한 지역: ${prefs.getString("address", "")}"*/
-                    account_address.text = prefs.getString("address", "")
-                    myData = userEntity
-                }
+                val prefs = activity!!.getSharedPreferences("User", Context.MODE_PRIVATE)
+                /*Log.e("선택 주소 getAddress : "," ${prefs.getString("address", "")}")
+                selectAddr.text = "선택한 지역: ${prefs.getString("address", "")}"*/
+                account_address.text = prefs.getString("address", "")
+                myData = userEntity
+
             }
     }
 /*

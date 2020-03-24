@@ -20,11 +20,24 @@
             app:title="채팅"
             tools:ignore="MissingConstraints"/>
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chat_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical" />
+
+
+        <TextView
+            android:id="@+id/chat_tv"
+            android:gravity="center"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="채팅이 없어요..."
+            android:textStyle="bold"
+            android:textSize="20dp"
+            tools:ignore="HardcodedText,SpUsage" />
     </LinearLayout>
 
 </FrameLayout>

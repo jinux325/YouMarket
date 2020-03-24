@@ -3,6 +3,9 @@ package com.u.marketapp.chat
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
@@ -14,6 +17,7 @@ import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.vo.ChatRoomVO
 import com.u.marketapp.vo.ChattingVO
 import kotlinx.android.synthetic.main.activity_chat.*
+import kotlinx.android.synthetic.main.activity_chat.toolbar
 import java.util.*
 
 
@@ -22,19 +26,22 @@ class ChatActivity : AppCompatActivity() {
     val db = FirebaseFirestore.getInstance()
     private val myUid = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var chatRoom : HashMap<String,Any>
-    private lateinit var chatRoomUid : String
+    private var chatRoomUid : String = ""
     private lateinit var chattingList : MutableList<ChattingVO>
     var comment:String=""
     lateinit var name:String
     private lateinit var myData: UserEntity
     private lateinit var pid:String
-    lateinit var seller:String
+    private lateinit var seller:String
     private lateinit var token:String
 
     @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
+
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayShowTitleEnabled(false)
 
         val intentItems = intent
         tv_partner_nickname.text = intentItems.getStringExtra("name")
@@ -65,7 +72,50 @@ class ChatActivity : AppCompatActivity() {
 
 
     }
+    // toolbar
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_chatting, menu)
+        return true
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.delete_chatting -> {
+                if(chatRoomUid == ""){
+                    // 채팅방 아직 없음
+                    finish()
+                }else{
+                    // 채팅방 나가기
+                    Log.e("채팅방 나가기 ", chatRoomUid)
+                    val arr : MutableList<String> = myData.chatting
+                    for(i in 0 until arr.size){
+                        if(arr[i] == chatRoomUid){
+                            arr.removeAt(i)
+                            break
+                        }
+                    }
+                    //val arr : MutableList<String> = mutableListOf<String>(chatRoomUid,chatRoomUid,chatRoomUid)
+                    val delete = hashMapOf<String, Any>(
+                        "chatting" to arr
+                    )
+                  //  FirebaseFirestore.getInstance().collection("User").document(myUid)
+                    //db.collection(resources.getString(R.string.db_user)).document(myUid)
+                    db.collection(resources.getString(R.string.db_user)).document(myUid)
+                        .update(delete).addOnSuccessListener {
+                            Log.e("채팅방 나가기 2 ", chatRoomUid)
+                            chattingMyUidDel()
+                            Toast.makeText(applicationContext, "채팅 나가기", Toast.LENGTH_LONG).show()
+                        }
 
+                }
+
+                return true
+            }
+            else -> {
+                Toast.makeText(applicationContext, "나머지 버튼 클릭됨", Toast.LENGTH_LONG).show()
+                super.onOptionsItemSelected(item)
+            }
+        }
+    }
 
     @SuppressLint("LongLogTag")
     fun addChatRoom(uid:String, pid:String, sellerUid:String){
@@ -137,13 +187,12 @@ class ChatActivity : AppCompatActivity() {
 
     private fun myData(){
         db.collection(resources.getString(R.string.db_user)).document(myUid).get()
-            .addOnCompleteListener{ task ->
-                if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
+            .addOnSuccessListener { documentSnapshot ->
+                    val userEntity: UserEntity? = documentSnapshot.toObject<UserEntity>(
                         UserEntity::class.java)
                     myData= userEntity!!
                     Log.d(" @@@@ 내 데이터 @@@@ ", myData.name)
-                }
+
             }
     }
 
@@ -212,24 +261,106 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun getToken(uid:String){
-        Log.d("@@ getToken ", "uid: $uid")
-        db.collection(resources.getString(R.string.db_user)).document(uid).get()
-            .addOnCompleteListener{ task ->
-                if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
-                        UserEntity::class.java)
-                    token = userEntity!!.token.toString()
+        if(uid != "") {
+            Log.d("@@ getToken ", "uid: $uid")
+            db.collection(resources.getString(R.string.db_user)).document(uid).get()
+                .addOnSuccessListener { documentSnapshot ->
+                    val userEntity: UserEntity? = documentSnapshot.toObject<UserEntity>(
+                        UserEntity::class.java
+                    )
+                    token = userEntity!!.token
                     Log.d("@@ getToken token  ", userEntity.token)
                     //FCM(userEntity!!.token)
-                    val fcm = FCM(token,myData.name,comment,chatRoomUid,tv_partner_nickname.text.toString())
+                    val fcm = FCM(
+                        token,
+                        myData.name,
+                        comment,
+                        chatRoomUid,
+                        tv_partner_nickname.text.toString()
+                    )
                     fcm.start()
                     /*val thread=FCM()
-                    thread.start()*/
+                thread.start()*/
                     //FCM(userEntity!!.token)
+
+                }
+        }
+    }
+
+    private fun chattingMyUidDel(){
+        db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).get()
+            .addOnSuccessListener { document ->
+                Log.e("채팅방 나가기 3 ", chatRoomUid)
+                val chatRoomVO: ChatRoomVO? = document.toObject(ChatRoomVO::class.java)
+                if(myUid == chatRoomVO?.buyer){
+                    Log.e("채팅방 나가기 4 ", chatRoomUid)
+                    if(chatRoomVO.seller == ""){
+                        Log.e("채팅방 나가기 5 ", chatRoomUid)
+                        //chattingCommentDel(document.reference)
+                        document.reference.collection("comment").get()
+                            .addOnSuccessListener { result ->
+                                Log.e("채팅방 나가기 10 ", result.toString() )
+                                for(documents in result){
+                                    Log.e("채팅방 나가기 11 ", document.id)
+                                    documents.reference.delete().addOnSuccessListener {
+                                        db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).delete().addOnSuccessListener {
+                                            finish()
+                                        }
+                                    }
+
+
+                                }
+                            }
+                    }else{
+                        Log.e("채팅방 나가기 6 ", chatRoomUid)
+                        db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid)
+                            .update("buyer", "").addOnSuccessListener { finish() }
+
+                    }
+
+                }else{
+                    Log.e("채팅방 나가기 7 ", chatRoomUid)
+                    if(chatRoomVO?.buyer == ""){
+                        Log.e("채팅방 나가기 8 ", chatRoomUid)
+                        //chattingCommentDel(document.reference)
+                       document.reference.collection("comment").get()
+                            .addOnSuccessListener { result ->
+                                Log.e("채팅방 나가기 10 ", result.toString() )
+                                for(documents in result){
+                                    Log.e("채팅방 나가기 11 ", document.id)
+                                    documents.reference.delete().addOnSuccessListener {
+                                        db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).delete().addOnSuccessListener {
+                                            finish()
+                                        }
+                                    }
+
+
+                                }
+                            }
+
+
+                       // db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).delete()
+                    }else{
+                        Log.e("채팅방 나가기 9 ", chatRoomUid)
+                        db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid)
+                            .update("seller", "").addOnSuccessListener { finish() }
+
+                    }
+
                 }
             }
     }
-
+    /*private fun chattingCommentDel(document:Any){
+        document.collection("comment").get()
+            .addOnSuccessListener { result ->
+                Log.e("채팅방 나가기 10 ", result.toString() )
+                for(document in result){
+                    Log.e("채팅방 나가기 11 ", document.id)
+                   *//* db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid)
+                        .collection("comment").document(document.id).delete()*//*
+                }
+            }
+    }*/
 
 /*
 
