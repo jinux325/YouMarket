@@ -5,9 +5,13 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.util.Log
 import android.view.*
+import android.view.animation.AnimationUtils
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -26,6 +30,8 @@ import com.u.marketapp.adapter.ProductRVAdapter
 import com.u.marketapp.databinding.FragmentHomeBinding
 import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.listener.EndlessRecyclerViewScrollListener
+import com.u.marketapp.setting.LocationSettingActivity
+import com.u.marketapp.utils.BaseApplication
 import com.u.marketapp.utils.SharedPreferencesUtils
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -35,13 +41,15 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         private val TAG = HomeFragment::class.java.simpleName
         private const val REQUEST_PRODUCT = 100
         private const val REQUEST_FILTER = 200
+        private const val REQUEST_ADDRESS_SETTING = 300
         private const val REQUEST_ITEM_LIMIT = 20L
     }
 
     private lateinit var actionbar: ActionBar
     private lateinit var adapter : ProductRVAdapter
     private lateinit var binding : FragmentHomeBinding
-    private lateinit var scrollListener: EndlessRecyclerViewScrollListener
+    private lateinit var scrollListener : EndlessRecyclerViewScrollListener
+    private val info : ArrayList<String> = ArrayList()
 
     // 새로고침
     override fun onRefresh() {
@@ -58,6 +66,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     private fun initView() {
+        getUserAddrss()
         setRVAdapter()
         setRVLayoutManager()
         requestItems()
@@ -78,6 +87,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 true
             }
             R.id.action_notification -> {
+                Toast.makeText(requireContext(), resources.getString(R.string.feature_to_be_added), Toast.LENGTH_SHORT).show()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -131,25 +141,30 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     // 스피너 클릭 이벤트
     private fun setSpinnerListener() {
-        val prefs = activity!!.getSharedPreferences("User", Context.MODE_PRIVATE)
-        text_view_spinner.text = prefs.getString("address", "내 동네 설정")
+        text_view_spinner.text = getSharedAddress()
         layout_spinner.setOnClickListener {
-            getUserAddrss()
+            animRotate(true)
+            showAlertDialog(info.toTypedArray())
         }
+    }
+
+    private fun animRotate(rotate: Boolean) {
+        val anim =
+            if (rotate) AnimationUtils.loadAnimation(context, R.anim.clockwise_rotate)
+            else AnimationUtils.loadAnimation(context, R.anim.counter_clockwise_rotate)
+        image_view_spinner.startAnimation(anim)
     }
 
     private fun getUserAddrss() {
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_user)).document(FirebaseAuth.getInstance().currentUser!!.uid).get()
             .addOnSuccessListener { documentSnapshot ->
-                val user = documentSnapshot.toObject(UserEntity::class.java)
-                val info = arrayListOf<String>()
-                user?.let {
+                val user = documentSnapshot.toObject(UserEntity::class.java)!!
+                user.let {
                     if (it.address.isNotEmpty()) info.add(it.address)
                     if (it.address2.isNotEmpty()) info.add(it.address2)
                 }
                 info.add("내 동네 설정")
-                showAlertDialog(info.toTypedArray())
             }
             .addOnFailureListener { e ->
                 Log.i(TAG, e.toString())
@@ -169,7 +184,8 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                     requestItems()
                 }
             } else {
-                showSnackbar("내 동네 설정!")
+                val intent = Intent(requireContext(), LocationSettingActivity::class.java)
+                startActivityForResult(intent, REQUEST_ADDRESS_SETTING)
             }
         }
         val dialog = builder.create()
@@ -182,15 +198,26 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             }
         }
         dialog.show()
+        dialog.setOnDismissListener {
+            animRotate(false)
+        }
     }
 
     private fun showSnackbar(msg: String) {
         Snackbar.make(layout_root, msg, Snackbar.LENGTH_SHORT).show()
     }
 
+    private fun checkSharedAddress() {
+        val prefs = activity!!.getSharedPreferences("User", Context.MODE_PRIVATE)
+        val address = prefs.getString("address", "내 동네 설정")
+        address?.let {
+            setSharedAddress(it)
+        }
+    }
+
     @SuppressLint("CommitPrefEdits")
     private fun setSharedAddress(address: String) {
-        val prefs = activity!!.getSharedPreferences("User", Context.MODE_PRIVATE)
+        val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val edit = prefs.edit()
         edit.putString("address", address)
         edit.apply()
@@ -198,7 +225,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     private fun getSharedAddress() : String {
-        val prefs = activity!!.getSharedPreferences("User", Context.MODE_PRIVATE)
+        val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val result = prefs.getString("address", "세류동")!!
         Log.i(TAG, "주소 가져오기 : $result")
         return result
@@ -228,6 +255,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 for (item in items) {
                     adapter.addItem(item)
                 }
+                BaseApplication.instance.progressOFF()
             }.addOnFailureListener { e ->
                 Log.i(TAG, e.toString())
             }
@@ -300,8 +328,14 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 REQUEST_FILTER -> { // 필터 페이지에서 리턴
                     val list = SharedPreferencesUtils.instance.getStringArrayPref(requireContext(), "category")
                     Log.i(TAG, list.toString())
+                    BaseApplication.instance.progressON(requireActivity(), resources.getString(R.string.loading))
                     adapter.clear()
                     requestItems()
+                }
+                REQUEST_ADDRESS_SETTING -> { // 내 동네 설정 리턴
+                    Log.i(TAG, "Location Setting Activity Return!!")
+                    checkSharedAddress()
+                    getUserAddrss()
                 }
             }
         }
