@@ -1,24 +1,21 @@
 package com.u.marketapp.activity
 
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Base64
+import android.preference.PreferenceManager
 import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.kakao.util.helper.Utility.getPackageInfo
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.R
+import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.fragment.AccountFragment
 import com.u.marketapp.fragment.ChatFragment
 import com.u.marketapp.fragment.HomeFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
@@ -35,13 +32,30 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val sign = getKeyHash(this)
-        Log.i(TAG, "키 해시 : $sign")
-
         bottom_navigation.setOnNavigationItemSelectedListener(this)
+        getUserInfo()
         fragmentHOME = HomeFragment()
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragmentHOME).commit()
+    }
+
+    private fun getUserInfo() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_user)).document(FirebaseAuth.getInstance().currentUser!!.uid).get()
+            .addOnSuccessListener { documentSnapshot ->
+                val user = documentSnapshot.toObject(UserEntity::class.java)!!
+                setSharedAddress(user.address)
+            }
+            .addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
+    }
+
+    private fun setSharedAddress(address: String) {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val edit = prefs.edit()
+        edit.putString("address", address)
+        edit.apply()
+        Log.i(TAG, "주소 변경 : ${prefs.getString("address", "세류동")}")
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -116,22 +130,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 if (::fragmentINFO.isInitialized) supportFragmentManager.beginTransaction().show(fragmentINFO).commit()
             }
         }
-    }
-
-    // Key Hash 찾기
-    private fun getKeyHash(context: Context?): String? {
-        val packageInfo: PackageInfo = getPackageInfo(context, PackageManager.GET_SIGNATURES)
-            ?: return null
-        for (signature in packageInfo.signatures) {
-            try {
-                val md: MessageDigest = MessageDigest.getInstance("SHA")
-                md.update(signature.toByteArray())
-                return Base64.encodeToString(md.digest(), Base64.NO_WRAP)
-            } catch (e: NoSuchAlgorithmException) {
-                Log.i(TAG, "Unable to get MessageDigest. signature=$signature", e)
-            }
-        }
-        return null
     }
 
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MarketApp</string>
+    <string name="app_name">유마켓</string>
 
     <string name="loading">Please Wait…</string>
     <string name="saving">Saving…</string>
