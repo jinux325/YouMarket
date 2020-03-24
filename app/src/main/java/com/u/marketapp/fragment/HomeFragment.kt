@@ -1,7 +1,9 @@
 package com.u.marketapp.fragment
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -89,6 +91,9 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             actionbar = (activity as AppCompatActivity).supportActionBar!!
             actionbar.setDisplayShowTitleEnabled(false)
         }
+
+        val prefs = activity!!.getSharedPreferences("User", Context.MODE_PRIVATE)
+        text_view_spinner.text = prefs.getString("address", "세류동")
     }
 
     // 리사이클뷰 레이아웃 매니저 설정
