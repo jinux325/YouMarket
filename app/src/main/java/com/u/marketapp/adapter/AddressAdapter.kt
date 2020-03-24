@@ -64,6 +64,11 @@ fun addressDialog( context: Context, lAddr:String, phoneNumber: String,location:
             if (FirebaseAuth.getInstance().currentUser != null) {
                 val uid = FirebaseAuth.getInstance().currentUser!!.uid
                 db.collection(context.resources.getString(R.string.db_user)).document(uid).update("address", addrSubString(lAddr))
+
+                val prefs = context.getSharedPreferences("User", Context.MODE_PRIVATE)
+                val edit = prefs.edit()
+                edit.putString("address", addrSubString(lAddr)).apply()
+
                 val intent = Intent(context, LocationSettingActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 context.startActivity(intent)
@@ -72,6 +77,11 @@ fun addressDialog( context: Context, lAddr:String, phoneNumber: String,location:
             if (FirebaseAuth.getInstance().currentUser != null) {
                 val uid = FirebaseAuth.getInstance().currentUser!!.uid
                 db.collection(context.resources.getString(R.string.db_user)).document(uid).update("address2", addrSubString(lAddr))
+
+                val prefs = context.getSharedPreferences("User", Context.MODE_PRIVATE)
+                val edit = prefs.edit()
+                edit.putString("address", addrSubString(lAddr)).apply()
+
                 val intent = Intent(context, LocationSettingActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 context.startActivity(intent)

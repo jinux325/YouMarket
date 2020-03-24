@@ -1,5 +1,6 @@
 package com.u.marketapp.fragment
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -83,7 +84,11 @@ class AccountFragment : Fragment() {
                     Glide.with(this).load(userEntity!!.imgPath)
                         .apply(RequestOptions.bitmapTransform(CircleCrop())).into(account_profile)
                     account_name.text = userEntity.name
-                    account_address.text = userEntity.address
+
+                    val prefs = activity!!.getSharedPreferences("User", Context.MODE_PRIVATE)
+                    /*Log.e("선택 주소 getAddress : "," ${prefs.getString("address", "")}")
+                    selectAddr.text = "선택한 지역: ${prefs.getString("address", "")}"*/
+                    account_address.text = prefs.getString("address", "")
                     myData = userEntity
                 }
             }

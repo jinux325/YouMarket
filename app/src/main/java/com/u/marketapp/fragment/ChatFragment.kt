@@ -63,27 +63,30 @@ class ChatFragment : Fragment() {
         for(i in list){
             FirebaseFirestore.getInstance().collection("Chatting").document(i).get()
                 .addOnCompleteListener{ task ->
-                    if (task.isSuccessful) {
-                        val chatRoomVO: ChatRoomVO? = task.result!!.toObject<ChatRoomVO>(ChatRoomVO::class.java)
-                        Log.d(chatRoomVO?.buyer, chatRoomVO?.buyer)
-                        Log.d(chatRoomVO?.seller, chatRoomVO?.seller)
-                        Log.d(chatRoomVO?.pid, chatRoomVO?.pid)
-                        Log.d(chatRoomVO?.registDate.toString(), chatRoomVO?.registDate.toString())
-                        Log.d(chatRoomVO?.comment, chatRoomVO?.comment)
+                    val chatRoomVO: ChatRoomVO? = task.result!!.toObject<ChatRoomVO>(ChatRoomVO::class.java)
+                    if(chatRoomVO != null ){
+                        if (task.isSuccessful) {
+                            Log.e(" chattingRoom : ", "$chatRoomVO")
+                                Log.d(chatRoomVO.buyer, chatRoomVO.buyer)
+                                Log.d(chatRoomVO.seller, chatRoomVO.seller)
+                                Log.d(chatRoomVO.pid, chatRoomVO.pid)
+                                Log.d(chatRoomVO.registDate.toString(), chatRoomVO.registDate.toString())
+                                Log.d(chatRoomVO.comment, chatRoomVO.comment)
 
-                        Log.d("chattingRoomList ", chatRoomVO!!.buyer)
+                                Log.d("chattingRoomList ", chatRoomVO.buyer)
 
-                        chatRoomVO.cId=i
-                        chattingRoomList.add(chatRoomVO)
-                        Log.d("chattingRoomList 11111 ", chattingRoomList[0].comment+"  "+chattingRoomList[0].cId)
-                        chattingRoomList.sortWith(Comparator { data1, data2 -> data2.registDate!!.compareTo(data1.registDate)})
+                                chatRoomVO.cId=i
+                                chattingRoomList.add(chatRoomVO)
+                                Log.d("chattingRoomList 11111 ", chattingRoomList[0].comment+"  "+chattingRoomList[0].cId)
+                                chattingRoomList.sortWith(Comparator { data1, data2 -> data2.registDate!!.compareTo(data1.registDate)})
 
-                    }
-                    Log.d("chattingRoomList 4444444 ", chattingRoomList[0].buyer)
+                        }
+                        Log.d("chattingRoomList 4444444 ", chattingRoomList[0].buyer)
 
-                    if(list.size == chattingRoomUidList.size){
-                        chat_recyclerView.layoutManager = LinearLayoutManager(context)
-                        chat_recyclerView.adapter = ChatAdapter(context, chattingRoomList)
+                        if(list.size == chattingRoomUidList.size){
+                            chat_recyclerView.layoutManager = LinearLayoutManager(context)
+                            chat_recyclerView.adapter = ChatAdapter(context, chattingRoomList)
+                        }
                     }
                 }
         }

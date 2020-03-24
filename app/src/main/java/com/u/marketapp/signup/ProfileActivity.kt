@@ -189,7 +189,8 @@ class ProfileActivity : AppCompatActivity() {
                     "address" to address,
                     "regDate" to Date(System.currentTimeMillis()),
                     "imgPath" to downloadUri.toString(),
-                    "token" to token
+                    "token" to token,
+                    "status" to 1
                 )
 
                 db.collection(resources.getString(R.string.db_user)).document(uid!!)
@@ -197,11 +198,7 @@ class ProfileActivity : AppCompatActivity() {
                     .addOnSuccessListener { Log.d(tag, "DocumentSnapshot successfully written!") }
                     .addOnFailureListener { e -> Log.w(tag, "Error writing document", e) }
 
-                edit.putString("uid", uid)
-                edit.putString("name", name)
                 edit.putString("address", address)
-                edit.putString("imgPath", downloadUri.toString())
-                edit.putString("phoneNumber", phoneNumber)
 
                 //edit.apply(); //비동기 처리
                 val intent = Intent(this, MainActivity::class.java)
