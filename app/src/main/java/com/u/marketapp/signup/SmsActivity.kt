@@ -16,9 +16,9 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
-import com.u.marketapp.MainActivity
+import com.u.marketapp.activity.MainActivity
 import com.u.marketapp.R
-import com.u.marketapp.SplashActivity
+import com.u.marketapp.activity.SplashActivity
 import com.u.marketapp.entity.UserEntity
 import kotlinx.android.synthetic.main.activity_sms.*
 import java.util.concurrent.TimeUnit

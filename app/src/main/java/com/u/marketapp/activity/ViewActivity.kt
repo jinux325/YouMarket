@@ -1,8 +1,9 @@
-package com.u.marketapp
+package com.u.marketapp.activity
 
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.u.marketapp.R
 import com.u.marketapp.adapter.ViewPagerAdapter2
 import kotlinx.android.synthetic.main.activity_product.*
 

@@ -13,7 +13,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.u.marketapp.CommentActivity
+import com.u.marketapp.activity.CommentActivity
 import com.u.marketapp.R
 
 

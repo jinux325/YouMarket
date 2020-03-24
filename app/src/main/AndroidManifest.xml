@@ -30,22 +30,22 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".FilterActivity"
+        <activity android:name=".activity.FilterActivity"
             android:theme="@style/MaterialTheme"/>
         <activity
-            android:name=".ReplyActivity"
+            android:name=".activity.ReplyActivity"
             android:theme="@style/MaterialTheme" />
         <activity
-            android:name=".CommentActivity"
+            android:name=".activity.CommentActivity"
             android:theme="@style/MaterialTheme" />
         <activity
-            android:name=".HomeFragment"
+            android:name=".fragment.HomeFragment"
             android:theme="@style/MaterialTheme" />
         <activity
-            android:name=".EditActivity"
+            android:name=".activity.EditActivity"
             android:theme="@style/MaterialTheme" />
         <activity
-            android:name=".ProductActivity"
+            android:name=".activity.ProductActivity"
             android:theme="@style/MaterialTheme">
             <intent-filter>
                 <data
@@ -54,10 +54,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ViewActivity"
+            android:name=".activity.ViewActivity"
             android:theme="@style/MaterialTheme" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:theme="@style/MaterialTheme" />
         <activity
             android:name=".chat.ChatActivity"
@@ -81,7 +81,7 @@
             android:name=".signup.SmsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".activity.SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

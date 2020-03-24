@@ -1,4 +1,4 @@
-package com.u.marketapp
+package com.u.marketapp.activity
 
 import android.app.Activity
 import android.content.Intent
@@ -20,6 +20,8 @@ import com.kakao.kakaolink.v2.KakaoLinkResponse
 import com.kakao.kakaolink.v2.KakaoLinkService
 import com.kakao.network.ErrorResult
 import com.kakao.network.callback.ResponseCallback
+import com.u.marketapp.*
+import com.u.marketapp.R
 import com.u.marketapp.adapter.CommentRVAdapter
 import com.u.marketapp.adapter.ViewPagerAdapter
 import com.u.marketapp.chat.ChatActivity
@@ -27,6 +29,7 @@ import com.u.marketapp.databinding.ActivityProductBinding
 import com.u.marketapp.entity.CommentEntity
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
+import com.u.marketapp.utils.BaseApplication
 import kotlinx.android.synthetic.main.activity_product.*
 
 class ProductActivity : AppCompatActivity(), View.OnClickListener {
@@ -50,7 +53,9 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_product)
+        binding = DataBindingUtil.setContentView(this,
+            R.layout.activity_product
+        )
         setActionBar()
         currentUid = FirebaseAuth.getInstance().currentUser!!.uid
         if (intent.hasExtra("id")) {
@@ -125,7 +130,9 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 val item = it.result!!.toObject(ProductEntity::class.java)
-                item?.let { a -> text_view_lookup.text = String.format(resources.getString(R.string.format_lookup), a.lookup.size) }
+                item?.let { a -> text_view_lookup.text = String.format(resources.getString(
+                    R.string.format_lookup
+                ), a.lookup.size) }
             }
         }
     }
@@ -214,7 +221,9 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 val item = it.result!!.toObject(ProductEntity::class.java)
-                item?.let { a -> text_view_attention.text = String.format(resources.getString(R.string.format_attention), a.attention.size) }
+                item?.let { a -> text_view_attention.text = String.format(resources.getString(
+                    R.string.format_attention
+                ), a.attention.size) }
             }
         }
     }
@@ -264,7 +273,9 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     private fun updateProduct() {
         val intent = Intent(this, EditActivity::class.java)
         intent.putExtra("pid", pid)
-        startActivityForResult(intent, REQUEST_UPDATE)
+        startActivityForResult(intent,
+            REQUEST_UPDATE
+        )
     }
 
     // 상품 비활성화
@@ -279,7 +290,9 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
 
     // 상품 삭제
     private fun deleteProduct() {
-        BaseApplication.instance.progressON(this, resources.getString(R.string.loading))
+        BaseApplication.instance.progressON(this, resources.getString(
+            R.string.loading
+        ))
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -290,7 +303,9 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                             for (document in task1.result!!.documents) {
                                 val item1 = document.toObject(CommentEntity::class.java)!!
                                 if (item1.replySize > 0) {
-                                    document.reference.collection(resources.getString(R.string.db_reply)).get().addOnCompleteListener { task2 ->
+                                    document.reference.collection(resources.getString(
+                                        R.string.db_reply
+                                    )).get().addOnCompleteListener { task2 ->
                                         if (task2.isSuccessful) {
                                             for (document1 in task2.result!!.documents) {
                                                 // 답글 삭제
@@ -377,7 +392,9 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
 
     // 상품 데이터 가져오기
     private fun getProductData() {
-        BaseApplication.instance.progressON(this, resources.getString(R.string.loading))
+        BaseApplication.instance.progressON(this, resources.getString(
+            R.string.loading
+        ))
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener { document ->
             if (document.isSuccessful) {

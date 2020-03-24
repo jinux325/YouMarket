@@ -12,7 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ReplyActivity">
+        tools:context=".activity.ReplyActivity">
 
         <!-- Appbar -->
         <com.google.android.material.appbar.AppBarLayout

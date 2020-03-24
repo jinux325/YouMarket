@@ -9,7 +9,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.u.marketapp.R
-import com.u.marketapp.SplashActivity
+import com.u.marketapp.activity.SplashActivity
 import com.u.marketapp.signup.SmsActivity
 import kotlinx.android.synthetic.main.activity_setting.*
 

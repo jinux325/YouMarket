@@ -1,4 +1,4 @@
-package com.u.marketapp
+package com.u.marketapp.activity
 
 import android.app.Activity
 import android.os.Bundle
@@ -8,6 +8,7 @@ import android.widget.CheckBox
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import com.u.marketapp.R
 import com.u.marketapp.utils.SharedPreferencesUtils
 import kotlinx.android.synthetic.main.activity_filter.*
 

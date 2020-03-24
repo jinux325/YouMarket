@@ -1,4 +1,4 @@
-package com.u.marketapp
+package com.u.marketapp.fragment
 
 import android.app.Activity
 import android.content.Intent
@@ -14,6 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.u.marketapp.activity.ProductActivity
+import com.u.marketapp.R
+import com.u.marketapp.activity.FilterActivity
 import com.u.marketapp.adapter.ProductRVAdapter
 import com.u.marketapp.databinding.FragmentHomeBinding
 import com.u.marketapp.listener.EndlessRecyclerViewScrollListener
@@ -43,7 +46,8 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // 데이터 바인딩
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
+        binding = DataBindingUtil.inflate(inflater,
+            R.layout.fragment_home, container, false)
         setRVAdapter()
         setRVLayoutManager()
         requestItems()
@@ -185,13 +189,17 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         Log.i(TAG, "Document ID : $id")
         val intent = Intent(context, ProductActivity::class.java)
         intent.putExtra("id", id)
-        startActivityForResult(intent, REQUEST_PRODUCT)
+        startActivityForResult(intent,
+            REQUEST_PRODUCT
+        )
     }
 
     // 필터 페이지 이동
     private fun moveFilterAcitity() {
         val intent = Intent(context, FilterActivity::class.java)
-        startActivityForResult(intent, REQUEST_FILTER)
+        startActivityForResult(intent,
+            REQUEST_FILTER
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

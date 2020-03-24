@@ -1,4 +1,4 @@
-package com.u.marketapp
+package com.u.marketapp.fragment
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +9,8 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.u.marketapp.activity.MainActivity
+import com.u.marketapp.R
 import com.u.marketapp.setting.AccountProfileActivity
 import com.u.marketapp.setting.LocationSettingActivity
 import com.u.marketapp.setting.SettingActivity

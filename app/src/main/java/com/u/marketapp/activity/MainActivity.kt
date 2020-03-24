@@ -1,4 +1,4 @@
-package com.u.marketapp
+package com.u.marketapp.activity
 
 import android.content.Context
 import android.content.Intent
@@ -10,9 +10,12 @@ import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kakao.util.helper.Utility.getPackageInfo
+import com.u.marketapp.R
+import com.u.marketapp.fragment.AccountFragment
+import com.u.marketapp.fragment.ChatFragment
+import com.u.marketapp.fragment.HomeFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -68,7 +71,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         if (fragmentHOME.isVisible) {
             super.onBackPressed()
         } else {
-            bottom_navigation.selectedItemId = R.id.navigation_home
+            bottom_navigation.selectedItemId =
+                R.id.navigation_home
         }
     }
 
