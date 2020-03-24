@@ -34,6 +34,8 @@ class ChatFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        Log.e("ChatFragment ", "onResume")
+
         chattingRoomList.clear()
         chattingRoomUidList.clear()
         userData()
@@ -41,18 +43,21 @@ class ChatFragment : Fragment() {
 
 
     private fun userData(){
+        Log.e("ChatFragment ", "userData")
         val uid = FirebaseAuth.getInstance().currentUser!!.uid
         FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(uid).get()
-            .addOnCompleteListener{ task ->
-                if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
+            .addOnSuccessListener { documentSnapshot ->
+                    val userEntity: UserEntity? = documentSnapshot.toObject<UserEntity>(UserEntity::class.java)
+                Log.e("ChatFragment ", "userData 1 "+userEntity?.chatting)
                     if(userEntity?.chatting != null){
+                        Log.e("ChatFragment ", "userData 2 ")
                         for(i in userEntity.chatting){
+                            Log.e("ChatFragment ", "userData 3 "+i)
                             chattingRoomUidList.add(i)
                         }
                         chattingRoomList(chattingRoomUidList)
                     }
-                }
+
             }
     }
 
@@ -60,25 +65,37 @@ class ChatFragment : Fragment() {
 
     @SuppressLint("LongLogTag")
     fun chattingRoomList(list:MutableList<String>){
+        Log.e("ChatFragment ", "chattingRoomList "+list)
+        if(list.size == 0){
+            Log.e("ChatFragment ", "chattingRoomList 0 "+list)
+            chat_recyclerView.visibility=View.GONE
+            chat_tv.visibility= View.VISIBLE
+        }else{
+            chat_recyclerView.visibility=View.VISIBLE
+            chat_tv.visibility= View.GONE
+        }
         for(i in list){
+            Log.e("ChatFragment ", "chattingRoomList 1 "+list)
             FirebaseFirestore.getInstance().collection("Chatting").document(i).get()
                 .addOnCompleteListener{ task ->
                     val chatRoomVO: ChatRoomVO? = task.result!!.toObject<ChatRoomVO>(ChatRoomVO::class.java)
+                    Log.e("ChatFragment ", "chattingRoomList 2 ")
                     if(chatRoomVO != null ){
+                        Log.e("ChatFragment ", "chattingRoomList 3 ")
                         if (task.isSuccessful) {
                             Log.e(" chattingRoom : ", "$chatRoomVO")
-                                Log.d(chatRoomVO.buyer, chatRoomVO.buyer)
-                                Log.d(chatRoomVO.seller, chatRoomVO.seller)
-                                Log.d(chatRoomVO.pid, chatRoomVO.pid)
-                                Log.d(chatRoomVO.registDate.toString(), chatRoomVO.registDate.toString())
-                                Log.d(chatRoomVO.comment, chatRoomVO.comment)
+                            Log.d(chatRoomVO.buyer, chatRoomVO.buyer)
+                            Log.d(chatRoomVO.seller, chatRoomVO.seller)
+                            Log.d(chatRoomVO.pid, chatRoomVO.pid)
+                            Log.d(chatRoomVO.registDate.toString(), chatRoomVO.registDate.toString())
+                            Log.d(chatRoomVO.comment, chatRoomVO.comment)
 
-                                Log.d("chattingRoomList ", chatRoomVO.buyer)
+                            Log.d("chattingRoomList ", chatRoomVO.buyer)
 
-                                chatRoomVO.cId=i
-                                chattingRoomList.add(chatRoomVO)
-                                Log.d("chattingRoomList 11111 ", chattingRoomList[0].comment+"  "+chattingRoomList[0].cId)
-                                chattingRoomList.sortWith(Comparator { data1, data2 -> data2.registDate!!.compareTo(data1.registDate)})
+                            chatRoomVO.cId=i
+                            chattingRoomList.add(chatRoomVO)
+                            Log.d("chattingRoomList 11111 ", chattingRoomList[0].comment+"  "+chattingRoomList[0].cId)
+                            chattingRoomList.sortWith(Comparator { data1, data2 -> data2.registDate!!.compareTo(data1.registDate)})
 
                         }
                         Log.d("chattingRoomList 4444444 ", chattingRoomList[0].buyer)

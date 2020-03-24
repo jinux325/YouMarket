@@ -13,5 +13,6 @@
     <string name="feature_to_be_added">기능 추가 예정입니다.</string>
 
     <string name="searchStr">검색</string>
+    <string name="chatting_delete">나가기</string>
 
 </resources>

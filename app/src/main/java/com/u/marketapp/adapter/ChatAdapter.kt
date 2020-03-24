@@ -42,9 +42,6 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
     }*/
     @SuppressLint("LongLogTag", "SimpleDateFormat", "SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
-
-
         Log.e("chatting data: ", "  ${chatList[position].cId}  ${chatList[position].buyer}  ${chatList[position].comment}  ${chatList[position].seller}  ${chatList[position].pid}  ${chatList[position].registDate}")
         //val chatFragment = ChatFragment()
         if(myUid == chatList[position].buyer){
@@ -67,46 +64,23 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
             }
         }
 
+
         val day = SimpleDateFormat("a hh:mm")
         val year = SimpleDateFormat("yyyy년")
-        if (chatList.size >= 1 && year.format(chatList[position].registDate) == year.format(
-                Date(
-                    System.currentTimeMillis()
-                )
-            )
-        ) {
+        if (chatList.size >= 1 && year.format(chatList[position].registDate) == year.format(Date(System.currentTimeMillis()))) {
             val month = SimpleDateFormat("MM월 dd일")
-            if (month.format(chatList[position].registDate) == month.format(
-                    Date(
-                        System.currentTimeMillis()
-                    )
-                )
-            ) {
+            if (month.format(chatList[position].registDate) == month.format(Date(System.currentTimeMillis()))) {
                 val dayFilter = SimpleDateFormat("hh")
                 if (dayFilter.format(chatList[position].registDate) == dayFilter.format(
-                        Date(
-                            System.currentTimeMillis()
-                        )
-                    )
-                ) {
+                        Date(System.currentTimeMillis()))) {
                     val minute = SimpleDateFormat("mm")
                     if (minute.format(chatList[position].registDate) == minute.format(
-                            Date(
-                                System.currentTimeMillis()
-                            )
-                        )
-                    ) {
+                            Date(System.currentTimeMillis()))) {
                         val second = SimpleDateFormat("ss")
-                        val s =
-                            Integer.valueOf(second.format(Date(System.currentTimeMillis()))) - Integer.valueOf(
-                                second.format(chatList[position].registDate)
-                            )
+                        val s =Integer.valueOf(second.format(Date(System.currentTimeMillis()))) - Integer.valueOf(second.format(chatList[position].registDate))
                         holder.time.text = s.toString() + "초 전"
                     } else {
-                        val minutes =
-                            Integer.valueOf(minute.format(Date(System.currentTimeMillis()))) - Integer.valueOf(
-                                minute.format(chatList[position].registDate)
-                            )
+                        val minutes =Integer.valueOf(minute.format(Date(System.currentTimeMillis()))) - Integer.valueOf(minute.format(chatList[position].registDate))
                         holder.time.text = minutes.toString() + "분 전"
                     }
                 } else {
@@ -135,17 +109,19 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
     }
 
     private fun getName(uid:String, holder:ViewHolder){
-        db.collection(context!!.resources.getString(R.string.db_user)).document(uid).get()
-            .addOnCompleteListener{ task ->
-                if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
-                    //name = userEntity?.name.toString()
-                    Log.d("getName 1231 231 2  ", userEntity?.name+"    image:   "+ userEntity?.imgPath)
-                    holder.nickname.text = userEntity?.name
-                    Glide.with(context).load(userEntity?.imgPath)
-                        .apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.image)
+        if(uid != ""){
+            db.collection(context!!.resources.getString(R.string.db_user)).document(uid).get()
+                .addOnCompleteListener{ task ->
+                    if (task.isSuccessful) {
+                        val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
+                        //name = userEntity?.name.toString()
+                        Log.d("getName 1231 231 2  ", userEntity?.name+"    image:   "+ userEntity?.imgPath)
+                        holder.nickname.text = userEntity?.name
+                        Glide.with(context).load(userEntity?.imgPath)
+                            .apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.image)
+                    }
                 }
-            }
+        }
     }
 
     private fun getProductImage(uid:String, holder:ViewHolder){
@@ -160,6 +136,7 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
     }
 
     private fun chattingIntent(uid:String, chatRoomUid:String){
+        if(uid != ""){
         db.collection(context!!.resources.getString(R.string.db_user)).document(uid).get()
             .addOnCompleteListener{ task ->
                 if (task.isSuccessful) {
@@ -170,6 +147,12 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
                     context.startActivity(intent)
                 }
             }
+        }else{
+            val intent = Intent(context, ChatActivity::class.java)
+            intent.putExtra("chatRoomUid", chatRoomUid)
+            intent.putExtra("name", "알 수 없음")
+            context!!.startActivity(intent)
+        }
     }
 
 

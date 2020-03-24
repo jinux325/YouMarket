@@ -19,10 +19,7 @@
         app:contentInsetStart="0dp">
 
         <!-- 타이틀 -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -58,18 +55,8 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_do_not_disturb_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textColor="@android:color/holo_orange_dark"
-                android:textSize="12sp"
-                android:text="방해금지 시간이에요(~오전 08:00)"
-                tools:text="방해금지 시간이에요(~오전 08:00)"
-                tools:ignore="HardcodedText"/>
 
-        </LinearLayout>
+
 
     </androidx.appcompat.widget.Toolbar>
 
