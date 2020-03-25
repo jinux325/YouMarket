@@ -20,7 +20,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup"
-        tools:replace="allowBackup">
+        tools:replace="allowBackup"
+        tools:targetApi="m">
 
         <service
             android:name=".chat.ChatFirebaseMessagingService"

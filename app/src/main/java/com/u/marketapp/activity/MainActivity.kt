@@ -1,5 +1,6 @@
 package com.u.marketapp.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -28,34 +29,21 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     private lateinit var fragmentCATEGORY: Fragment
     private lateinit var fragmentCHATTING: Fragment
     private lateinit var fragmentINFO: Fragment
+    private lateinit var address: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         bottom_navigation.setOnNavigationItemSelectedListener(this)
-        getUserInfo()
+        address = getSharedAddress()
+        Log.i(TAG, "주소 : $address")
         fragmentHOME = HomeFragment()
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragmentHOME).commit()
     }
 
-    private fun getUserInfo() {
-        val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_user)).document(FirebaseAuth.getInstance().currentUser!!.uid).get()
-            .addOnSuccessListener { documentSnapshot ->
-                val user = documentSnapshot.toObject(UserEntity::class.java)!!
-                setSharedAddress(user.address)
-            }
-            .addOnFailureListener { e ->
-                Log.i(TAG, e.toString())
-            }
-    }
-
-    private fun setSharedAddress(address: String) {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        val edit = prefs.edit()
-        edit.putString("address", address)
-        edit.apply()
-        Log.i(TAG, "주소 변경 : ${prefs.getString("address", "세류동")}")
+    private fun getSharedAddress() : String {
+        val pref = getSharedPreferences("user", Context.MODE_PRIVATE)
+        return pref.getString("address", "내 동네 설정")!!
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -94,10 +82,17 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     private fun changeFragment(key: Int) {
         when (key) {
             1 -> {
-                if (::fragmentHOME.isInitialized) supportFragmentManager.beginTransaction().show(fragmentHOME).commit()
-                if (::fragmentCATEGORY.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentCATEGORY).commit()
-                if (::fragmentCHATTING.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentCHATTING).commit()
-                if (::fragmentINFO.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentINFO).commit()
+                Log.i(TAG, "이전 주소 : $address -> 바뀐 주소 : ${getSharedAddress()}")
+                if(address != getSharedAddress()) {
+                    address = getSharedAddress()
+                    fragmentHOME = HomeFragment()
+                    supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragmentHOME).commit()
+                } else {
+                    if (::fragmentHOME.isInitialized) supportFragmentManager.beginTransaction().show(fragmentHOME).commit()
+                    if (::fragmentCATEGORY.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentCATEGORY).commit()
+                    if (::fragmentCHATTING.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentCHATTING).commit()
+                    if (::fragmentINFO.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentINFO).commit()
+                }
             }
             2 -> {
                 if (!(::fragmentCATEGORY.isInitialized)) {
