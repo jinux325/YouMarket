@@ -45,7 +45,7 @@ class SplashActivity : AppCompatActivity() {
                             Log.e("splash ", " $uid  ${document.id}")
                             Log.e("splash ", " $count  ${result.size()}")
                             if(uid == document.id){
-                                Log.e("splash ", " 디비에 잇음")
+                                Log.e("splash ", " 디비에 있음")
                                 val intent = Intent(this@SplashActivity, MainActivity::class.java)
                                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                 startActivity(intent)

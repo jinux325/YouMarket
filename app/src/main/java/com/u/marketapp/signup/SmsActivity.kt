@@ -116,6 +116,7 @@ class SmsActivity : AppCompatActivity() {
             } else if (p0 is FirebaseTooManyRequestsException) {
                 Toast.makeText(this@SmsActivity, " 인증 많이함. 나중에 다시 해주세요. ", Toast.LENGTH_LONG).show()
             }
+            buttonContinue.isEnabled = true
         }
 
         override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
