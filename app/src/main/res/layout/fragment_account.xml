@@ -34,15 +34,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_span="2"
+                android:orientation="horizontal"
                 tools:ignore="UselessParent">
 
                 <ImageView
                     android:id="@+id/account_profile"
                     android:layout_width="65dp"
                     android:layout_height="65dp"
-                    android:layout_marginBottom="25dp"
                     android:layout_marginStart="22dp"
                     android:layout_marginTop="15dp"
+                    android:layout_marginBottom="25dp"
                     android:src="@drawable/ic_profile"
                     tools:ignore="ContentDescription" />
 
@@ -58,13 +59,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/account_nameColor"
-                        android:textSize="20sp"
-                        />
+                        android:textSize="20sp" />
 
                     <LinearLayout
-                        android:layout_marginTop="7sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="7sp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -74,7 +74,7 @@
                             android:textColor="@color/account_addressColor"
                             android:textSize="13sp" />
 
-                       <!-- <TextView
+                        <!-- <TextView
                             android:id="@+id/account_uid"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -84,8 +84,22 @@
                             android:textColor="@color/account_uidColor"
                             android:textSize="13sp" />-->
                     </LinearLayout>
+
                 </LinearLayout>
+
+
             </LinearLayout>
+            <TextView
+                android:id="@+id/btn_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/button"
+                android:padding="7dp"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:text="프로필 수정"
+                tools:ignore="HardcodedText" />
         </TableRow>
 
         <TableRow>

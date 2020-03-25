@@ -39,6 +39,9 @@ class AccountFragment : Fragment() {
         }
         view.account_setting.setOnClickListener { startActivity(Intent(activity, SettingActivity::class.java)) }
         view.location.setOnClickListener { startActivity(Intent(activity, LocationSettingActivity::class.java)) }
+        view.btn_profile.setOnClickListener {
+            startActivity(Intent(activity, AccountProfileActivity::class.java).putExtra("name",myData.name).putExtra("imgPath",myData.imgPath))
+        }
 
         return view
     }

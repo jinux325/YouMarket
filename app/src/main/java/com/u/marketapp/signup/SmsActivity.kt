@@ -116,6 +116,7 @@ class SmsActivity : AppCompatActivity() {
             } else if (p0 is FirebaseTooManyRequestsException) {
                 Toast.makeText(this@SmsActivity, " 인증 많이함. 나중에 다시 해주세요. ", Toast.LENGTH_LONG).show()
             }
+            buttonContinue.isEnabled = true
         }
 
         override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
@@ -181,9 +182,11 @@ class SmsActivity : AppCompatActivity() {
     }
 
     private fun userDelete(){
+        val uid = mAuth.currentUser!!.uid
         FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener { task ->
             if(task.isSuccessful){
                 FirebaseAuth.getInstance().signOut()
+                db.collection(resources.getString(R.string.db_user)).document(uid).update("status", 0)
                 val intent = Intent(this, SplashActivity::class.java)
                 intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)

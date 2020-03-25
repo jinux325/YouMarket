@@ -380,7 +380,7 @@ class ReplyActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
     }
 
     private fun sendFCM(token: String, name: String, msg: String) {
-        val fcm = FCM(token, name, msg, pid, "")
+        val fcm = FCM(token, name, msg, pid, "",resources.getString(R.string.ReplyActivity))
         fcm.start()
     }
 

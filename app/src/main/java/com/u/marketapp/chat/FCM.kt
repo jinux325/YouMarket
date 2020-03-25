@@ -1,19 +1,14 @@
 package com.u.marketapp.chat
 
 import android.util.Log
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.u.marketapp.R
-import com.u.marketapp.entity.UserEntity
-import com.u.marketapp.vo.ChatRoomVO
-import kotlinx.android.synthetic.main.activity_chat.*
 import org.json.JSONObject
 import java.net.HttpURLConnection
 
-class FCM(private val token:String, private val myName:String?, private val comment:String?, private val docId:String, private val partnerName:String?) : Thread() {
+class FCM(private val token:String, private val myName:String?, private val comment:String?, private val docId:String, private val partnerName:String?, private val str:String) : Thread() {
 
     val db = FirebaseFirestore.getInstance()
-    private val myUid = FirebaseAuth.getInstance().currentUser!!.uid
+   // private val myUid = FirebaseAuth.getInstance().currentUser!!.uid
 
     override fun run() {
         try {
@@ -32,7 +27,7 @@ class FCM(private val token:String, private val myName:String?, private val comm
             val data = JSONObject()
             data.put("title", title)
             data.put("body", body)
-            data.put("click_action", "ChatActivity")
+            data.put("click_action", str)
             data.put("documentId", documentId)
             data.put("partnerName", partnerName)
             //root.put("notification", notification);

@@ -276,7 +276,8 @@ class ChatActivity : AppCompatActivity() {
                         myData.name,
                         comment,
                         chatRoomUid,
-                        tv_partner_nickname.text.toString()
+                        tv_partner_nickname.text.toString(),
+                        resources.getString(R.string.ChatActivity)
                     )
                     fcm.start()
                     /*val thread=FCM()
