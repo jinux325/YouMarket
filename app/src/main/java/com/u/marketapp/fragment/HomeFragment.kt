@@ -1,12 +1,10 @@
 package com.u.marketapp.fragment
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.util.Log
 import android.view.*
 import android.view.animation.AnimationUtils
@@ -44,6 +42,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         private const val REQUEST_ITEM_LIMIT = 20L
     }
 
+    private lateinit var listener: OnFragmentInteractionListener
     private lateinit var actionbar: ActionBar
     private lateinit var adapter : ProductRVAdapter
     private lateinit var binding : FragmentHomeBinding
@@ -55,6 +54,20 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         adapter.clear()
         requestItems()
         binding.swipRefreshLayout.isRefreshing = false
+    }
+
+    interface OnFragmentInteractionListener {
+        fun onFragmentInteraction(address: String)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (context is OnFragmentInteractionListener) {
+            listener = context
+        } else {
+            throw RuntimeException("$context must implement OnFragmentInteractionListener")
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -214,20 +227,20 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         }
     }
 
-    @SuppressLint("CommitPrefEdits")
+    private fun getSharedAddress() : String {
+        val pref = context!!.getSharedPreferences("User", Context.MODE_PRIVATE)
+        val result = pref.getString("address", "내 동네 설정")!!
+        Log.i(TAG, "주소 가져오기 : $result")
+        return result
+    }
+
     private fun setSharedAddress(address: String) {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        val prefs = context!!.getSharedPreferences("User", Context.MODE_PRIVATE)
         val edit = prefs.edit()
         edit.putString("address", address)
         edit.apply()
+        if (::listener.isInitialized) listener.onFragmentInteraction(address)
         Log.i(TAG, "주소 변경 : ${prefs.getString("address", "세류동")}")
-    }
-
-    private fun getSharedAddress() : String {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        val result = prefs.getString("address", "세류동")!!
-        Log.i(TAG, "주소 가져오기 : $result")
-        return result
     }
 
     // 데이터 로드
