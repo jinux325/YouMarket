@@ -1,7 +1,9 @@
 package com.u.marketapp.setting
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.google.firebase.auth.FirebaseAuth
 import com.u.marketapp.R
 import kotlinx.android.synthetic.main.activity_mail.*
 import kotlinx.coroutines.GlobalScope
@@ -56,10 +58,14 @@ class MailActivity : AppCompatActivity() {
             Message.RecipientType.TO,
             InternetAddress.parse(username))
         message.subject = et_title.text.toString()
-        message.setText(et_message.text.toString())
-
+        val uid = FirebaseAuth.getInstance().currentUser!!.uid
+        val prefs = getSharedPreferences("User", Context.MODE_PRIVATE)
+        val name = prefs.getString("name", "")
+        message.setText(et_message.text.toString()+"\r\r $name \r ($uid)")
 
         // 전송
         Transport.send(message)
+        et_title.text = null
+        et_message.text = null
     }
 }
