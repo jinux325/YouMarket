@@ -15,6 +15,9 @@
     <string name="searchStr">검색</string>
     <string name="chatting_delete">나가기</string>
 
+    <string name="app_version">v1.0</string>
+    <string name="msg">업데이트 예정입니다.</string>
+
     <string name="ChatActivity">ChatActivity</string>
     <string name="ReplyActivity">ReplyActivity</string>
     <string name="CommentActivity">CommentActivity</string>

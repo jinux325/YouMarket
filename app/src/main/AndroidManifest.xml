@@ -21,6 +21,10 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup"
         tools:replace="allowBackup">
+        <activity android:name=".setting.MailActivity"></activity>
+        <activity
+            android:name=".setting.NoticeActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service
             android:name=".chat.ChatFirebaseMessagingService"
@@ -30,8 +34,9 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".activity.FilterActivity"
-            android:theme="@style/MaterialTheme"/>
+        <activity
+            android:name=".activity.FilterActivity"
+            android:theme="@style/MaterialTheme" />
         <activity
             android:name=".activity.ReplyActivity"
             android:theme="@style/MaterialTheme" />

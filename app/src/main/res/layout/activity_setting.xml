@@ -142,7 +142,7 @@
 
             </RelativeLayout>
 
-            <RelativeLayout
+          <!--  <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/background_setting"
@@ -238,7 +238,7 @@
 
 
 
-
+-->
 
 
 
@@ -262,7 +262,7 @@
 
                     />
             </RelativeLayout>
-            <RelativeLayout
+           <!-- <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="65dp"
                 android:background="@drawable/background_bottomline_thin"
@@ -298,7 +298,7 @@
                     android:textSize="15sp"
                     android:textStyle="bold"
                     tools:ignore="HardcodedText"/>
-            </RelativeLayout>
+            </RelativeLayout>-->
             <RelativeLayout
                 android:id="@+id/version"
                 android:layout_width="match_parent"
@@ -317,6 +317,16 @@
                     android:textSize="15sp"
                     android:textStyle="bold"
                     tools:ignore="HardcodedText" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="22dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/app_version"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
             </RelativeLayout>
             <RelativeLayout
                 android:id="@+id/logout"
