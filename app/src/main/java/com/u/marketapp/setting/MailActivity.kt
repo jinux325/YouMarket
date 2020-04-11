@@ -24,7 +24,6 @@ class MailActivity : AppCompatActivity() {
             GlobalScope.launch {
                 sendEmail()
             }
-            //Send Mail
         }
 
     }
