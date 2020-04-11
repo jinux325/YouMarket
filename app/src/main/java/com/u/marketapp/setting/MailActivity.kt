@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.u.marketapp.R
 import kotlinx.android.synthetic.main.activity_mail.*
-import kotlinx.android.synthetic.main.fragment_account.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.*
@@ -30,23 +29,23 @@ class MailActivity : AppCompatActivity() {
 
     }
 
-    fun sendEmail()
+    private fun sendEmail()
     {
         // 보내는 메일 주소와 비밀번호
-        val username = "dnwlstlr9203@gmail.com";
-        val password = "flare@920";
+        val username = "dnwlstlr9203@gmail.com"
+        val password = "flare@920"
 
-        val props = Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
+        val props = Properties()
+        props["mail.smtp.auth"] = "true"
+        props["mail.smtp.starttls.enable"] = "true"
+        props["mail.smtp.host"] = "smtp.gmail.com"
+        props["mail.smtp.port"] = "587"
 
         // 비밀번호 인증으로 세션 생성
         val session = Session.getInstance(props,
             object: javax.mail.Authenticator() {
                 override  fun getPasswordAuthentication(): PasswordAuthentication {
-                    return PasswordAuthentication(username, password);
+                    return PasswordAuthentication(username, password)
                 }
             })
 

@@ -3,17 +3,13 @@ package com.u.marketapp.setting
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.u.marketapp.R
 import com.u.marketapp.adapter.NoticeAdapter
-import com.u.marketapp.vo.ChatRoomVO
 import com.u.marketapp.vo.NoticeVO
-import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.activity_notice.*
 
 class NoticeActivity : AppCompatActivity() {
@@ -60,8 +56,7 @@ class NoticeActivity : AppCompatActivity() {
 
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        when (id) {
+        when (item.itemId) {
             android.R.id.home -> {
                 finish()
                 return true
