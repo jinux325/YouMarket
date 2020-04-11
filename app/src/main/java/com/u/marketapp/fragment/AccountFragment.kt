@@ -29,11 +29,7 @@ class AccountFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
         val view = inflater.inflate(R.layout.fragment_account, container, false)
-       /* Thread(){
-            run(){
-                lodding()
-            }
-        }*/
+
         view.account_profile.setOnClickListener {
             startActivity(Intent(activity, AccountProfileActivity::class.java).putExtra("name",myData.name).putExtra("imgPath",myData.imgPath))
         }
@@ -46,7 +42,7 @@ class AccountFragment : Fragment() {
         view.notice_setting.setOnClickListener { startActivity(Intent(activity, NoticeActivity::class.java)) }
         view.sendEmail.setOnClickListener { startActivity(Intent(activity, MailActivity::class.java)) }
         view.app_send.setOnClickListener{ msgDialog() }
-        
+
         return view
     }
 
@@ -54,7 +50,6 @@ class AccountFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
         (activity as MainActivity?)!!.setSupportActionBar(account_toolbar)
-        //loddingEnd()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -73,11 +68,6 @@ class AccountFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        /*Thread(){
-            run(){
-                lodding()
-            }
-        }*/
         Log.d("AccountFragment ", "onResume")
         myData()
 
@@ -118,16 +108,4 @@ class AccountFragment : Fragment() {
 
     }
 
-/*
-    private val dialog = AlertDialog.Builder(activity)
-    private val ad = dialog.create()
-
-    private fun lodding(){
-        dialog.setMessage("잠시만 기다려주세요...").setCancelable(false)
-        ad.show()
-    }
-
-    private fun loddingEnd(){
-        ad.dismiss()
-    }*/
 }
