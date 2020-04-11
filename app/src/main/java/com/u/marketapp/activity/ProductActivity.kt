@@ -2,25 +2,26 @@ package com.u.marketapp.activity
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import android.view.ContextMenu
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.*
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.kakao.kakaolink.v2.KakaoLinkResponse
 import com.kakao.kakaolink.v2.KakaoLinkService
 import com.kakao.network.ErrorResult
 import com.kakao.network.callback.ResponseCallback
-import com.u.marketapp.*
+import com.u.marketapp.BR
 import com.u.marketapp.R
 import com.u.marketapp.adapter.CommentRVAdapter
 import com.u.marketapp.adapter.ViewPagerAdapter
@@ -56,6 +57,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         binding = DataBindingUtil.setContentView(this,
             R.layout.activity_product
         )
+        setStatusBar()
         setActionBar()
         currentUid = FirebaseAuth.getInstance().currentUser!!.uid
         if (intent.hasExtra("id")) {
@@ -69,6 +71,29 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         } else {
             Log.i(TAG, "Intent Not Signal!!")
         }
+    }
+
+    // 상태바 정의
+    private fun setStatusBar() {
+        window.apply {
+            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            statusBarColor = Color.TRANSPARENT
+        }
+        if (toolbar != null) {
+            toolbar.setPadding(toolbar.paddingLeft, toolbar.paddingTop + getStatusBarHeight(), toolbar.paddingRight, toolbar.paddingBottom)
+        }
+    }
+
+    // 상태바 높이
+    private fun getStatusBarHeight() : Int {
+        var result = 0
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            result = resources.getDimensionPixelSize(resourceId)
+        }
+        return result
     }
 
     // 액션바 정의

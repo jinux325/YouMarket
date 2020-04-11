@@ -1,5 +1,6 @@
 package com.u.marketapp.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -18,7 +19,7 @@ import com.u.marketapp.fragment.HomeFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener {
 
     companion object {
         private val TAG = MainActivity::class.java.simpleName
@@ -28,34 +29,36 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     private lateinit var fragmentCATEGORY: Fragment
     private lateinit var fragmentCHATTING: Fragment
     private lateinit var fragmentINFO: Fragment
+    private lateinit var address: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         bottom_navigation.setOnNavigationItemSelectedListener(this)
-        getUserInfo()
+        address = getSharedAddress()
+        Log.i(TAG, "주소 : $address")
+        initView()
+    }
+
+    private fun initView() {
         fragmentHOME = HomeFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragmentHOME).commit()
+        fragmentCHATTING = ChatFragment()
+        fragmentINFO = AccountFragment()
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.add(R.id.frame_layout, fragmentHOME)
+        transaction.add(R.id.frame_layout, fragmentCHATTING)
+        transaction.add(R.id.frame_layout, fragmentINFO)
+        transaction.commit()
+        changeFragment(1)
     }
 
-    private fun getUserInfo() {
-        val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_user)).document(FirebaseAuth.getInstance().currentUser!!.uid).get()
-            .addOnSuccessListener { documentSnapshot ->
-                val user = documentSnapshot.toObject(UserEntity::class.java)!!
-                setSharedAddress(user.address)
-            }
-            .addOnFailureListener { e ->
-                Log.i(TAG, e.toString())
-            }
+    private fun getSharedAddress() : String {
+        val pref = getSharedPreferences("User", Context.MODE_PRIVATE)
+        return pref.getString("address", "내 동네 설정")!!
     }
 
-    private fun setSharedAddress(address: String) {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        val edit = prefs.edit()
-        edit.putString("address", address)
-        edit.apply()
-        Log.i(TAG, "주소 변경 : ${prefs.getString("address", "세류동")}")
+    override fun onFragmentInteraction(address: String) {
+        this.address = address
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -64,7 +67,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 changeFragment(1)
             }
             R.id.navigation_category -> {
-//                changeFragment(2)
+                changeFragment(2)
             }
             R.id.navigation_edit -> {
                 val intent = Intent(this, EditActivity::class.java)
@@ -85,8 +88,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         if (fragmentHOME.isVisible) {
             super.onBackPressed()
         } else {
-            bottom_navigation.selectedItemId =
-                R.id.navigation_home
+            bottom_navigation.selectedItemId = R.id.navigation_home
         }
     }
 
@@ -94,40 +96,41 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     private fun changeFragment(key: Int) {
         when (key) {
             1 -> {
-                if (::fragmentHOME.isInitialized) supportFragmentManager.beginTransaction().show(fragmentHOME).commit()
-                if (::fragmentCATEGORY.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentCATEGORY).commit()
-                if (::fragmentCHATTING.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentCHATTING).commit()
-                if (::fragmentINFO.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentINFO).commit()
+                Log.i(TAG, "이전 주소 : $address -> 바뀐 주소 : ${getSharedAddress()}")
+                if(address != getSharedAddress()) {
+                    Log.i(TAG, "홍 새로 생성")
+                    address = getSharedAddress()
+                    fragmentHOME = HomeFragment()
+                    val transaction = supportFragmentManager.beginTransaction()
+                    transaction.replace(R.id.frame_layout, fragmentHOME).commit()
+                } else {
+                    Log.i(TAG, "홈 활성화")
+                    val transaction = supportFragmentManager.beginTransaction()
+                    transaction.show(fragmentHOME)
+//                    transaction.hide(fragmentCATEGORY)
+                    transaction.hide(fragmentCHATTING)
+                    transaction.hide(fragmentINFO)
+                    transaction.commitNowAllowingStateLoss()
+                }
             }
             2 -> {
-                if (!(::fragmentCATEGORY.isInitialized)) {
-//                    fragmentCATEGORY =
-                    supportFragmentManager.beginTransaction().add(R.id.frame_layout, fragmentCATEGORY).commit()
-                }
-                if (::fragmentHOME.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentHOME).commit()
-                if (::fragmentCATEGORY.isInitialized) supportFragmentManager.beginTransaction().show(fragmentCATEGORY).commit()
-                if (::fragmentCHATTING.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentCHATTING).commit()
-                if (::fragmentINFO.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentINFO).commit()
+
             }
             4 -> {
-                if (!(::fragmentCHATTING.isInitialized)) {
-                    fragmentCHATTING = ChatFragment()
-                    supportFragmentManager.beginTransaction().add(R.id.frame_layout, fragmentCHATTING).commit()
-                }
-                if (::fragmentHOME.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentHOME).commit()
-                if (::fragmentCATEGORY.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentCATEGORY).commit()
-                if (::fragmentCHATTING.isInitialized) supportFragmentManager.beginTransaction().show(fragmentCHATTING).commit()
-                if (::fragmentINFO.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentINFO).commit()
+                val transaction = supportFragmentManager.beginTransaction()
+                transaction.hide(fragmentHOME)
+//                transaction.hide(fragmentCATEGORY)
+                transaction.show(fragmentCHATTING)
+                transaction.hide(fragmentINFO)
+                transaction.commitNowAllowingStateLoss()
             }
             5 -> {
-                if (!(::fragmentINFO.isInitialized)) {
-                    fragmentINFO = AccountFragment()
-                    supportFragmentManager.beginTransaction().add(R.id.frame_layout, fragmentINFO).commit()
-                }
-                if (::fragmentHOME.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentHOME).commit()
-                if (::fragmentCATEGORY.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentCATEGORY).commit()
-                if (::fragmentCHATTING.isInitialized) supportFragmentManager.beginTransaction().hide(fragmentCHATTING).commit()
-                if (::fragmentINFO.isInitialized) supportFragmentManager.beginTransaction().show(fragmentINFO).commit()
+                val transaction = supportFragmentManager.beginTransaction()
+                transaction.hide(fragmentHOME)
+//                transaction.hide(fragmentCATEGORY)
+                transaction.hide(fragmentCHATTING)
+                transaction.show(fragmentINFO)
+                transaction.commitNowAllowingStateLoss()
             }
         }
     }

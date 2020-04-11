@@ -49,7 +49,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:background="@color/black"
-                            app:layout_constraintDimensionRatio="10:9"
+                            app:layout_constraintDimensionRatio="10:10"
                             app:layout_constraintTop_toTopOf="parent"/>
 
                         <com.rd.PageIndicatorView
@@ -74,7 +74,7 @@
                     <com.google.android.material.appbar.MaterialToolbar
                         android:id="@+id/toolbar"
                         android:layout_width="match_parent"
-                        android:layout_height="?attr/actionBarSize"
+                        android:layout_height="wrap_content"
                         app:layout_collapseMode="pin"
                         app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"/>
 

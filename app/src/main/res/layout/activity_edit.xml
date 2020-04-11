@@ -207,7 +207,7 @@
                 android:paddingBottom="20dp"
                 android:background="@android:color/transparent"
                 android:textSize="18sp"
-                android:inputType="text"
+                android:inputType="textMultiLine"
                 android:importantForAutofill="no"
                 android:hint="@string/edit_hint_contents"
                 tools:targetApi="O" />
