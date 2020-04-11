@@ -45,7 +45,8 @@ class AccountFragment : Fragment() {
         view.location_verify.setOnClickListener { msgDialog() }
         view.notice_setting.setOnClickListener { startActivity(Intent(activity, NoticeActivity::class.java)) }
         view.sendEmail.setOnClickListener { startActivity(Intent(activity, MailActivity::class.java)) }
-
+        view.app_send.setOnClickListener{ msgDialog() }
+        
         return view
     }
 
