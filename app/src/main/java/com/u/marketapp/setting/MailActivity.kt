@@ -33,8 +33,8 @@ class MailActivity : AppCompatActivity() {
     private fun sendEmail()
     {
         // 보내는 메일 주소와 비밀번호
-        val username = "dnwlstlr9203@gmail.com"
-        val password = "flare@920"
+        val username = resources.getString(R.string.mail_id)
+        val password = resources.getString(R.string.mail_ps)
 
         val props = Properties()
         props["mail.smtp.auth"] = "true"
