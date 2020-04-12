@@ -8,7 +8,6 @@ import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
-import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -21,11 +20,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.u.marketapp.utils.BaseApplication
 import com.u.marketapp.R
 import com.u.marketapp.adapter.PreviewRVAdapter
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
+import com.u.marketapp.utils.BaseApplication
 import gun0912.tedimagepicker.builder.TedImagePicker
 import gun0912.tedimagepicker.builder.type.MediaType
 import kotlinx.android.synthetic.main.activity_edit.*

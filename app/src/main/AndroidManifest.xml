@@ -31,8 +31,12 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".activity.SearchActivity"
-            android:theme="@style/MaterialTheme"/>
+        <activity
+            android:name=".fragment.HomeFragment"
+            android:theme="@style/MaterialTheme" />
+        <activity
+            android:name=".activity.SearchActivity"
+            android:theme="@style/MaterialTheme" />
         <activity
             android:name=".activity.FilterActivity"
             android:theme="@style/MaterialTheme" />
@@ -41,9 +45,6 @@
             android:theme="@style/MaterialTheme" />
         <activity
             android:name=".activity.CommentActivity"
-            android:theme="@style/MaterialTheme" />
-        <activity
-            android:name=".fragment.HomeFragment"
             android:theme="@style/MaterialTheme" />
         <activity
             android:name=".activity.EditActivity"
