@@ -1,6 +1,8 @@
 package com.u.marketapp.fragment
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -13,10 +15,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.activity.MainActivity
 import com.u.marketapp.R
-import com.u.marketapp.setting.AccountProfileActivity
-import com.u.marketapp.setting.LocationSettingActivity
-import com.u.marketapp.setting.SettingActivity
 import com.u.marketapp.entity.UserEntity
+import com.u.marketapp.setting.*
 import kotlinx.android.synthetic.main.fragment_account.*
 import kotlinx.android.synthetic.main.fragment_account.view.*
 
@@ -29,11 +29,7 @@ class AccountFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
         val view = inflater.inflate(R.layout.fragment_account, container, false)
-       /* Thread(){
-            run(){
-                lodding()
-            }
-        }*/
+
         view.account_profile.setOnClickListener {
             startActivity(Intent(activity, AccountProfileActivity::class.java).putExtra("name",myData.name).putExtra("imgPath",myData.imgPath))
         }
@@ -42,6 +38,10 @@ class AccountFragment : Fragment() {
         view.btn_profile.setOnClickListener {
             startActivity(Intent(activity, AccountProfileActivity::class.java).putExtra("name",myData.name).putExtra("imgPath",myData.imgPath))
         }
+        view.location_verify.setOnClickListener { msgDialog() }
+        view.notice_setting.setOnClickListener { startActivity(Intent(activity, NoticeActivity::class.java)) }
+        view.sendEmail.setOnClickListener { startActivity(Intent(activity, MailActivity::class.java)) }
+        view.app_send.setOnClickListener{ msgDialog() }
 
         return view
     }
@@ -50,7 +50,6 @@ class AccountFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
         (activity as MainActivity?)!!.setSupportActionBar(account_toolbar)
-        //loddingEnd()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -69,11 +68,6 @@ class AccountFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        /*Thread(){
-            run(){
-                lodding()
-            }
-        }*/
         Log.d("AccountFragment ", "onResume")
         myData()
 
@@ -96,16 +90,22 @@ class AccountFragment : Fragment() {
 
             }
     }
-/*
-    private val dialog = AlertDialog.Builder(activity)
-    private val ad = dialog.create()
 
-    private fun lodding(){
-        dialog.setMessage("잠시만 기다려주세요...").setCancelable(false)
-        ad.show()
+    private fun msgDialog(){
+        val dialog = AlertDialog.Builder(context)
+        dialog.setMessage("업데이트 예정입니다. ").setCancelable(false)
+        val dialogListener = object: DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, p1: Int) {
+                when(p1){
+                    DialogInterface.BUTTON_POSITIVE ->
+                        dialog?.dismiss()
+                }
+            }
+        }
+        dialog.setPositiveButton("확인",dialogListener)
+        dialog.setNegativeButton("취소",dialogListener)
+        dialog.show()
+
     }
 
-    private fun loddingEnd(){
-        ad.dismiss()
-    }*/
 }

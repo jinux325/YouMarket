@@ -362,7 +362,7 @@
         </TableRow>
 -->
 
-        <LinearLayout
+      <!--  <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/background_bottomline_thin"
@@ -380,7 +380,7 @@
 
         </LinearLayout>
 
-
+-->
         <LinearLayout
             android:id="@+id/sendEmail"
             android:layout_width="match_parent"
@@ -400,6 +400,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/notice_setting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/background_bottomline_thin"
@@ -417,6 +418,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/app_send"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/background_bottomline_thin"
