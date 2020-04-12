@@ -120,19 +120,39 @@
 
                 </LinearLayout>
 
-                <!-- 가격 -->
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/text_view_price"
+                <LinearLayout
+                    android:id="@+id/layout_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:orientation="horizontal"
                     android:layout_marginTop="5dp"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:text="@{@string/format_price(item.price)}"
+                    android:gravity="center_horizontal"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/layout_address"
-                    tools:text="가격입니다." />
+                    app:layout_constraintTop_toBottomOf="@id/layout_address">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/text_view_trade"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:padding="5dp"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        bindTrade="@{item.transactionStatus}"
+                        tools:text="예약중"/>
+
+                    <!-- 가격 -->
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/text_view_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:text="@{@string/format_price(item.price)}"
+                        tools:text="가격입니다." />
+
+                </LinearLayout>
 
                 <!-- 댓글 & 채팅 & 좋아요 -->
                 <LinearLayout
@@ -143,7 +163,7 @@
                     android:gravity="end|bottom"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/text_view_price"
+                    app:layout_constraintTop_toBottomOf="@id/layout_price"
                     app:layout_constraintBottom_toBottomOf="parent">
 
                     <!-- 댓글 -->

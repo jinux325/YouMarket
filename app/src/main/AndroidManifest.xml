@@ -22,6 +22,7 @@
         tools:ignore="AllowBackup"
         tools:replace="allowBackup"
         tools:targetApi="m">
+        <activity android:name=".activity.SearchActivity"></activity>
 
         <service
             android:name=".chat.ChatFirebaseMessagingService"
@@ -31,8 +32,9 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".activity.FilterActivity"
-            android:theme="@style/MaterialTheme"/>
+        <activity
+            android:name=".activity.FilterActivity"
+            android:theme="@style/MaterialTheme" />
         <activity
             android:name=".activity.ReplyActivity"
             android:theme="@style/MaterialTheme" />

@@ -1,5 +1,6 @@
 package com.u.marketapp.adapter
 
+import android.graphics.Color
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -91,6 +92,27 @@ fun bindViewFromSuggestion(view: MaterialTextView, suggestion: Boolean) {
     } else {
         view.text = view.resources.getString(R.string.product_unable_to_offer_price)
         view.setTextColor(ContextCompat.getColor(view.context, R.color.colorGray))
+    }
+}
+
+@BindingAdapter("bindTrade")
+fun bindViewFromTrade(view: MaterialTextView, trade: Int) {
+    when (trade) {
+        0 -> { // 거래중
+            view.visibility = View.GONE
+        }
+        1 -> { // 예약중
+            view.visibility = View.VISIBLE
+            view.text = view.resources.getText(R.string.trade_1)
+            view.setBackgroundColor(ContextCompat.getColor(view.context, R.color.colorPrimary))
+            view.setTextColor(ContextCompat.getColor(view.context, R.color.white))
+        }
+        2 -> { // 거래완료
+            view.visibility = View.VISIBLE
+            view.text = view.resources.getText(R.string.trade_2)
+            view.setBackgroundColor(ContextCompat.getColor(view.context, R.color.account_addressColor))
+            view.setTextColor(ContextCompat.getColor(view.context, R.color.white))
+        }
     }
 }
 
