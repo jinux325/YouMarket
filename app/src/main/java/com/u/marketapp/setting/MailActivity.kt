@@ -24,15 +24,12 @@ class MailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_mail)
         bt_send.setOnClickListener {
             when {
-                et_title.text.isNullOrBlank() -> {
-                    Toast.makeText(this,"제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
-                }
                 et_message.text.isNullOrBlank() -> {
                     Toast.makeText(this,"내용을 입력해주세요.", Toast.LENGTH_SHORT).show()
                 }
                 else -> {
                     GlobalScope.launch {
-                        sendEmail(et_title.text.toString(), et_message.text.toString())
+                        sendEmail(et_message.text.toString())
                     }
                 }
             }
@@ -40,13 +37,12 @@ class MailActivity : AppCompatActivity() {
 
     }
 
-    private fun sendEmail(title:String, content:String)
+    private fun sendEmail(content:String)
     {
         // 보내는 메일 주소와 비밀번호
         val username = resources.getString(R.string.mail_id)
         val password = resources.getString(R.string.mail_pw)
 
-        et_title.text = null
         et_message.text = null
 
         val props = Properties()
@@ -70,11 +66,11 @@ class MailActivity : AppCompatActivity() {
         message.setRecipients(
             Message.RecipientType.TO,
             InternetAddress.parse(username))
-        message.subject = title
         val uid = FirebaseAuth.getInstance().currentUser!!.uid
         val prefs = getSharedPreferences("User", Context.MODE_PRIVATE)
         val name = prefs.getString("name", "")
-        message.setText("$content \r\r $name \r ($uid)")
+        message.subject = "$name ($uid)"
+        message.setText(content)
 
         // 전송
         Transport.send(message)
