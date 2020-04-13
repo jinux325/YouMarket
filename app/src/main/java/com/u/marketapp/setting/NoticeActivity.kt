@@ -20,26 +20,9 @@ class NoticeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notice)
 
-        //title = "공지사항"
-    /*    val toolbar = findViewById(R.id.notice_toolbar) as Toolbar
-        setSupportActionBar(toolbar)
-        val ab = supportActionBar!!
-        ab.setDisplayShowTitleEnabled(false)*/
         setSupportActionBar(notice_toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-       /* db.collection("Notice").orderBy("desc").get().addOnSuccessListener { result ->
-            val list= mutableListOf<NoticeVO>()
-            for(document in result){
-                val noticeVO: NoticeVO = document.toObject(NoticeVO::class.java)
-                Log.e(" "," ${noticeVO.title}  ${noticeVO.date}")
-                list.add(noticeVO)
-            }
-
-            rv_notice_setting.layoutManager = LinearLayoutManager(this)
-            rv_notice_setting.adapter = NoticeAdapter(this, list)
-
-        }*/
         db.collection("Notice").orderBy("date",
             Query.Direction.DESCENDING).addSnapshotListener{ snapshot, _ ->
             val list= mutableListOf<NoticeVO>()
