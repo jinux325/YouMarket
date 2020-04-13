@@ -23,6 +23,7 @@ import com.google.firebase.firestore.Query
 import com.u.marketapp.R
 import com.u.marketapp.activity.FilterActivity
 import com.u.marketapp.activity.ProductActivity
+import com.u.marketapp.activity.SearchActivity
 import com.u.marketapp.adapter.ProductRVAdapter
 import com.u.marketapp.databinding.FragmentHomeBinding
 import com.u.marketapp.entity.UserEntity
@@ -53,7 +54,6 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     override fun onRefresh() {
         adapter.clear()
         requestItems()
-        binding.swipRefreshLayout.isRefreshing = false
     }
 
     interface OnFragmentInteractionListener {
@@ -92,10 +92,11 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_search -> {
+                moveSearchActivity()
                 true
             }
             R.id.action_filter -> {
-                moveFilterAcitity()
+                moveFilterActivity()
                 true
             }
             R.id.action_notification -> {
@@ -259,7 +260,6 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             Log.i(TAG, "COUNT : ${list.size} -> $list")
             query = query.whereIn("category", list)
         }
-
         query.get()
             .addOnSuccessListener { documentSnapshots ->
                 val items = documentSnapshots.documents
@@ -268,6 +268,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                     adapter.addItem(item)
                 }
                 BaseApplication.instance.progressOFF()
+                binding.swipRefreshLayout.isRefreshing = false
             }.addOnFailureListener { e ->
                 Log.i(TAG, e.toString())
             }
@@ -321,12 +322,16 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         )
     }
 
+    // 검색 페이지 이동
+    private fun moveSearchActivity() {
+        val intent = Intent(context, SearchActivity::class.java)
+        startActivity(intent)
+    }
+
     // 필터 페이지 이동
-    private fun moveFilterAcitity() {
+    private fun moveFilterActivity() {
         val intent = Intent(context, FilterActivity::class.java)
-        startActivityForResult(intent,
-            REQUEST_FILTER
-        )
+        startActivityForResult(intent, REQUEST_FILTER)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

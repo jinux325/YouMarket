@@ -38,6 +38,11 @@ class ProductRVAdapter : RecyclerView.Adapter<ProductRVAdapter.ViewHolder>() {
 
     override fun getItemCount(): Int = items.size
 
+    fun addAllItem(newList: List<DocumentSnapshot>) {
+        items.addAll(newList)
+        notifyDataSetChanged()
+    }
+
     // 단일 데이터 추가
     fun addItem(newItem: DocumentSnapshot) {
         items.add(newItem)

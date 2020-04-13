@@ -158,17 +158,37 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/text_view_title"
+                            <LinearLayout
+                                android:id="@+id/layout_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/black"
-                                android:textStyle="bold"
-                                android:textSize="19sp"
-                                android:text="@{product.title}"
+                                android:orientation="horizontal"
                                 app:layout_constraintLeft_toLeftOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                tools:text="상품 제목"/>
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/text_view_trade"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="5dp"
+                                    android:paddingStart="5dp"
+                                    android:paddingEnd="5dp"
+                                    android:textStyle="bold"
+                                    android:textSize="19sp"
+                                    bindTrade="@{product.transactionStatus}"
+                                    tools:text="거래완료"/>
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/text_view_title"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/black"
+                                    android:textStyle="bold"
+                                    android:textSize="19sp"
+                                    android:text="@{product.title}"
+                                    tools:text="상품 제목"/>
+
+                            </LinearLayout>
 
                             <LinearLayout
                                 android:id="@+id/layout_category_date"
@@ -177,7 +197,7 @@
                                 android:orientation="horizontal"
                                 android:layout_marginTop="5dp"
                                 app:layout_constraintLeft_toLeftOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/text_view_title">
+                                app:layout_constraintTop_toBottomOf="@id/layout_title">
 
                                 <com.google.android.material.textview.MaterialTextView
                                     android:id="@+id/text_view_category"

@@ -22,8 +22,6 @@
         tools:ignore="AllowBackup"
         tools:replace="allowBackup"
         tools:targetApi="m">
-        <activity android:name=".setting.NoticeActivityReadPage"
-            android:theme="@style/AppTheme.NoActionBar" />
 
         <service
             android:name=".chat.ChatFirebaseMessagingService"
@@ -34,6 +32,12 @@
         </service>
 
         <activity
+            android:name=".fragment.HomeFragment"
+            android:theme="@style/MaterialTheme" />
+        <activity
+            android:name=".activity.SearchActivity"
+            android:theme="@style/MaterialTheme" />
+        <activity
             android:name=".activity.FilterActivity"
             android:theme="@style/MaterialTheme" />
         <activity
@@ -41,9 +45,6 @@
             android:theme="@style/MaterialTheme" />
         <activity
             android:name=".activity.CommentActivity"
-            android:theme="@style/MaterialTheme" />
-        <activity
-            android:name=".fragment.HomeFragment"
             android:theme="@style/MaterialTheme" />
         <activity
             android:name=".activity.EditActivity"
@@ -71,12 +72,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".setting.SettingActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".setting.MailActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".setting.NoticeActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".setting.AccountProfileActivity"
