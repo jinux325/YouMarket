@@ -80,6 +80,15 @@
             android:name=".setting.AccountProfileActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".setting.NoticeActivityReadPage"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".setting.MailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".setting.NoticeActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".signup.ProfileActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
