@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="mail_id">dnwlstlr9203@gmail.com</string>
-    <string name="mail_pw">market@pw</string>
-
     <string name="mail_msg1">사용하시는데 문제가 있나요? 발생한 오류에 대해서 자세히 알려주시면, 최대한 빨리 수정할게요!</string>
     <string name="mail_msg2">사용하시다가 개선 사항이나 좋은 생각이 떠오르셨나요? 자유롭게 이야기 해주세요. 소중한 의견을 보내주세요:)</string>
     <string name="mail_msg3">보내주신 의견은 따뜻한 서비스를 만들어가는 밑거름이 됩니다. 자유롭게 남겨주세요!</string>

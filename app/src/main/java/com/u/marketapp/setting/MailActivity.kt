@@ -5,10 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.R
+import com.u.marketapp.vo.EmailVO
 import kotlinx.android.synthetic.main.activity_mail.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.*
 import javax.mail.Message
 import javax.mail.PasswordAuthentication
@@ -19,6 +20,9 @@ import javax.mail.internet.MimeMessage
 
 class MailActivity : AppCompatActivity() {
 
+    lateinit var userId:String
+    lateinit var password:String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mail)
@@ -28,8 +32,16 @@ class MailActivity : AppCompatActivity() {
                     Toast.makeText(this,"내용을 입력해주세요.", Toast.LENGTH_SHORT).show()
                 }
                 else -> {
-                    GlobalScope.launch {
-                        sendEmail(et_message.text.toString())
+                    val scope = CoroutineScope(Dispatchers.Main)
+                    scope.launch {
+                        FirebaseFirestore.getInstance().collection("Email").document("Email").get().addOnSuccessListener { result ->
+                            val emailVO: EmailVO? = result.toObject<EmailVO>(EmailVO::class.java)
+                            userId = emailVO!!.ID
+                            password = emailVO.PW
+                            GlobalScope.launch {
+                                sendEmail(et_message.text.toString())
+                            }
+                        }
                     }
                 }
             }
@@ -40,8 +52,8 @@ class MailActivity : AppCompatActivity() {
     private fun sendEmail(content:String)
     {
         // 보내는 메일 주소와 비밀번호
-        val username = resources.getString(R.string.mail_id)
-        val password = resources.getString(R.string.mail_pw)
+     /*   val username = resources.getString(R.string.mail_id)
+        val password = resources.getString(R.string.mail_pw)*/
 
         et_message.text = null
 
@@ -55,17 +67,17 @@ class MailActivity : AppCompatActivity() {
         val session = Session.getInstance(props,
             object: javax.mail.Authenticator() {
                 override  fun getPasswordAuthentication(): PasswordAuthentication {
-                    return PasswordAuthentication(username, password)
+                    return PasswordAuthentication(userId, password)
                 }
             })
 
         // 메시지 객체 만들기
         val message = MimeMessage(session)
-        message.setFrom(InternetAddress(username))
+        message.setFrom(InternetAddress(userId))
         // 수신자 설정, 여러명으로도 가능
         message.setRecipients(
             Message.RecipientType.TO,
-            InternetAddress.parse(username))
+            InternetAddress.parse(userId))
         val uid = FirebaseAuth.getInstance().currentUser!!.uid
         val prefs = getSharedPreferences("User", Context.MODE_PRIVATE)
         val name = prefs.getString("name", "")
