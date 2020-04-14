@@ -14,6 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.R
 import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.fragment.AccountFragment
+import com.u.marketapp.fragment.CategoryFragment
 import com.u.marketapp.fragment.ChatFragment
 import com.u.marketapp.fragment.HomeFragment
 import kotlinx.android.synthetic.main.activity_main.*
@@ -42,10 +43,12 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     private fun initView() {
         fragmentHOME = HomeFragment()
+        fragmentCATEGORY = CategoryFragment()
         fragmentCHATTING = ChatFragment()
         fragmentINFO = AccountFragment()
         val transaction = supportFragmentManager.beginTransaction()
         transaction.add(R.id.frame_layout, fragmentHOME)
+        transaction.add(R.id.frame_layout, fragmentCATEGORY)
         transaction.add(R.id.frame_layout, fragmentCHATTING)
         transaction.add(R.id.frame_layout, fragmentINFO)
         transaction.commit()
@@ -107,19 +110,24 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                     Log.i(TAG, "홈 활성화")
                     val transaction = supportFragmentManager.beginTransaction()
                     transaction.show(fragmentHOME)
-//                    transaction.hide(fragmentCATEGORY)
+                    transaction.hide(fragmentCATEGORY)
                     transaction.hide(fragmentCHATTING)
                     transaction.hide(fragmentINFO)
                     transaction.commitNowAllowingStateLoss()
                 }
             }
             2 -> {
-
+                val transaction = supportFragmentManager.beginTransaction()
+                transaction.hide(fragmentHOME)
+                transaction.show(fragmentCATEGORY)
+                transaction.hide(fragmentCHATTING)
+                transaction.hide(fragmentINFO)
+                transaction.commitNowAllowingStateLoss()
             }
             4 -> {
                 val transaction = supportFragmentManager.beginTransaction()
                 transaction.hide(fragmentHOME)
-//                transaction.hide(fragmentCATEGORY)
+                transaction.hide(fragmentCATEGORY)
                 transaction.show(fragmentCHATTING)
                 transaction.hide(fragmentINFO)
                 transaction.commitNowAllowingStateLoss()
@@ -127,7 +135,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             5 -> {
                 val transaction = supportFragmentManager.beginTransaction()
                 transaction.hide(fragmentHOME)
-//                transaction.hide(fragmentCATEGORY)
+                transaction.hide(fragmentCATEGORY)
                 transaction.hide(fragmentCHATTING)
                 transaction.show(fragmentINFO)
                 transaction.commitNowAllowingStateLoss()

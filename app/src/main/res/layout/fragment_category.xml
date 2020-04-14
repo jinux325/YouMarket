@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.CategoryFragment">
+
+    <!-- Appbar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/layout_appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:elevation="1dp"
+            android:background="@color/white"
+            app:title="카테고리"
+            app:menu="@menu/toolbar_category"
+            app:popupTheme="@style/ThemeOverlay.MaterialComponents.ActionBar"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/layout_appbar"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 디지털/가전 -->
+            <LinearLayout
+                android:id="@+id/layout_category_digital"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:background="?attr/selectableItemBackground"
+                android:focusable="true"
+                android:clickable="true"
+                android:onClick="onClick"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_launcher_background"
+                    android:contentDescription="@string/empty_image_view" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:text="@string/category_digital"/>
+
+            </LinearLayout>
+
+            <!-- 가구/인테리어 -->
+            <LinearLayout
+                android:id="@+id/layout_category_furniture"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:background="?attr/selectableItemBackground"
+                android:focusable="true"
+                android:clickable="true"
+                android:onClick="onClick"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_launcher_background"
+                    android:contentDescription="@string/empty_image_view" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:text="@string/category_furniture"/>
+
+            </LinearLayout>
+
+            <!-- 생활/가공식품 -->
+            <LinearLayout
+                android:id="@+id/layout_category_life"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:background="?attr/selectableItemBackground"
+                android:focusable="true"
+                android:clickable="true"
+                android:onClick="onClick"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_launcher_background"
+                    android:contentDescription="@string/empty_image_view" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:text="@string/category_life"/>
+
+            </LinearLayout>
+
+            <!-- 여성패션/잡화 -->
+            <LinearLayout
+                android:id="@+id/layout_category_woman"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:background="?attr/selectableItemBackground"
+                android:focusable="true"
+                android:clickable="true"
+                android:onClick="onClick"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_launcher_background"
+                    android:contentDescription="@string/empty_image_view" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:text="@string/category_woman"/>
+
+            </LinearLayout>
+
+            <!-- 남성패션/잡화 -->
+            <LinearLayout
+                android:id="@+id/layout_category_man"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:background="?attr/selectableItemBackground"
+                android:focusable="true"
+                android:clickable="true"
+                android:onClick="onClick"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_launcher_background"
+                    android:contentDescription="@string/empty_image_view" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:text="@string/category_man"/>
+
+            </LinearLayout>
+
+            <!-- 스포츠/레저 -->
+            <LinearLayout
+                android:id="@+id/layout_category_sport"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:background="?attr/selectableItemBackground"
+                android:focusable="true"
+                android:clickable="true"
+                android:onClick="onClick"
+                tools:ignore="UseCompoundDrawables">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_launcher_background"
+                android:contentDescription="@string/empty_image_view" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:text="@string/category_sport"/>
+
+            </LinearLayout>
+
+            <!-- 게임/취미 -->
+            <LinearLayout
+                android:id="@+id/layout_category_game"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:background="?attr/selectableItemBackground"
+                android:focusable="true"
+                android:clickable="true"
+                android:onClick="onClick"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_launcher_background"
+                    android:contentDescription="@string/empty_image_view" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:text="@string/category_game"/>
+
+            </LinearLayout>
+
+            <!-- 도서/티켓/음반 -->
+            <LinearLayout
+                android:id="@+id/layout_category_book"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:background="?attr/selectableItemBackground"
+                android:focusable="true"
+                android:clickable="true"
+                android:onClick="onClick"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_launcher_background"
+                    android:contentDescription="@string/empty_image_view" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:text="@string/category_book"/>
+
+            </LinearLayout>
+
+            <!-- 기타 중고물품 -->
+            <LinearLayout
+                android:id="@+id/layout_category_etc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:background="?attr/selectableItemBackground"
+                android:focusable="true"
+                android:clickable="true"
+                android:onClick="onClick"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_launcher_background"
+                    android:contentDescription="@string/empty_image_view" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:text="@string/category_etc"/>
+
+            </LinearLayout>
+
+            <!-- 삽니다 -->
+            <LinearLayout
+                android:id="@+id/layout_category_buy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:background="?attr/selectableItemBackground"
+                android:focusable="true"
+                android:clickable="true"
+                android:onClick="onClick"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_launcher_background"
+                    android:contentDescription="@string/empty_image_view" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:text="@string/category_buy"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
