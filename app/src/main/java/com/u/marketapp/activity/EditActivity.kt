@@ -264,12 +264,12 @@ class EditActivity : AppCompatActivity() {
 
     // 데이터 수집
     private fun getEditData() : ProductEntity {
-        val pref = getSharedPreferences("user", Context.MODE_PRIVATE)
+        val pref = getSharedPreferences("User", Context.MODE_PRIVATE)
         val item = ProductEntity()
         item.seller = FirebaseAuth.getInstance().currentUser!!.uid // 판매자 정보
         item.category = text_view_category.text.toString() // 카테고리
         item.title = edit_text_title.text.toString() // 제목
-        item.address = pref.getString(resources.getString(R.string.edit_address), userData.address)!!
+        item.address = pref.getString(resources.getString(R.string.edit_address), userData.address)?:userData.address
         if (edit_text_price.text.toString().isNotEmpty()) {
             item.price = edit_text_price.text.toString().replace(",", "").toInt() // 가격
         }
@@ -280,11 +280,11 @@ class EditActivity : AppCompatActivity() {
 
     // 데이터 수집 - 수정
     private fun getNewEditData() : Map<String, Any> {
-        val pref = getSharedPreferences("user", Context.MODE_PRIVATE)
+        val pref = getSharedPreferences("User", Context.MODE_PRIVATE)
         val map : HashMap<String, Any> = hashMapOf()
-        map["catgory"] = text_view_category.text // 카테고리
+        map["category"] = text_view_category.text // 카테고리
         map["title"] = edit_text_title.text.toString() // 제목
-        map["address"] = pref.getString(resources.getString(R.string.edit_address), userData.address)!!
+        map["address"] = pref.getString(resources.getString(R.string.edit_address), userData.address)?:userData.address
         map["contents"] = edit_text_contents.text.toString() // 내용
         map["suggestion"] = check_box_suggestion.isChecked // 가격 제안 여부
         map["modDate"] = Date() // 수정일
@@ -321,13 +321,14 @@ class EditActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_product)).document(pid).update(data).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "상품 수정 완료!")
-                if (adapter.itemCount > 0) {
-                    saveImage(pid)
+                if (currentArray.size > 0 || delImageArray.size > 0) {
+                    Log.i(TAG, "상품 이미지 수정!!")
                     deleteImage(pid)
+                    saveImage(pid)
                 } else {
+                    Log.i(TAG, "상품 이미지 없어서 그냥 활성화!!")
                     updateActiveProduct(pid)
                 }
-                setResult(Activity.RESULT_OK)
             } else {
                 BaseApplication.instance.progressOFF()
             }
@@ -350,10 +351,11 @@ class EditActivity : AppCompatActivity() {
     }
 
     // 이미지 저장
-    private fun saveImage(pid: String?) {
-        val storage = FirebaseStorage.getInstance()
-        pid.let { item ->
-            val dir = "${SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(Date())}/${FirebaseAuth.getInstance().currentUser!!.uid}/${item}"
+    private fun saveImage(pid: String) {
+        Log.i(TAG, "새로운 이미지 추가!!")
+        if (currentArray.size > 0) {
+            val storage = FirebaseStorage.getInstance()
+            val dir = "${SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(Date())}/${FirebaseAuth.getInstance().currentUser!!.uid}/${pid}"
             var count = 0
             for (uri in currentArray) {
                 val fileName = "${System.currentTimeMillis()}.${getFileExtension(uri)}"
@@ -366,31 +368,39 @@ class EditActivity : AppCompatActivity() {
                 }.addOnCompleteListener {
                     if (it.isSuccessful) {
                         Log.i(TAG, "이미지 추가 성공 : ${it.result.toString()}")
-                        updateImage(item, it.result.toString())
+                        updateImage(pid, it.result.toString())
                         if ((++count) >= currentArray.size) {
-                            updateActiveProduct(item)
+                            updateActiveProduct(pid)
                         }
                     }
                 }
             }
+        } else {
+            Log.i(TAG, "새로운 이미지가 없음!!!")
+            updateActiveProduct(pid)
         }
     }
 
     // 이미지 제거
-    private fun deleteImage(item: String?) {
-        val db = FirebaseFirestore.getInstance()
-        val storage = FirebaseStorage.getInstance()
-        for (uri in delImageArray) {
-            db.collection(resources.getString(R.string.db_product)).document(item!!).update("imageArray", FieldValue.arrayRemove(uri.toString())).addOnCompleteListener {
-                if (it.isSuccessful) {
-                    Log.i(TAG, "이미지 삭제 성공 (데이터) : $uri")
+    private fun deleteImage(pid: String) {
+        Log.i(TAG, "기존 이미지 제거!!")
+        if (delImageArray.size > 0) {
+            val db = FirebaseFirestore.getInstance()
+            val storage = FirebaseStorage.getInstance()
+            for (uri in delImageArray) {
+                db.collection(resources.getString(R.string.db_product)).document(pid).update("imageArray", FieldValue.arrayRemove(uri.toString())).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.i(TAG, "이미지 삭제 성공 (데이터) : $uri")
+                    }
+                }
+                storage.getReferenceFromUrl(uri.toString()).delete().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Log.i(TAG, "이미지 삭제 성공 (저장소) : $uri")
+                    }
                 }
             }
-            storage.getReferenceFromUrl(uri.toString()).delete().addOnCompleteListener {
-                if (it.isSuccessful) {
-                    Log.i(TAG, "이미지 삭제 성공 (저장소) : $uri")
-                }
-            }
+        } else {
+            Log.i(TAG, "제거할 기존 이미지가 없음!!!")
         }
     }
 
@@ -411,6 +421,7 @@ class EditActivity : AppCompatActivity() {
             if (it.isSuccessful) {
                 Log.i(TAG, "상품 업데이트 성공 : ${it.result}")
                 BaseApplication.instance.progressOFF()
+                setResult(Activity.RESULT_OK)
                 finish() // 종료
             }
         }
