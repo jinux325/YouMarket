@@ -157,10 +157,21 @@ class CategoryActivity : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_PRODUCT)
     }
 
+    // 검색 페이지 이동
+    private fun moveSearchActivity() {
+        val intent = Intent(this, SearchActivity::class.java)
+        intent.putExtra("category", category)
+        startActivity(intent)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
             android.R.id.home -> {
                 onBackPressed()
+                true
+            }
+            R.id.action_search -> {
+                moveSearchActivity()
                 true
             }
             else -> super.onOptionsItemSelected(item)

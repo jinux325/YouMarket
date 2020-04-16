@@ -39,7 +39,6 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         private val TAG = HomeFragment::class.java.simpleName
         private const val REQUEST_PRODUCT = 100
         private const val REQUEST_FILTER = 200
-        private const val REQUEST_ADDRESS_SETTING = 300
         private const val REQUEST_ITEM_LIMIT = 20L
     }
 
@@ -172,8 +171,9 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_user)).document(FirebaseAuth.getInstance().currentUser!!.uid).get()
             .addOnSuccessListener { documentSnapshot ->
-                val user = documentSnapshot.toObject(UserEntity::class.java)!!
-                user.let {
+                val user = documentSnapshot.toObject(UserEntity::class.java)
+                info.clear()
+                user?.let {
                     if (it.address.isNotEmpty()) info.add(it.address)
                     if (it.address2.isNotEmpty()) info.add(it.address2)
                 }
@@ -189,16 +189,9 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         builder.setItems(info) { _, which ->
             val item = info[which]
             if (item != "내 동네 설정") {
-                showSnackbar("${item}으로 변경 되었습니다.")
-                setSharedAddress(item)
-                if (text_view_spinner.text != getSharedAddress()) {
-                    text_view_spinner.text = item
-                    adapter.clear()
-                    requestItems()
-                }
+                changeAddress(item)
             } else {
-                val intent = Intent(requireContext(), LocationSettingActivity::class.java)
-                startActivityForResult(intent, REQUEST_ADDRESS_SETTING)
+                moveLocationSetting()
             }
         }
         val dialog = builder.create()
@@ -216,6 +209,22 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         }
     }
 
+    private fun moveLocationSetting() {
+        Log.i(TAG, "LocationSettingActivity로 이동!!!!")
+        val intent = Intent(requireContext(), LocationSettingActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun changeAddress(item: String) {
+        showSnackbar("${item}으로 변경 되었습니다.")
+        if (text_view_spinner.text != item) {
+            setSharedAddress(item)
+            text_view_spinner.text = item
+            adapter.clear()
+            requestItems()
+        }
+    }
+
     private fun showSnackbar(msg: String) {
         Snackbar.make(layout_root, msg, Snackbar.LENGTH_SHORT).show()
     }
@@ -224,7 +233,10 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         val prefs = activity!!.getSharedPreferences("User", Context.MODE_PRIVATE)
         val address = prefs.getString("address", "내 동네 설정")
         address?.let {
-            setSharedAddress(it)
+            Log.i(TAG, "주소 확인 : $address")
+            if (address != "내 동네 설정" && address != text_view_spinner.text) {
+                changeAddress(address)
+            }
         }
     }
 
@@ -334,6 +346,12 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         startActivityForResult(intent, REQUEST_FILTER)
     }
 
+    override fun onResume() {
+        super.onResume()
+        checkSharedAddress()
+        getUserAddrss()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -348,11 +366,6 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                     BaseApplication.instance.progressON(requireActivity(), resources.getString(R.string.loading))
                     adapter.clear()
                     requestItems()
-                }
-                REQUEST_ADDRESS_SETTING -> { // 내 동네 설정 리턴
-                    Log.i(TAG, "Location Setting Activity Return!!")
-                    checkSharedAddress()
-                    getUserAddrss()
                 }
             }
         }

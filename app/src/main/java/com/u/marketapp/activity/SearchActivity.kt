@@ -31,19 +31,27 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var adapter : ProductRVAdapter
     private lateinit var scrollListener : EndlessRecyclerViewScrollListener
+    private lateinit var category : String
     private var filterString = ""
     private var nowPage = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+        if (intent.hasExtra("category")) {
+            category = intent.getStringExtra("category")
+            setSearchView(intent.getStringExtra("'${category}'에서 검색"))
+        } else {
+            val pref = getSharedPreferences("User", Context.MODE_PRIVATE)
+            val address = pref.getString("address", "내 동네 설정")!!
+            setSearchView("'${address}' 근처에서 검색")
+        }
         initView()
     }
 
     // 화면 초기화
     private fun initView() {
         setActionbar() // 액션바 설정
-        setSearchView()
         setRVLayoutManager()
         setRVAdapter()
     }
@@ -60,10 +68,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     // 검색창
-    private fun setSearchView() {
-        val pref = getSharedPreferences("User", Context.MODE_PRIVATE)
-        val address = pref.getString("address", "내 동네 설정")!!
-        layout_text_input.hint = "'${address}' 근처에서 검색"
+    private fun setSearchView(str: String) {
+        layout_text_input.hint = str
         edit_text_input.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_SEARCH -> {
@@ -113,11 +119,15 @@ class SearchActivity : AppCompatActivity() {
         scrollListener.resetState()
 
         val db = FirebaseFirestore.getInstance()
-        val query = db.collection(resources.getString(R.string.db_product))
+        var query = db.collection(resources.getString(R.string.db_product))
             .whereEqualTo("address", getSharedAddress())
             .whereEqualTo("status", true)
             .orderBy("regDate", Query.Direction.DESCENDING)
             .limit(REQUEST_ITEM_LIMIT)
+
+        if (::category.isInitialized) {
+           query = query.whereEqualTo("category", category)
+        }
 
         query.get()
             .addOnSuccessListener { documentSnapshots ->
@@ -132,12 +142,16 @@ class SearchActivity : AppCompatActivity() {
     // 데이터 로드
     private fun requestPagingItems(next: Int) {
         val db = FirebaseFirestore.getInstance()
-        val query = db.collection(resources.getString(R.string.db_product))
+        var query = db.collection(resources.getString(R.string.db_product))
             .whereEqualTo("address", getSharedAddress())
             .whereEqualTo("status", true)
             .orderBy("regDate", Query.Direction.DESCENDING)
             .startAfter(adapter.getItem(next))
             .limit(REQUEST_ITEM_LIMIT)
+
+        if (::category.isInitialized) {
+            query = query.whereEqualTo("category", category)
+        }
 
         query.get()
             .addOnSuccessListener { documentSnapshots ->

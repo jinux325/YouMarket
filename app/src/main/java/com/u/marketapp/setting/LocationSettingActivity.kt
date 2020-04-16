@@ -43,23 +43,23 @@ class LocationSettingActivity : AppCompatActivity() {
         }
 
         addr1_delete.setOnClickListener {
-          /*  val dialog = AlertDialog.Builder(this)
-            dialog.setMessage(R.string.location_activity_addr1_delete).setCancelable(false)
-            fun pos(){
-                val intent =
-                    Intent(this@LocationSettingActivity, AddressActivity::class.java)
-                intent.putExtra("update", "update1")
-                intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
-                startActivity(intent)
-            }
-            val dialogListener = DialogInterface.OnClickListener { _, p1 ->
-                when(p1){
-                    DialogInterface.BUTTON_POSITIVE -> pos()
-                }
-            }
-            dialog.setPositiveButton("확인",dialogListener)
-            dialog.setNegativeButton("취소",dialogListener)
-            dialog.show()*/
+            /*  val dialog = AlertDialog.Builder(this)
+              dialog.setMessage(R.string.location_activity_addr1_delete).setCancelable(false)
+              fun pos(){
+                  val intent =
+                      Intent(this@LocationSettingActivity, AddressActivity::class.java)
+                  intent.putExtra("update", "update1")
+                  intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
+                  startActivity(intent)
+              }
+              val dialogListener = DialogInterface.OnClickListener { _, p1 ->
+                  when(p1){
+                      DialogInterface.BUTTON_POSITIVE -> pos()
+                  }
+              }
+              dialog.setPositiveButton("확인",dialogListener)
+              dialog.setNegativeButton("취소",dialogListener)
+              dialog.show()*/
             delete("1")
         }
 
@@ -177,14 +177,13 @@ class LocationSettingActivity : AppCompatActivity() {
 
 
 
-   /*     val delete = hashMapOf<String, Any>(
-            "address2" to FieldValue.delete()
-        )
-        db.collection(resources.getString(R.string.db_user)).document(uid).update(delete)
-        addr2.visibility = View.GONE
-        addr2_add.visibility = View.VISIBLE
-
-        selectAddr1()*/
+        /*     val delete = hashMapOf<String, Any>(
+                 "address2" to FieldValue.delete()
+             )
+             db.collection(resources.getString(R.string.db_user)).document(uid).update(delete)
+             addr2.visibility = View.GONE
+             addr2_add.visibility = View.VISIBLE
+             selectAddr1()*/
     }
 
     @SuppressLint("LongLogTag", "SetTextI18n")
@@ -225,27 +224,26 @@ class LocationSettingActivity : AppCompatActivity() {
                         addr2.setBackgroundResource(R.drawable.button)
                     }
 
-                /*    myData = userEntity!!
-                    if (userEntity.address2 == "") {
-                        addr2.visibility = View.GONE
-                        addr2_add.visibility = View.VISIBLE
-                    } else {
-                        tv_addr2.text = userEntity.address2
-                        addr2.visibility = View.VISIBLE
-                        addr2_add.visibility = View.GONE
-                    }
-                    tv_addr1.text = userEntity.address
-
-                    val prefs = getSharedPreferences("User", Context.MODE_PRIVATE)
-                    Log.e("선택 주소 getAddress : "," ${prefs.getString("address", "")}")
-                    selectAddr.text = "선택한 지역: ${prefs.getString("address", "")}"
-                    if(prefs.getString("address", "") == userEntity.address ){
-                        addr1.setBackgroundResource(R.drawable.button)
-                        addr2.setBackgroundResource(R.drawable.no_select_button)
-                    }else{
-                        addr1.setBackgroundResource(R.drawable.no_select_button)
-                        addr2.setBackgroundResource(R.drawable.button)
-                    }*/
+                    /*    myData = userEntity!!
+                        if (userEntity.address2 == "") {
+                            addr2.visibility = View.GONE
+                            addr2_add.visibility = View.VISIBLE
+                        } else {
+                            tv_addr2.text = userEntity.address2
+                            addr2.visibility = View.VISIBLE
+                            addr2_add.visibility = View.GONE
+                        }
+                        tv_addr1.text = userEntity.address
+                        val prefs = getSharedPreferences("User", Context.MODE_PRIVATE)
+                        Log.e("선택 주소 getAddress : "," ${prefs.getString("address", "")}")
+                        selectAddr.text = "선택한 지역: ${prefs.getString("address", "")}"
+                        if(prefs.getString("address", "") == userEntity.address ){
+                            addr1.setBackgroundResource(R.drawable.button)
+                            addr2.setBackgroundResource(R.drawable.no_select_button)
+                        }else{
+                            addr1.setBackgroundResource(R.drawable.no_select_button)
+                            addr2.setBackgroundResource(R.drawable.button)
+                        }*/
                 } else {
                     Log.d(tag, "Error getting LocationSetting", task.exception)
                 }
