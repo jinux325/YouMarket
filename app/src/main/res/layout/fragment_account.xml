@@ -461,7 +461,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Umarket이 좋다면 리뷰를 남겨주세요 :)"
+                android:text="Umarket에 오류가 있다면 문의를 남겨주세요! :)"
                 android:textStyle="bold"
                 android:textSize="15sp"
                 android:textColor="@color/editcolor"

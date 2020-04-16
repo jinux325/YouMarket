@@ -1,27 +1,15 @@
 package com.u.marketapp.setting
 
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.R
-import com.u.marketapp.vo.EmailVO
 import kotlinx.android.synthetic.main.activity_mail.*
-import kotlinx.coroutines.*
 import java.util.*
-import javax.mail.Message
-import javax.mail.PasswordAuthentication
-import javax.mail.Session
-import javax.mail.Transport
-import javax.mail.internet.InternetAddress
-import javax.mail.internet.MimeMessage
 
 class MailActivity : AppCompatActivity() {
-
-    lateinit var userId:String
-    lateinit var password:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
