@@ -40,7 +40,7 @@ class SearchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
         if (intent.hasExtra("category")) {
             category = intent.getStringExtra("category")
-            setSearchView(intent.getStringExtra("'${category}'에서 검색"))
+            setSearchView("'${category}'에서 검색")
         } else {
             val pref = getSharedPreferences("User", Context.MODE_PRIVATE)
             val address = pref.getString("address", "내 동네 설정")!!
