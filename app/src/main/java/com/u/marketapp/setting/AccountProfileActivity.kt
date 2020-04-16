@@ -30,8 +30,6 @@ class AccountProfileActivity : AppCompatActivity() {
     private lateinit var dbImage:String
     private var profileImage : Uri? = null
     private lateinit var dbName : String
-    /*lateinit var address:String
-    var uid: String? = null*/
 
     private val myUid = FirebaseAuth.getInstance().currentUser!!.uid
     private val db = FirebaseFirestore.getInstance()
@@ -92,14 +90,11 @@ class AccountProfileActivity : AppCompatActivity() {
             R.id.join -> {
                 val name = profile_name.text.toString()
                 Log.e("imgPath 1111 ", " $name  $profileImage")
-               /* if (name.length <= 0) {
-                    Toast.makeText(this, " $db_name 으로 하시겠어요?", Toast.LENGTH_LONG).show()
-                } else */
+
                 if (name.length >= 11) Toast.makeText(this, "10자 이하로 적어주세요.", Toast.LENGTH_LONG).show() else {
 
                         Log.e("imgPath 2222 ", " $name  $profileImage")
-                        /*  if (profileImage == null || profileImage.toString().length == 0 ) {
-                                                    } else {*/
+
                         try {
                             Log.e("imgPath 3333 ", " $name  $profileImage")
                             if(name.replace(" ", "").isEmpty()){
@@ -111,7 +106,7 @@ class AccountProfileActivity : AppCompatActivity() {
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
-                        //}
+
 
                 }
                 true

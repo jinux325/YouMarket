@@ -32,61 +32,20 @@ class MailActivity : AppCompatActivity() {
                     Toast.makeText(this,"내용을 입력해주세요.", Toast.LENGTH_SHORT).show()
                 }
                 else -> {
-                    val scope = CoroutineScope(Dispatchers.Main)
-                    scope.launch {
-                        FirebaseFirestore.getInstance().collection("Email").document("Email").get().addOnSuccessListener { result ->
-                            val emailVO: EmailVO? = result.toObject<EmailVO>(EmailVO::class.java)
-                            userId = emailVO!!.ID
-                            password = emailVO.PW
-                            GlobalScope.launch {
-                                sendEmail(et_message.text.toString())
-                            }
-                        }
-                    }
+
+                    val uid = FirebaseAuth.getInstance().currentUser!!.uid
+                    val registDate = Date(System.currentTimeMillis())
+                    val email = hashMapOf(
+                        "uid" to uid,
+                        "content" to et_message.text.toString(),
+                        "registDate" to registDate
+                    )
+                    FirebaseFirestore.getInstance().collection("Email").document()
+                        .set(email).addOnSuccessListener { et_message.text = null }
+
                 }
             }
         }
-
     }
 
-    private fun sendEmail(content:String)
-    {
-        // 보내는 메일 주소와 비밀번호
-     /*   val username = resources.getString(R.string.mail_id)
-        val password = resources.getString(R.string.mail_pw)*/
-
-        et_message.text = null
-
-        val props = Properties()
-        props["mail.smtp.auth"] = "true"
-        props["mail.smtp.starttls.enable"] = "true"
-        props["mail.smtp.host"] = "smtp.gmail.com"
-        props["mail.smtp.port"] = "587"
-
-        // 비밀번호 인증으로 세션 생성
-        val session = Session.getInstance(props,
-            object: javax.mail.Authenticator() {
-                override  fun getPasswordAuthentication(): PasswordAuthentication {
-                    return PasswordAuthentication(userId, password)
-                }
-            })
-
-        // 메시지 객체 만들기
-        val message = MimeMessage(session)
-        message.setFrom(InternetAddress(userId))
-        // 수신자 설정, 여러명으로도 가능
-        message.setRecipients(
-            Message.RecipientType.TO,
-            InternetAddress.parse(userId))
-        val uid = FirebaseAuth.getInstance().currentUser!!.uid
-        val prefs = getSharedPreferences("User", Context.MODE_PRIVATE)
-        val name = prefs.getString("name", "")
-        message.subject = "$name ($uid)"
-        message.setText(content)
-
-        // 전송
-        Transport.send(message)
-
-
-    }
 }

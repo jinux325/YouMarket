@@ -93,12 +93,10 @@ class ChatActivity : AppCompatActivity() {
                             break
                         }
                     }
-                    //val arr : MutableList<String> = mutableListOf<String>(chatRoomUid,chatRoomUid,chatRoomUid)
                     val delete = hashMapOf<String, Any>(
                         "chatting" to arr
                     )
-                  //  FirebaseFirestore.getInstance().collection("User").document(myUid)
-                    //db.collection(resources.getString(R.string.db_user)).document(myUid)
+
                     db.collection(resources.getString(R.string.db_user)).document(myUid)
                         .update(delete).addOnSuccessListener {
                             Log.e("채팅방 나가기 2 ", chatRoomUid)
@@ -351,68 +349,6 @@ class ChatActivity : AppCompatActivity() {
                 }
             }
     }
-    /*private fun chattingCommentDel(document:Any){
-        document.collection("comment").get()
-            .addOnSuccessListener { result ->
-                Log.e("채팅방 나가기 10 ", result.toString() )
-                for(document in result){
-                    Log.e("채팅방 나가기 11 ", document.id)
-                   *//* db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid)
-                        .collection("comment").document(document.id).delete()*//*
-                }
-            }
-    }*/
 
-/*
-
-    inner class FCM : Thread() {
-        override fun run() {
-            try {
-                Log.d("@@ FCM ", "token: $token  chatRoomUid: $chatRoomUid")
-                val serverKey =
-                    "AAAACA4EsA0:APA91bGdb7Oxa49X6z23tXjCn48DiosjzqYFZXM6G67I_gH5sFI_AKuoFJ6ayLyqBHGAmckEkMSO8UU5qD8XFesWRSlDKBVdx6zHI_cCEaz6xCTg4CbgWkKCNxVBzM3SupUJXio41w6a"
-                val registrationToken: String = token
-                val URL = "https://fcm.googleapis.com/fcm/send"
-                val title = myData.name
-                val body = comment
-                val documentId = chatRoomUid
-                val partnerName = tv_partner_nickname.text
-                Log.e("@@ ChatActivity Thread", "$token  $title  $body")
-                // FMC 메시지 생성 start
-                val root = JSONObject()
-                val data = JSONObject()
-                data.put("title", title)
-                data.put("body", body)
-                data.put("click_action", "ChatActivity")
-                data.put("documentId", documentId)
-                data.put("partnerName", partnerName)
-                //root.put("notification", notification);
-                root.put("to", registrationToken)
-                root.put("data", data)
-                // FMC 메시지 생성 end
-                Log.d("Main_ Thread", "@@@")
-                val url = URL(URL)
-                val conn =
-                    url.openConnection() as HttpURLConnection
-                conn.requestMethod = "POST"
-                conn.doOutput = true
-                conn.doInput = true
-                conn.addRequestProperty("Authorization", "key=$serverKey")
-                conn.setRequestProperty("Accept", "application/json")
-                conn.setRequestProperty("Content-type", "application/json")
-                val os = conn.outputStream
-                os.write(root.toString().toByteArray(charset("utf-8")))
-                os.flush()
-                conn.responseCode
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.d("Main_ Thread", "@@")
-            }
-        }
-    }
-
-
-
-*/
 
 }

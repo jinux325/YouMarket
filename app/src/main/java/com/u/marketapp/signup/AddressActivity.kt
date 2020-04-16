@@ -40,8 +40,6 @@ class AddressActivity : AppCompatActivity() {
 
         bt.setOnClickListener {
             page = 1
-                       // loading()
-
             val async = AscynTask()
             async.execute()
 

@@ -390,7 +390,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="고객센터"
+                android:text="문의하기"
                 android:textSize="15sp"
                 android:layout_margin="20dp"
                 tools:ignore="HardcodedText"
@@ -417,7 +417,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
+       <!-- <LinearLayout
             android:id="@+id/app_send"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -434,7 +434,7 @@
                 />
 
         </LinearLayout>
-
+-->
         <LinearLayout
             android:id="@+id/account_setting"
             android:layout_width="match_parent"

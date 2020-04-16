@@ -41,7 +41,7 @@ class AccountFragment : Fragment() {
         view.location_verify.setOnClickListener { msgDialog() }
         view.notice_setting.setOnClickListener { startActivity(Intent(activity, NoticeActivity::class.java)) }
         view.sendEmail.setOnClickListener { startActivity(Intent(activity, MailActivity::class.java)) }
-        view.app_send.setOnClickListener{ msgDialog() }
+       // view.app_send.setOnClickListener{ msgDialog() }
 
         return view
     }
@@ -83,8 +83,7 @@ class AccountFragment : Fragment() {
                 account_name.text = userEntity.name
 
                 val prefs = activity!!.getSharedPreferences("User", Context.MODE_PRIVATE)
-                /*Log.e("선택 주소 getAddress : "," ${prefs.getString("address", "")}")
-                selectAddr.text = "선택한 지역: ${prefs.getString("address", "")}"*/
+
                 account_address.text = prefs.getString("address", "")
                 myData = userEntity
 

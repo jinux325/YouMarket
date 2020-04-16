@@ -52,7 +52,6 @@ class ChatFragment : Fragment() {
                     if(userEntity?.chatting != null){
                         Log.e("ChatFragment ", "userData 2 ")
                         for(i in userEntity.chatting){
-                            Log.e("ChatFragment ", "userData 3 "+i)
                             chattingRoomUidList.add(i)
                         }
                         chattingRoomList(chattingRoomUidList)
@@ -65,9 +64,7 @@ class ChatFragment : Fragment() {
 
     @SuppressLint("LongLogTag")
     fun chattingRoomList(list:MutableList<String>){
-        Log.e("ChatFragment ", "chattingRoomList "+list)
         if(list.size == 0){
-            Log.e("ChatFragment ", "chattingRoomList 0 "+list)
             chat_recyclerView.visibility=View.GONE
             chat_tv.visibility= View.VISIBLE
         }else{
@@ -75,7 +72,6 @@ class ChatFragment : Fragment() {
             chat_tv.visibility= View.GONE
         }
         for(i in list){
-            Log.e("ChatFragment ", "chattingRoomList 1 "+list)
             FirebaseFirestore.getInstance().collection("Chatting").document(i).get()
                 .addOnCompleteListener{ task ->
                     val chatRoomVO: ChatRoomVO? = task.result!!.toObject<ChatRoomVO>(ChatRoomVO::class.java)

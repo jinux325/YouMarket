@@ -14,29 +14,19 @@ import com.u.marketapp.signup.SmsActivity
 
 class SplashActivity : AppCompatActivity() {
 
-  //  private var number = "NoNumber"
 
     @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        /*val prefs = getSharedPreferences("User", Context.MODE_PRIVATE)
-
-        val log = prefs.getString("log", "")
-        Log.e("log $TAG", log)
-     */
 
         val hd = Handler()
         hd.postDelayed({
             val user = FirebaseAuth.getInstance().currentUser
             if (user != null) {
                 val uid = FirebaseAuth.getInstance().currentUser!!.uid
-              //  number = FirebaseAuth.getInstance().currentUser!!.phoneNumber!!
-               // Log.d("유저 확인", number)
-               /* val intent = Intent(this@SplashActivity, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)*/
+
                 var count = 0
                 FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user))
                     .get().addOnSuccessListener { result ->
@@ -59,16 +49,12 @@ class SplashActivity : AppCompatActivity() {
                                 break
                             }
                         }
-                       // FirebaseAuth.getInstance().signOut()
+
                     }
             }else{
                 val intent = Intent(this@SplashActivity, SmsActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
-              ///  Log.d("로그 없음", number)
-              /*  val intent = Intent(this@SplashActivity, SmsActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)*/
 
             }
         }, 1000) // 1초 후 이미지를 닫습니다

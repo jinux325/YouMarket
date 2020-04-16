@@ -8,7 +8,6 @@ import java.net.HttpURLConnection
 class FCM(private val token:String, private val myName:String?, private val comment:String?, private val docId:String, private val partnerName:String?, private val str:String) : Thread() {
 
     val db = FirebaseFirestore.getInstance()
-   // private val myUid = FirebaseAuth.getInstance().currentUser!!.uid
 
     override fun run() {
         try {

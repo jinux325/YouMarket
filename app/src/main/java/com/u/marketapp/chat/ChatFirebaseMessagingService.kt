@@ -114,11 +114,6 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
                 channel.setShowBadge(false)
                 channel.enableVibration(false)
 
-                /*val notificationSound = RingtoneManager.getDefaultUri(NotificationManager.IMPORTANCE_DEFAULT)
-                val audioAttributes = AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    .build()*/
                 channel.setSound(null,null)
 
                 notificationManager.createNotificationChannel(channel)
@@ -137,50 +132,7 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
 
             }
 
-         /*   Log.e("FCM channe ", " ")
-            description = "This is channel14"
-            importance = NotificationManager.IMPORTANCE_HIGH
 
-            Log.e("send Notifi  "," $channelId, $name, $importance")
-
-            val channel = NotificationChannel(channelId, name, importance)
-            channel.description = description
-            channel.setShowBadge(false)
-            channel.enableVibration(true)
-
-            //notificationManager.deleteNotificationChannel(channelId)
-
-
-            notificationManager.createNotificationChannel(channel)
-
-
-
-
-*/
-
-
-            /*val channel = NotificationChannel(channelId, name, importance)
-            channel.description = description
-
-            channel.setShowBadge(false)*/
-
-
-            /* channel.enableLights(false)
-            channel.lightColor = Color.RED*/
-          /*  val pref = getSharedPreferences("setting", Context.MODE_PRIVATE)
-            val prefVibrationSwitch = pref.getString("vibrationSwitch", "")
-            if(prefVibrationSwitch=="true"){
-                Log.e("FCM ", " 진동")
-                channel.enableVibration(false)
-                notificationManager.deleteNotificationChannel(channelId)
-            }else{
-                Log.e("FCM ", " no진동")
-                channel.enableVibration(true)
-                channel.vibrationPattern = longArrayOf(0)
-                notificationManager.deleteNotificationChannel(channelId)
-            }*/
-
-         //   notificationManager.createNotificationChannel(channel)
         }
 
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
