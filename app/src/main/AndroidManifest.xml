@@ -35,6 +35,9 @@
             android:name=".fragment.HomeFragment"
             android:theme="@style/MaterialTheme" />
         <activity
+            android:name=".activity.CategoryActivity"
+            android:theme="@style/MaterialTheme" />
+        <activity
             android:name=".activity.SearchActivity"
             android:theme="@style/MaterialTheme" />
         <activity
