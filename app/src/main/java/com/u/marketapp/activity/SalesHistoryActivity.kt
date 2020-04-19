@@ -18,8 +18,7 @@ import kotlinx.android.synthetic.main.activity_sales_history.*
 class SalesHistoryActivity : AppCompatActivity() {
 
     private lateinit var actionbar: ActionBar
-    private lateinit var toast: Toast
-    private var backkeyPressedTime: Long = 200
+    private var backPressedTime: Long = 200
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,16 +73,19 @@ class SalesHistoryActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (System.currentTimeMillis() > backkeyPressedTime + 500) {
-            backkeyPressedTime = System.currentTimeMillis()
-            toast.show()
+        if (System.currentTimeMillis() > backPressedTime + 2000) {
+            backPressedTime = System.currentTimeMillis()
+            showToastMessage()
             return
         }
 
-        if (System.currentTimeMillis() <= backkeyPressedTime + 500) {
-            toast.cancel()
+        if (System.currentTimeMillis() <= backPressedTime + 2000) {
             this.finish()
         }
+    }
+
+    private fun showToastMessage() {
+        Toast.makeText(this, "뒤로가기 버튼을 한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
