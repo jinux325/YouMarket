@@ -31,7 +31,6 @@ class CategoryFragment : Fragment(), View.OnClickListener {
     }
 
     private fun initView(v: View) {
-//        setActionbar()
         v.findViewById<LinearLayout>(R.id.layout_category_digital).setOnClickListener(this) // 디지털
         v.findViewById<LinearLayout>(R.id.layout_category_furniture).setOnClickListener(this) // 가구
         v.findViewById<LinearLayout>(R.id.layout_category_life).setOnClickListener(this) // 생활

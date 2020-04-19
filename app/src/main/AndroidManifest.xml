@@ -32,6 +32,15 @@
         </service>
 
         <activity
+            android:name=".activity.PurchaseHistoryActivity"
+            android:theme="@style/MaterialTheme" />
+        <activity
+            android:name=".activity.AttentionHistoryActivity"
+            android:theme="@style/MaterialTheme" />
+        <activity
+            android:name=".activity.SalesHistoryActivity"
+            android:theme="@style/MaterialTheme" />
+        <activity
             android:name=".fragment.HomeFragment"
             android:theme="@style/MaterialTheme" />
         <activity

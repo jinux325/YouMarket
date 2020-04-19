@@ -65,6 +65,13 @@
         <item name="android:background">@color/black_30</item>
     </style>
 
+    <!-- Tab Text Style -->
+    <style name="TabTextStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/txt_white_gray</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <!-- BottomNavigationView Active -->
     <style name="BottomNavigation.Active" parent="TextAppearance.AppCompat.Caption">
         <item name="fontFamily">sans-serif</item>
