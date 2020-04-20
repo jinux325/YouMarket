@@ -6,6 +6,7 @@ import kotlin.collections.ArrayList
 
 data class ProductEntity (
     var seller: String, // 판매자
+    var buyer: String, // 구매자
     var category: String, // 카테고리
     var title: String, // 제목
     var contents: String, // 내용
@@ -22,5 +23,5 @@ data class ProductEntity (
     val transactionStatus: Int, // 거래상태 ( 0: 거래중, 1: 예약중, 2: 거래완료 )
     val status: Boolean // 상태 ( true: 판매중, false: 숨김 )
 ) : Serializable {
-    constructor() : this("", "", "", "", 0, false, "", ArrayList(), ArrayList(), ArrayList(), ArrayList(), 0, Date(), Date(), 0, false)
+    constructor() : this("", "", "", "", "", 0, false, "", ArrayList(), ArrayList(), ArrayList(), ArrayList(), 0, Date(), Date(), 0, false)
 }

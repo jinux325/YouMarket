@@ -254,6 +254,7 @@ class SalesFragment2 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 .addOnSuccessListener {
                     adapterSales.removeItem(selectPosition)
                     removeUserSalesItem(pid)
+                    // TODO 상품 삭제시 하위에 포함된 댓글, 채팅방, 구매자 목록, 관심목록, 조회 등등 일괄 삭제
                 }
                 .addOnFailureListener { e ->
                     Log.i(TAG, e.toString())

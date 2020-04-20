@@ -1,6 +1,5 @@
 package com.u.marketapp.history
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -262,6 +261,7 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 .update("transactionStatus", 2)
                 .addOnSuccessListener {
                     adapterSales.removeItem(selectPosition)
+                    // TODO 채팅방 목록에 해당하는 유저들을 팝업창에 띄우고 1명 선택 후 구매자로 등록, 구매자는 구매 목록에 추가
                 }
                 .addOnFailureListener { e ->
                     Log.i(TAG, e.toString())
@@ -391,10 +391,14 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     // 끌어올리기 확인 팝업창
     private fun showPopupForPull() {
         val item = adapterSales.getItem(selectPosition).toObject(ProductEntity::class.java)
-        val day: Long = 24 * 60 * 60 * 1000
-        val reg = item?.regDate?.time ?: 0
+        val day = 24 * 60 * 60 * 1000L
+        val now = System.currentTimeMillis()
         val mod = item?.modDate?.time ?: 0
-        if (item?.modDate != item?.regDate && (mod - reg > day) ) {
+        val diff = now - mod
+
+        Log.i(TAG, "mod : $diff")
+
+        if (diff > day) {
             val str = "상품 끌어올리기를 하시겠습니까?"
             MaterialAlertDialogBuilder(context)
                 .setTitle(str)
@@ -402,7 +406,7 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 .setNegativeButton("취소", null)
                 .show()
         } else {
-            val str = "${remainingTime(mod - reg)} 후에 사용가능합니다."
+            val str = "${remainingTime(day - diff)} 후에 사용가능합니다."
             MaterialAlertDialogBuilder(context)
                 .setTitle(str)
                 .setPositiveButton("확인", null)
@@ -412,26 +416,26 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     private fun remainingTime(date: Long) : String {
-        var result = ""
-        val time = System.currentTimeMillis() - date
+        Log.i(TAG, "남은 시간 : $date")
         val second = 1000L
         val minute = second * 60
         val hour = minute * 60
         val day = hour * 24
 
-        when {
-            time < minute -> {
-                result = "${time/second}분"
+        return when {
+            date < day -> {
+                "${date/hour}시간"
             }
-            time < hour -> {
-                result = "${time/minute}시간"
+            date < hour -> {
+                "${date/minute}분"
             }
-            time < day -> {
-                result = "${time/hour}일"
+            date < minute -> {
+                "${date/second}초"
+            }
+            else -> {
+                "??"
             }
         }
-
-        return result
     }
 
 }

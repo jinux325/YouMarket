@@ -31,6 +31,7 @@ import com.u.marketapp.entity.CommentEntity
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.utils.BaseApplication
+import com.u.marketapp.utils.FireStoreUtils
 import kotlinx.android.synthetic.main.activity_product.*
 
 class ProductActivity : AppCompatActivity(), View.OnClickListener {
@@ -583,7 +584,11 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     private fun showPopupForDelete() {
         MaterialAlertDialogBuilder(this)
             .setTitle("거래중인 게시글이 삭제되면 거래 상대방이 당황할 수 있어요. 게시글을 정말 삭제하시겠어요?")
-            .setPositiveButton("삭제") { _, _ -> deleteProduct() }
+            .setPositiveButton("삭제") { _, _ ->
+                FireStoreUtils.instance.deleteProduct(this, pid)
+                Activity.RESULT_OK
+                finish()
+            }
             .setNegativeButton("취소", null)
             .show()
     }
