@@ -1,6 +1,7 @@
 package com.u.marketapp.adapter
 
 import android.view.View
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -8,10 +9,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textview.MaterialTextView
+import com.google.firebase.auth.FirebaseAuth
 import com.u.marketapp.R
 import com.u.marketapp.entity.ProductEntity
 import java.util.*
+import kotlin.collections.ArrayList
 
 @BindingAdapter("bindUrlArray")
 fun bindViewFromUrlArray(view: ImageView?, imageArray: ArrayList<String>?) {

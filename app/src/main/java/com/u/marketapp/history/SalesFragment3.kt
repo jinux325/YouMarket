@@ -14,6 +14,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.R
 import com.u.marketapp.activity.EditActivity
@@ -110,10 +111,16 @@ class SalesFragment3 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             .get()
             .addOnSuccessListener { documentSnapshots ->
                 val user = documentSnapshots.toObject(UserEntity::class.java)!!
-                for (item in user.salesArray) {
-                    getProductItem(item)
+                val array = user.salesArray
+                if (array.size > 0) {
+                    for (item in user.salesArray) {
+                        getProductItem(item)
+                    }
+                    swipeRefreshLayout.isRefreshing = false
+                } else {
+                    checkItemsData(true)
+                    swipeRefreshLayout.isRefreshing = false
                 }
-                swipeRefreshLayout.isRefreshing = false
             }.addOnFailureListener { e ->
                 Log.i(TAG, e.toString())
             }
@@ -202,18 +209,10 @@ class SalesFragment3 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                REQUEST_PRODUCT -> { // 상품 페이지에서 리턴
-                    refreshItem()
-                }
-                REQUEST_UPDATE -> { // 수정 페이지에서 리턴
-                    refreshItem()
-                }
-            }
-        }
+    override fun onResume() {
+        super.onResume()
+        Log.i(TAG, "Selected Item : $selectPosition")
+        refreshItem()
     }
 
     // 상품 끌어올리기
@@ -265,6 +264,7 @@ class SalesFragment3 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 .delete()
                 .addOnSuccessListener {
                     adapterSales.removeItem(selectPosition)
+                    removeUserSalesItem(pid)
                 }
                 .addOnFailureListener { e ->
                     Log.i(TAG, e.toString())
@@ -272,6 +272,20 @@ class SalesFragment3 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         } else {
             Log.i(TAG, "선택이 잘못되었습니다.....")
         }
+    }
+
+    // 유저 판매목록 제거
+    private fun removeUserSalesItem(pid: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_user))
+            .document(FirebaseAuth.getInstance().currentUser!!.uid)
+            .update("salesArray", FieldValue.arrayRemove(pid))
+            .addOnSuccessListener {
+                Log.i(TAG, "판매목록에서 제거!")
+            }
+            .addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
     }
 
     // 상품 재정의

@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="item"
+            type="com.u.marketapp.entity.ProductEntity" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:focusable="true"
+        android:clickable="true"
+        android:elevation="1dp"
+        android:background="@android:color/background_light"
+        android:stateListAnimator="@animator/elevation_state">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_root"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:background="?attr/selectableItemBackground"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
+
+            <!-- 이미지 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_view_thumnail"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:cardCornerRadius="8dp"
+                app:cardUseCompatPadding="true"
+                app:cardBackgroundColor="@color/cardview_light_background"
+                tools:ignore="PrivateResource">
+
+                <ImageView
+                    android:id="@+id/image_view_thumnail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    bindUrlArray="@{item.imageArray}"
+                    tools:src="@drawable/ic_launcher_background"
+                    tools:ignore="ContentDescription" />
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- 제목 & 주소 & 시간 & 가격 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_contents"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="5dp"
+                android:layout_marginStart="5dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/card_view_thumnail"
+                app:layout_constraintRight_toRightOf="parent">
+
+                <!-- 제목 -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/text_view_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:hint="제목이 없습니다."
+                    android:text="@{item.title}"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/check_box"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="제목입니다."
+                    tools:ignore="HardcodedText" />
+
+                <!-- 관심 여부 -->
+                <CheckBox
+                    android:id="@+id/check_box"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:button="@drawable/selector_custom_check"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- 주소 & 시간 -->
+                <LinearLayout
+                    android:id="@+id/layout_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/text_view_title">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/text_view_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="@android:color/darker_gray"
+                        android:text="@{item.address}"
+                        tools:text="세류동" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="@android:color/darker_gray"
+                        android:text=" · "
+                        tools:ignore="HardcodedText" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/text_view_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="12sp"
+                        bindDate="@{item}"
+                        tools:text="시간" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center_horizontal"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/layout_address">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/text_view_trade"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:padding="5dp"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        bindTrade="@{item.transactionStatus}"
+                        tools:text="예약중"/>
+
+                    <!-- 가격 -->
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/text_view_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:text="@{@string/format_price(item.price)}"
+                        tools:text="가격입니다." />
+
+                </LinearLayout>
+
+                <!-- 댓글 & 채팅 & 좋아요 -->
+                <LinearLayout
+                    android:id="@+id/layout_bottom"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:orientation="horizontal"
+                    android:gravity="end|bottom"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/layout_price"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <!-- 댓글 -->
+                    <LinearLayout
+                        android:id="@+id/layout_comment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:visibility="visible"
+                        android:orientation="horizontal"
+                        bindSize="@{item.commentSize}"
+                        tools:ignore="UseCompoundDrawables">
+
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_marginEnd="5dp"
+                            android:src="@drawable/ic_communication"
+                            android:contentDescription="@string/empty_image_view" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/text_view_comment_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="13sp"
+                            android:text="@{Integer.toString(item.commentSize)}"
+                            tools:text="0"/>
+
+                    </LinearLayout>
+
+                    <!-- 채팅 -->
+                    <LinearLayout
+                        android:id="@+id/layout_chatting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center_vertical"
+                        android:visibility="visible"
+                        android:orientation="horizontal"
+                        bindSize="@{item.chattingRoom.size()}"
+                        tools:ignore="UseCompoundDrawables">
+
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_marginEnd="5dp"
+                            android:src="@drawable/ic_speech_bubble"
+                            android:contentDescription="@string/empty_image_view" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/text_view_chatting_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="13sp"
+                            android:text="@{Integer.toString(item.chattingRoom.size())}"
+                            tools:text="0"/>
+
+                    </LinearLayout>
+
+                    <!-- 좋아요 -->
+                    <LinearLayout
+                        android:id="@+id/layout_attention"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center_vertical"
+                        android:visibility="visible"
+                        android:orientation="horizontal"
+                        bindSize="@{item.attention.size()}"
+                        tools:ignore="UseCompoundDrawables">
+
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_marginEnd="5dp"
+                            android:src="@drawable/ic_heart_uncheck"
+                            android:contentDescription="@string/empty_image_view" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/text_view_attention_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="13sp"
+                            android:text="@{Integer.toString(item.attention.size())}"
+                            tools:text="0"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

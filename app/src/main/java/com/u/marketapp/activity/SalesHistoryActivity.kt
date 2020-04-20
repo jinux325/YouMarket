@@ -17,6 +17,10 @@ import kotlinx.android.synthetic.main.activity_sales_history.*
 
 class SalesHistoryActivity : AppCompatActivity() {
 
+    companion object {
+        private val TAG = SalesHistoryActivity::class.java.simpleName
+    }
+
     private lateinit var actionbar: ActionBar
     private var backPressedTime: Long = 200
 
