@@ -31,7 +31,8 @@ class FireStoreUtils : AppCompatActivity() {
             .get()
             .addOnSuccessListener { document ->
                 val item = document.toObject(ProductEntity::class.java)!!
-                if (item.commentSize > 0) {
+                deleteSellList(document.id) // 사용자 판매목록 제거
+                if (item.commentSize > 0) { // 댓글 목록 제거
                     document.reference.collection(activity.resources.getString(R.string.db_comment))
                         .get()
                         .addOnSuccessListener { task ->
@@ -40,12 +41,12 @@ class FireStoreUtils : AppCompatActivity() {
                             Log.i(TAG, e.toString())
                         }
                 }
+                // 실제 상품 제거
                 document.reference
                     .delete()
                     .addOnSuccessListener {
                         Log.i(TAG, "상품 삭제 성공!")
                         deleteImage(item) // 이미지 제거
-                        deleteSellList(document.id) // 사용자 판매목록 제거
                         // TODO 구매자 구매목록 제거
                         // TODO 채팅방 제거
                     }.addOnFailureListener { e ->
@@ -58,6 +59,7 @@ class FireStoreUtils : AppCompatActivity() {
 
     // 댓글목록 제거
     private fun deleteCommentList(list: List<DocumentSnapshot>) {
+        var isCheck = false
         for (document in list) {
             val item = document.toObject(CommentEntity::class.java)!!
             if (item.replySize > 0) {
@@ -74,21 +76,36 @@ class FireStoreUtils : AppCompatActivity() {
             document.reference
                 .delete()
                 .addOnSuccessListener {
+                    isCheck = true
                 }.addOnFailureListener { e ->
                     Log.i(TAG, e.toString())
+                    isCheck = false
                 }
+        }
+        if (isCheck) {
+            Log.i(TAG, "댓글 목록 삭제 성공!")
+        } else {
+            Log.i(TAG, "답글 목록 삭제 실패!")
         }
     }
 
     // 답글목록 제거
     private fun deleteReplyList(list: List<DocumentSnapshot>) {
+        var isCheck = false
         for (document in list) {
             // 답글 삭제
             document.reference.delete()
                 .addOnSuccessListener {
+                    isCheck = true
                 }.addOnFailureListener { e ->
                     Log.i(TAG, e.toString())
+                    isCheck = false
                 }
+        }
+        if (isCheck) {
+            Log.i(TAG, "답글 목록 삭제 성공!")
+        } else {
+            Log.i(TAG, "답글 목록 삭제 실패!")
         }
     }
 

@@ -1,14 +1,13 @@
 package com.u.marketapp.activity
 
-import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -194,8 +193,25 @@ class PurchaseHistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefres
         if (selectPosition != -1) {
             val pid = adapter.getItem(selectPosition).id
             adapter.removeItem(selectPosition)
-            getItem(selectPosition, pid)
+            checkGetItem(selectPosition, pid)
         }
+    }
+
+
+    // 상품 존재 확인
+    private fun checkGetItem(position: Int, pid: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_user))
+            .document(FirebaseAuth.getInstance().currentUser!!.uid)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                val user = documentSnapshot.toObject(UserEntity::class.java)!!
+                if (user.purchaseArray.contains(pid)) {
+                    getItem(position, documentSnapshot.id)
+                }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
     }
 
     // 상품 로드

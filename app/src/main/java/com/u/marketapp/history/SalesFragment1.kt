@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,7 +13,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.R
 import com.u.marketapp.activity.EditActivity
@@ -20,6 +20,7 @@ import com.u.marketapp.activity.ProductActivity
 import com.u.marketapp.adapter.SalesHistoryRVAdapter
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
+import com.u.marketapp.utils.FireStoreUtils
 import kotlinx.android.synthetic.main.fragment_history.view.*
 import java.util.*
 
@@ -310,47 +311,32 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         }
     }
 
-    // 상품 삭제
-    private fun removeItem() {
-        if (selectPosition != -1) {
-            val pid = adapterSales.getItem(selectPosition).id
-            val db = FirebaseFirestore.getInstance()
-            db.collection(resources.getString(R.string.db_product))
-                .document(pid)
-                .delete()
-                .addOnSuccessListener {
-                    adapterSales.removeItem(selectPosition)
-                    removeUserSalesItem(pid)
-                }
-                .addOnFailureListener { e ->
-                    Log.i(TAG, e.toString())
-                }
-        } else {
-            Log.i(TAG, "선택이 잘못되었습니다.....")
-        }
-    }
-
-    // 유저 판매목록 제거
-    private fun removeUserSalesItem(pid: String) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_user))
-            .document(FirebaseAuth.getInstance().currentUser!!.uid)
-            .update("salesArray", FieldValue.arrayRemove(pid))
-            .addOnSuccessListener {
-                Log.i(TAG, "판매목록에서 제거!")
-            }
-            .addOnFailureListener { e ->
-                Log.i(TAG, e.toString())
-            }
-    }
-
     // 상품 재정의
     private fun refreshItem() {
         if (selectPosition != -1) {
+            Log.i(TAG, "일시정지에서 돌아옴 : 상품 재정의")
             val pid = adapterSales.getItem(selectPosition).id
             adapterSales.removeItem(selectPosition)
-            getItem(selectPosition, pid)
+            checkGetItem(selectPosition, pid)
+        } else {
+            Log.i(TAG, "일시정지에서 돌아옴 : 재정의 실패!!")
         }
+    }
+
+    // 상품 존재 확인
+    private fun checkGetItem(position: Int, pid: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_user))
+            .document(FirebaseAuth.getInstance().currentUser!!.uid)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                val user = documentSnapshot.toObject(UserEntity::class.java)!!
+                if (user.salesArray.contains(pid)) {
+                    getItem(position, documentSnapshot.id)
+                }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
     }
 
     // 상품 로드
@@ -374,7 +360,7 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private fun showPopupForDelete() {
         MaterialAlertDialogBuilder(context)
             .setTitle("거래중인 게시글이 삭제되면 거래 상대방이 당황할 수 있어요. 게시글을 정말 삭제하시겠어요?")
-            .setPositiveButton("확인") { _, _ -> removeItem() }
+            .setPositiveButton("확인") { _, _ -> FireStoreUtils.instance.deleteProduct((context as AppCompatActivity), adapterSales.getItem(selectPosition).id) }
             .setNegativeButton("취소", null)
             .show()
     }

@@ -1,6 +1,5 @@
 package com.u.marketapp.activity
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -203,8 +202,24 @@ class AttentionHistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefre
         if (selectPosition != -1) {
             val pid = adapter.getItem(selectPosition).id
             adapter.removeItem(selectPosition)
-            getItem(selectPosition, pid)
+            checkGetItem(selectPosition, pid)
         }
+    }
+
+    // 상품 존재 확인
+    private fun checkGetItem(position: Int, pid: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_user))
+            .document(FirebaseAuth.getInstance().currentUser!!.uid)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                val user = documentSnapshot.toObject(UserEntity::class.java)!!
+                if (user.attentionArray.contains(pid)) {
+                    getItem(position, documentSnapshot.id)
+                }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
     }
 
     // 상품 로드
