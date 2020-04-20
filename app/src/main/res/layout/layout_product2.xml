@@ -299,7 +299,8 @@
                 android:background="?attr/selectableItemBackground"
                 android:textStyle="bold"
                 android:textColor="@color/black"
-                android:text="예약중으로 변경" />
+                bindTradeHistory="@{item.transactionStatus}"
+                tools:text="예약중으로 변경"/>
 
             <!-- 선 -->
             <View
@@ -321,7 +322,7 @@
                 android:background="?attr/selectableItemBackground"
                 android:textStyle="bold"
                 android:textColor="@color/black"
-                android:text="거래완료" />
+                android:text="@string/trade_2" />
 
         </LinearLayout>
 

@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
@@ -147,6 +148,18 @@ fun bindViewFromDate(view: MaterialTextView?, regDate: Date?) {
             else -> {
                 it.text = String.format(it.resources.getString(R.string.format_date), regDate)
             }
+        }
+    }
+}
+
+@BindingAdapter("bindTradeHistory")
+fun bindViewFromTradeHistory(view: TextView, trade: Int) {
+    when (trade) {
+        0 -> { // 거래중
+            view.text = "예약중으로 변경"
+        }
+        1 -> { // 예약중
+            view.text = "판매중으로 변경"
         }
     }
 }
