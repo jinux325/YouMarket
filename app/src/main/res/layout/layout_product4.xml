@@ -280,56 +280,25 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 
-        <LinearLayout
-            android:id="@+id/layout_trade"
+        <TextView
+            android:id="@+id/text_view_visible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/view_divider">
-
-            <TextView
-                android:id="@+id/text_view_trade_change"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="10dp"
-                android:gravity="center"
-                android:focusable="true"
-                android:clickable="true"
-                android:background="?attr/selectableItemBackground"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                bindTradeHistory="@{item.transactionStatus}"
-                tools:text="예약중으로 변경"/>
-
-            <!-- 선 -->
-            <View
-                style="@style/Divider"
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="7dp"/>
-
-            <TextView
-                android:id="@+id/text_view_trade_complete"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="10dp"
-                android:gravity="center"
-                android:focusable="true"
-                android:clickable="true"
-                android:background="?attr/selectableItemBackground"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                android:text="@string/trade_2" />
-
-        </LinearLayout>
+            android:padding="10dp"
+            android:gravity="center"
+            android:focusable="true"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackground"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:text="@string/text_visible"
+            app:layout_constraintTop_toBottomOf="@id/view_divider"
+            tools:text="숨기기 해제" />
 
         <!-- 선 -->
         <View
             style="@style/Divider"
-            app:layout_constraintTop_toBottomOf="@id/layout_trade"
+            app:layout_constraintTop_toBottomOf="@id/text_view_visible"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 

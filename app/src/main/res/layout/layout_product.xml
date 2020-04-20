@@ -116,7 +116,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/darker_gray"
                         android:textSize="12sp"
-                        bindDate="@{item.regDate}"
+                        bindDate="@{item}"
                         tools:text="시간" />
 
                 </LinearLayout>

@@ -293,6 +293,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         var query = db.collection(resources.getString(R.string.db_product))
             .whereEqualTo("address", getSharedAddress())
             .whereEqualTo("status", true)
+            .orderBy("modDate", Query.Direction.DESCENDING)
             .orderBy("regDate", Query.Direction.DESCENDING)
             .startAfter(adapter.getItem(next))
             .limit(REQUEST_ITEM_LIMIT)

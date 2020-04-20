@@ -7,11 +7,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.DocumentSnapshot
 import com.u.marketapp.R
-import com.u.marketapp.databinding.LayoutProduct2Binding
+import com.u.marketapp.databinding.LayoutProduct3Binding
 import com.u.marketapp.entity.ProductEntity
-import kotlinx.android.synthetic.main.layout_product2.view.*
+import kotlinx.android.synthetic.main.layout_product2.view.image_view_more
+import kotlinx.android.synthetic.main.layout_product3.view.*
 
-class SalesHistoryRVAdapter : RecyclerView.Adapter<SalesHistoryRVAdapter.ViewHolder>() {
+class CompleteHistoryRVAdapter : RecyclerView.Adapter<CompleteHistoryRVAdapter.ViewHolder>() {
 
     private val items : ArrayList<DocumentSnapshot> = ArrayList()
 
@@ -27,21 +28,15 @@ class SalesHistoryRVAdapter : RecyclerView.Adapter<SalesHistoryRVAdapter.ViewHol
         this.moreClickListener = moreClickListener
     }
 
-    interface TradeClickListener { fun onClick(view: View, position: Int) }
-    private lateinit var tradeClickListener: TradeClickListener
-    fun setTradeClickListener(tradeClickListener: TradeClickListener) {
-        this.tradeClickListener = tradeClickListener
-    }
-
-    interface StateClickListener { fun onClick(view: View, position: Int) }
-    private lateinit var stateClickListener: StateClickListener
-    fun setStateClickListener(stateClickListener: StateClickListener) {
-        this.stateClickListener = stateClickListener
+    interface ReviewClickListener { fun onClick(view: View, position: Int) }
+    private lateinit var reviewClickListener: ReviewClickListener
+    fun setReviewClickListener(reviewClickListener: ReviewClickListener) {
+        this.reviewClickListener = reviewClickListener
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.layout_product2, parent, false)
+            DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.layout_product3, parent, false)
         )
     }
 
@@ -52,8 +47,7 @@ class SalesHistoryRVAdapter : RecyclerView.Adapter<SalesHistoryRVAdapter.ViewHol
             itemView.tag = item
             itemView.setOnClickListener { itemClickListener.onClick(it, position) }
             itemView.image_view_more.setOnClickListener { moreClickListener.onClick(it, position) }
-            itemView.text_view_trade_change.setOnClickListener { tradeClickListener.onClick(it, position) }
-            itemView.text_view_trade_complete.setOnClickListener { stateClickListener.onClick(it, position) }
+            itemView.text_view_review.setOnClickListener { reviewClickListener.onClick(it, position) }
         }
     }
 
@@ -88,7 +82,7 @@ class SalesHistoryRVAdapter : RecyclerView.Adapter<SalesHistoryRVAdapter.ViewHol
         notifyDataSetChanged()
     }
 
-    class ViewHolder(private val binding: LayoutProduct2Binding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: LayoutProduct3Binding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(temp: DocumentSnapshot) {
             binding.apply {
                 item = temp.toObject(ProductEntity::class.java)
