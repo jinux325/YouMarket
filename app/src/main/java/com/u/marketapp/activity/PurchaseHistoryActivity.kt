@@ -3,6 +3,7 @@ package com.u.marketapp.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.ContextMenu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -10,6 +11,7 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
@@ -18,6 +20,7 @@ import com.u.marketapp.R
 import com.u.marketapp.adapter.PurchaseHistoryRVAdapter
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
+import com.u.marketapp.utils.FireStoreUtils
 import kotlinx.android.synthetic.main.activity_purchase_history.*
 
 class PurchaseHistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
@@ -125,7 +128,7 @@ class PurchaseHistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefres
             .get()
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
-                    if (getActiveProductItem(documentSnapshot)) {
+                    if (getActiveProductItem(documentSnapshot) && getStateProductItem(documentSnapshot) == 2) {
                         adapter.addItem(documentSnapshot)
                         checkItemsData(false)
                     }
@@ -138,59 +141,22 @@ class PurchaseHistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefres
     }
 
     // 구매 상품 제거
-    private fun removeAttentionProductItem(pid: String) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_user))
-            .document(FirebaseAuth.getInstance().currentUser!!.uid)
-            .update("purchaseArray", FieldValue.arrayRemove(pid))
-            .addOnSuccessListener {
-                removePurchaseUserItem(pid)
-                Log.i(TAG, "유저목록에서 ${selectPosition}번 상품 구매 해제")
-                Toast.makeText(this, "구매목록에서 제거하였습니다.", Toast.LENGTH_SHORT).show()
-            }.addOnFailureListener { e ->
-                Log.i(TAG, e.toString())
-            }
-    }
-
-    // 구매 상품 추가
-    private fun addPurchaseProductItem(pid: String) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_user))
-            .document(FirebaseAuth.getInstance().currentUser!!.uid)
-            .update("purchaseArray", FieldValue.arrayUnion(pid))
-            .addOnSuccessListener {
-                addPurchaseUserItem(pid)
-                Log.i(TAG, "유저목록에 ${selectPosition}번 상품 구매 추가")
-                Toast.makeText(this, "구매목록에 추가하였습니다.", Toast.LENGTH_SHORT).show()
-            }.addOnFailureListener { e ->
-                Log.i(TAG, e.toString())
-            }
-    }
-
-    // 구매 유저 추가
-    private fun addPurchaseUserItem(pid: String) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product))
-            .document(pid)
-            .update("purchase", FieldValue.arrayUnion(FirebaseAuth.getInstance().currentUser!!.uid))
-            .addOnSuccessListener {
-                Log.i(TAG, "${selectPosition}번 상품 구매 추가")
-            }.addOnFailureListener { e ->
-                Log.i(TAG, e.toString())
-            }
-    }
-
-    // 구매 유저 제거
-    private fun removePurchaseUserItem(pid: String) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product))
-            .document(pid)
-            .update("purchase", FieldValue.arrayRemove(FirebaseAuth.getInstance().currentUser!!.uid))
-            .addOnSuccessListener {
-                Log.i(TAG, "${selectPosition}번 상품 구매 제거")
-            }.addOnFailureListener { e ->
-                Log.i(TAG, e.toString())
-            }
+    private fun removePurchaseProductItem(pid: String) {
+        if (selectPosition != -1) {
+            val db = FirebaseFirestore.getInstance()
+            db.collection(resources.getString(R.string.db_user))
+                .document(FirebaseAuth.getInstance().currentUser!!.uid)
+                .update("purchaseArray", FieldValue.arrayRemove(pid))
+                .addOnSuccessListener {
+                    Log.i(TAG, "유저의 구매목록에서 ${selectPosition}번 상품 제거")
+                    Toast.makeText(this, "구매목록에서 제거하였습니다.", Toast.LENGTH_SHORT).show()
+                    adapter.removeItem(selectPosition)
+                }.addOnFailureListener { e ->
+                    Log.i(TAG, e.toString())
+                }
+        } else {
+            Log.i(TAG, "No such Item")
+        }
     }
 
     // 상품 재정의
@@ -237,6 +203,12 @@ class PurchaseHistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefres
             .addOnFailureListener { e ->
                 Log.i(TAG, e.toString())
             }
+    }
+
+    // 상품 거래 상태 확인
+    private fun getStateProductItem(document: DocumentSnapshot) : Int {
+        val item = document.toObject(ProductEntity::class.java)!!
+        return item.transactionStatus
     }
 
     // 상품 활성화 확인
@@ -294,6 +266,21 @@ class PurchaseHistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefres
         super.onResume()
         Log.i(TAG, "Selected Item : $selectPosition")
         refreshItem()
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        menuInflater.apply { inflate(R.menu.context_purchase, menu) }
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_item_delete -> { // 삭제
+                Log.i(TAG, "action_delete : $selectPosition")
+                removePurchaseProductItem(adapter.getItem(selectPosition).id)
+                true
+            }
+            else -> super.onContextItemSelected(item)
+        }
     }
 
 }
