@@ -11,6 +11,8 @@ import com.google.firebase.storage.FirebaseStorage
 import com.u.marketapp.R
 import com.u.marketapp.entity.CommentEntity
 import com.u.marketapp.entity.ProductEntity
+import com.u.marketapp.entity.UserEntity
+import com.u.marketapp.vo.ChatRoomVO
 
 @SuppressLint("Registered")
 class FireStoreUtils : AppCompatActivity() {
@@ -21,6 +23,26 @@ class FireStoreUtils : AppCompatActivity() {
     }
 
     private lateinit var activity: AppCompatActivity
+
+    // 전체 상품 제거
+    fun allDeleteProduct(activity: AppCompatActivity) {
+        this.activity = activity
+
+        val db = FirebaseFirestore.getInstance()
+        db.collection(activity.resources.getString(R.string.db_user))
+            .document(FirebaseAuth.getInstance().currentUser!!.uid)
+            .get()
+            .addOnSuccessListener { document ->
+                val user = document.toObject(UserEntity::class.java)!!
+                if (user.salesArray.size > 0) {
+                    for (sale in user.salesArray) {
+                        deleteProduct(sale)
+                    }
+                }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
+    }
 
     // 상품 제거
     fun deleteProduct(activity: AppCompatActivity, pid: String) {
@@ -47,11 +69,122 @@ class FireStoreUtils : AppCompatActivity() {
                     .addOnSuccessListener {
                         Log.i(TAG, "상품 삭제 성공!")
                         deleteImage(item) // 이미지 제거
-                        // TODO 구매자 구매목록 제거
-                        // TODO 채팅방 제거
+                        deleteBuyerHistory(pid)
+                        deleteChatRoomList(pid)
                     }.addOnFailureListener { e ->
                         Log.i(TAG, e.toString())
                     }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
+    }
+
+    // 상품 제거
+    fun deleteProduct(pid: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(activity.resources.getString(R.string.db_product)).document(pid)
+            .get()
+            .addOnSuccessListener { document ->
+                val item = document.toObject(ProductEntity::class.java)!!
+                deleteSellList(document.id) // 사용자 판매목록 제거
+                if (item.commentSize > 0) { // 댓글 목록 제거
+                    document.reference.collection(activity.resources.getString(R.string.db_comment))
+                        .get()
+                        .addOnSuccessListener { task ->
+                            deleteCommentList(task.documents)
+                        }.addOnFailureListener { e ->
+                            Log.i(TAG, e.toString())
+                        }
+                }
+                // 실제 상품 제거
+                document.reference
+                    .delete()
+                    .addOnSuccessListener {
+                        Log.i(TAG, "상품 삭제 성공!")
+                        deleteImage(item) // 이미지 제거
+                        deleteBuyerHistory(pid)
+                        deleteChatRoomList(pid)
+                    }.addOnFailureListener { e ->
+                        Log.i(TAG, e.toString())
+                    }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
+    }
+
+    // 구매자 구매목록 제거
+    private fun deleteBuyerHistory(pid: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(activity.resources.getString(R.string.db_product))
+            .document(pid)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                val item = documentSnapshot.toObject(ProductEntity::class.java)!!
+                if (item.buyer.isNotEmpty()) {
+                    db.collection(activity.resources.getString(R.string.db_user))
+                        .document(item.buyer)
+                        .update("purchaseArray", FieldValue.arrayRemove(pid))
+                        .addOnSuccessListener {
+                            Log.i(TAG, "구매자 구매목록 제거")
+                        }.addOnFailureListener { e ->
+                            Log.i(TAG, e.toString())
+                        }
+                }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
+    }
+
+    // 채팅방 제거
+    private fun deleteChatRoomList(pid: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(activity.resources.getString(R.string.db_product))
+            .document(pid)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                val item = documentSnapshot.toObject(ProductEntity::class.java)!!
+                if (item.chattingRoom.size > 0) {
+                    for (room in item.chattingRoom) {
+                        db.collection(activity.resources.getString(R.string.db_chatting))
+                            .document(room)
+                            .get()
+                            .addOnSuccessListener { documentSnapshot2 ->
+                                val chatRoom = documentSnapshot2.toObject(ChatRoomVO::class.java)
+                                chatRoom?.apply {
+                                    buyer?.let { deleteBuyerChatRoom(it, room) }
+                                    seller?.let { deleteSellerChatRoom(it, room) }
+                                }
+                            }.addOnFailureListener { e ->
+                                Log.i(TAG, e.toString())
+                            }
+                    }
+                }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
+    }
+
+    // 판매자 채팅방 제거
+    private fun deleteSellerChatRoom(seller: String, room: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(activity.resources.getString(R.string.db_user))
+            .document(seller)
+            .update("chatting", FieldValue.arrayRemove(room))
+            .addOnSuccessListener {
+                Log.i(TAG, "판매자 채팅방 제거")
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
+    }
+
+    // 구매자들 채팅방 제거
+    private fun deleteBuyerChatRoom(buyer: String, room: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(activity.resources.getString(R.string.db_user))
+            .document(buyer)
+            .update("chatting", FieldValue.arrayRemove(room))
+            .addOnSuccessListener {
+                Log.i(TAG, "구매자 채팅방 제거")
             }.addOnFailureListener { e ->
                 Log.i(TAG, e.toString())
             }
