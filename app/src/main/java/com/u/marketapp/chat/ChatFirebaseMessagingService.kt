@@ -19,11 +19,15 @@ import com.u.marketapp.activity.ReplyActivity
 
 
 class ChatFirebaseMessagingService : FirebaseMessagingService() {
+    //var open: PendingIntent? = null
     private val db = FirebaseFirestore.getInstance()
+    // private val TAG = "ChatFirebase"
     override fun onNewToken(s: String) {
         super.onNewToken(s)
+        /// val token = s
         Log.e(" @@ token", " $s")
 
+        // Log.e(" @@ token ", FirebaseInstanceId.getInstance().token)
         if (FirebaseAuth.getInstance().currentUser != null) {
             val uid = FirebaseAuth.getInstance().currentUser!!.uid
             db.collection(resources.getString(R.string.db_user)).document(uid)
@@ -55,25 +59,16 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun sendNotification(remoteMessage: RemoteMessage) {
         val intent:Intent
-        when {
-            remoteMessage.data["click_action"] != resources.getString(R.string.ChatActivity) -> {
-                intent = Intent(this, ChatActivity::class.java).apply {
-                    flags = FLAG_ACTIVITY_NO_HISTORY
-                    putExtra("chatRoomUid", remoteMessage.data["documentId"])
-                    putExtra("name", remoteMessage.data["partnerName"])
-                }
+        if(remoteMessage.data["partnerName"] != ""){
+            intent = Intent(this, ChatActivity::class.java).apply {
+                flags = FLAG_ACTIVITY_NO_HISTORY
+                putExtra("chatRoomUid", remoteMessage.data["documentId"])
+                putExtra("name", remoteMessage.data["partnerName"])
             }
-            remoteMessage.data["click_action"] != resources.getString(R.string.CommentActivity) -> {
-                intent = Intent(this, CommentActivity::class.java).apply {
-                    flags = FLAG_ACTIVITY_NO_HISTORY
-                    putExtra("pid", remoteMessage.data["documentId"])
-                }
-            }
-            else -> {
-                intent = Intent(this, ReplyActivity::class.java).apply {
-                    flags = FLAG_ACTIVITY_NO_HISTORY
-                    putExtra("pid", remoteMessage.data["documentId"])
-                }
+        }else{
+            intent = Intent(this, CommentActivity::class.java).apply {
+                flags = FLAG_ACTIVITY_NO_HISTORY
+                putExtra("pid", remoteMessage.data["documentId"])
             }
         }
 
@@ -83,15 +78,15 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
         val description :String
 
         val pref = getSharedPreferences("setting", Context.MODE_PRIVATE)
-          val prefVibrationSwitch = pref.getString("vibrationSwitch", "")
+        val prefVibrationSwitch = pref.getString("vibrationSwitch", "")
 
-         channelId = if(prefVibrationSwitch=="true"){
-              Log.e("FCM ", " Vibration")
-              "Vibration"
-          }else{
-              Log.e("FCM ", " no Vibration")
-              "NoVibration"
-          }
+        channelId = if(prefVibrationSwitch=="true"){
+            Log.e("FCM ", " Vibration")
+            "Vibration"
+        }else{
+            Log.e("FCM ", " no Vibration")
+            "NoVibration"
+        }
 
         val notificationManager: NotificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -110,6 +105,11 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
                 channel.setShowBadge(false)
                 channel.enableVibration(false)
 
+                /*val notificationSound = RingtoneManager.getDefaultUri(NotificationManager.IMPORTANCE_DEFAULT)
+                val audioAttributes = AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build()*/
                 channel.setSound(null,null)
 
                 notificationManager.createNotificationChannel(channel)
@@ -128,7 +128,40 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
 
             }
 
+            /*   Log.e("FCM channe ", " ")
+               description = "This is channel14"
+               importance = NotificationManager.IMPORTANCE_HIGH
+               Log.e("send Notifi  "," $channelId, $name, $importance")
+               val channel = NotificationChannel(channelId, name, importance)
+               channel.description = description
+               channel.setShowBadge(false)
+               channel.enableVibration(true)
+               //notificationManager.deleteNotificationChannel(channelId)
+               notificationManager.createNotificationChannel(channel)
+   */
 
+
+            /*val channel = NotificationChannel(channelId, name, importance)
+            channel.description = description
+            channel.setShowBadge(false)*/
+
+
+            /* channel.enableLights(false)
+            channel.lightColor = Color.RED*/
+            /*  val pref = getSharedPreferences("setting", Context.MODE_PRIVATE)
+              val prefVibrationSwitch = pref.getString("vibrationSwitch", "")
+              if(prefVibrationSwitch=="true"){
+                  Log.e("FCM ", " 진동")
+                  channel.enableVibration(false)
+                  notificationManager.deleteNotificationChannel(channelId)
+              }else{
+                  Log.e("FCM ", " no진동")
+                  channel.enableVibration(true)
+                  channel.vibrationPattern = longArrayOf(0)
+                  notificationManager.deleteNotificationChannel(channelId)
+              }*/
+
+            //   notificationManager.createNotificationChannel(channel)
         }
 
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
