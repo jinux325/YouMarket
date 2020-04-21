@@ -61,13 +61,17 @@ class ChatActivity : AppCompatActivity() {
         iv_send.setOnClickListener {
             comment= et_message.text.toString()
 
-            val intentItem = intent
-            if(intentItem.hasExtra("pid")){
-                addChatRoom(myUid, pid, seller)
+            if(comment.trim() != ""){
+                val intentItem = intent
+                if(intentItem.hasExtra("pid")){
+                    addChatRoom(myUid, pid, seller)
+                }else{
+                    addChatComment(myUid, comment, chatRoomUid)
+                }
+                et_message.text.clear()
             }else{
-                addChatComment(myUid, comment, chatRoomUid)
+                Toast.makeText(this,"메시지를 적어주세요.",Toast.LENGTH_SHORT).show()
             }
-            et_message.text.clear()
 
         }
 
@@ -268,7 +272,6 @@ class ChatActivity : AppCompatActivity() {
                         UserEntity::class.java
                     )
                     token = userEntity!!.token
-                    //FCM(userEntity!!.token)
                     val fcm = FCM(
                         token,
                         myData.name,
@@ -278,9 +281,7 @@ class ChatActivity : AppCompatActivity() {
                         resources.getString(R.string.ChatActivity)
                     )
                     fcm.start()
-                    /*val thread=FCM()
-                thread.start()*/
-                    //FCM(userEntity!!.token)
+
 
                 }
         }

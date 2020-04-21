@@ -59,6 +59,7 @@
             </LinearLayout>
                 <TextView
                     android:maxLength="15"
+                    android:maxLines="1"
                 android:id="@+id/chat_comment"
                 android:text=""
                 android:layout_width="match_parent"
