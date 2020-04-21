@@ -74,15 +74,6 @@
                             android:textColor="@color/account_addressColor"
                             android:textSize="13sp" />
 
-                        <!-- <TextView
-                            android:id="@+id/account_uid"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_toRightOf="@id/account_address"
-                            android:text="#12314551"
-                            android:textColor="@color/account_uidColor"
-                            android:textSize="13sp" />-->
                     </LinearLayout>
 
                 </LinearLayout>

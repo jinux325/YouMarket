@@ -49,11 +49,9 @@ class ChatActivity : AppCompatActivity() {
         myData()
 
         if(intentItems.hasExtra("chatRoomUid")) {
-            Log.d("EQWRQ!@D!@D!d 11 ", "asada ")
             chatRoomUid = intentItems.getStringExtra("chatRoomUid")
             getChattingList()
         }else{
-            Log.d("EQWRQ!@D!@D!d 22 ", "asada ")
             getChattingRoom()
         }
 
@@ -85,7 +83,6 @@ class ChatActivity : AppCompatActivity() {
                     finish()
                 }else{
                     // 채팅방 나가기
-                    Log.e("채팅방 나가기 ", chatRoomUid)
                     val arr : MutableList<String> = myData.chatting
                     for(i in 0 until arr.size){
                         if(arr[i] == chatRoomUid){
@@ -99,7 +96,6 @@ class ChatActivity : AppCompatActivity() {
 
                     db.collection(resources.getString(R.string.db_user)).document(myUid)
                         .update(delete).addOnSuccessListener {
-                            Log.e("채팅방 나가기 2 ", chatRoomUid)
                             chattingMyUidDel()
                             Toast.makeText(applicationContext, "채팅 나가기", Toast.LENGTH_LONG).show()
                         }
@@ -195,12 +191,9 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun getDocumentId(pid:String, myUid:String){
-        Log.d("EQWRQ!@D!@D!d 333 ", "$pid   $myUid")
         FirebaseFirestore.getInstance().collection("Chatting")
             .whereEqualTo("pid", pid).whereEqualTo("buyer", myUid).get().addOnSuccessListener { result ->
-                Log.d("EQWRQ!@D!@D!d 444 ", "firebase ")
                 for(document in result){
-                    Log.d("EQWRQ!@D!@D!d 555 ", document.id)
                     chatRoomUid = document.id
                     getChattingList()
                 }
@@ -237,7 +230,6 @@ class ChatActivity : AppCompatActivity() {
             "registDate" to Date(System.currentTimeMillis())
         )
 
-        Log.d("EQWRQ!@D!@D!d  ", "$pid   $myUid")
 
         getDocumentId(pid, myUid)
 
@@ -267,7 +259,6 @@ class ChatActivity : AppCompatActivity() {
                         UserEntity::class.java
                     )
                     token = userEntity!!.token
-                    Log.d("@@ getToken token  ", userEntity.token)
                     //FCM(userEntity!!.token)
                     val fcm = FCM(
                         token,
@@ -289,18 +280,13 @@ class ChatActivity : AppCompatActivity() {
     private fun chattingMyUidDel(){
         db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).get()
             .addOnSuccessListener { document ->
-                Log.e("채팅방 나가기 3 ", chatRoomUid)
                 val chatRoomVO: ChatRoomVO? = document.toObject(ChatRoomVO::class.java)
                 if(myUid == chatRoomVO?.buyer){
-                    Log.e("채팅방 나가기 4 ", chatRoomUid)
                     if(chatRoomVO.seller == ""){
-                        Log.e("채팅방 나가기 5 ", chatRoomUid)
                         //chattingCommentDel(document.reference)
                         document.reference.collection("comment").get()
                             .addOnSuccessListener { result ->
-                                Log.e("채팅방 나가기 10 ", result.toString() )
                                 for(documents in result){
-                                    Log.e("채팅방 나가기 11 ", document.id)
                                     documents.reference.delete().addOnSuccessListener {
                                         db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).delete().addOnSuccessListener {
                                             finish()
@@ -311,22 +297,17 @@ class ChatActivity : AppCompatActivity() {
                                 }
                             }
                     }else{
-                        Log.e("채팅방 나가기 6 ", chatRoomUid)
                         db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid)
                             .update("buyer", "").addOnSuccessListener { finish() }
 
                     }
 
                 }else{
-                    Log.e("채팅방 나가기 7 ", chatRoomUid)
                     if(chatRoomVO?.buyer == ""){
-                        Log.e("채팅방 나가기 8 ", chatRoomUid)
                         //chattingCommentDel(document.reference)
                        document.reference.collection("comment").get()
                             .addOnSuccessListener { result ->
-                                Log.e("채팅방 나가기 10 ", result.toString() )
                                 for(documents in result){
-                                    Log.e("채팅방 나가기 11 ", document.id)
                                     documents.reference.delete().addOnSuccessListener {
                                         db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).delete().addOnSuccessListener {
                                             finish()
@@ -337,10 +318,7 @@ class ChatActivity : AppCompatActivity() {
                                 }
                             }
 
-
-                       // db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).delete()
                     }else{
-                        Log.e("채팅방 나가기 9 ", chatRoomUid)
                         db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid)
                             .update("seller", "").addOnSuccessListener { finish() }
 

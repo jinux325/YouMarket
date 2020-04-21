@@ -25,7 +25,7 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
     RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
 
     private val db = FirebaseFirestore.getInstance()
-    private val myUid = FirebaseAuth.getInstance().currentUser!!.phoneNumber!!
+    private val myUid = FirebaseAuth.getInstance().currentUser!!.uid
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(parent)
 
@@ -56,7 +56,7 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
 
         holder.comment.text = chatList[position].comment
         holder.cardView.setOnClickListener {
-            Log.e("chatIntent: "," ${chatList[position].comment}  ${chatList[position].buyer}  ${chatList[position].seller}   ${chatList[position].cId}")
+            Log.e("chatIntent: "," $myUid  ${chatList[position].comment}  ${chatList[position].buyer}  ${chatList[position].seller}   ${chatList[position].cId}")
             if(myUid == chatList[position].buyer){
                 chattingIntent(chatList[position].seller!! , chatList[position].cId!!)
             }else{
@@ -155,15 +155,4 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
         }
     }
 
-
-  /*  private fun lodding(){
-        Log.e(" 로딩... ", "중")
-        dialog.setMessage("잠시만 기다려주세요...").setCancelable(false)
-        ad.show()
-    }
-
-    private fun loddingEnd(){
-        Log.e(" 로딩... ", "끝")
-       // ad.dismiss()
-    }*/
 }
