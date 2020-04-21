@@ -103,6 +103,7 @@ class FireStoreUtils : AppCompatActivity() {
                         Log.i(TAG, "상품 삭제 성공!")
                         deleteImage(item) // 이미지 제거
                         deleteBuyerHistory(pid)
+                        deleteAttentionHistory(pid)
                         deleteChatRoomList(pid)
                     }.addOnFailureListener { e ->
                         Log.i(TAG, e.toString())
@@ -112,7 +113,7 @@ class FireStoreUtils : AppCompatActivity() {
             }
     }
 
-    // 구매자 구매목록 제거
+    // 구매자의 구매목록 제거
     private fun deleteBuyerHistory(pid: String) {
         val db = FirebaseFirestore.getInstance()
         db.collection(activity.resources.getString(R.string.db_product))
@@ -130,6 +131,37 @@ class FireStoreUtils : AppCompatActivity() {
                             Log.i(TAG, e.toString())
                         }
                 }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
+    }
+
+    // 관심목록 제거
+    private fun deleteAttentionHistory(pid: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(activity.resources.getString(R.string.db_product))
+            .document(pid)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                val item = documentSnapshot.toObject(ProductEntity::class.java)!!
+                if (item.attention.size > 0) {
+                    for (uid in item.attention) {
+                        deleteAttention(uid, pid)
+                    }
+                }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
+    }
+
+    // 관심자의 관심목록 제거
+    private fun deleteAttention(uid: String, pid: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(activity.resources.getString(R.string.db_user))
+            .document(uid)
+            .update("attentionArray", FieldValue.arrayRemove(pid))
+            .addOnSuccessListener {
+                Log.i(TAG, "관심자의 관심목록 제거")
             }.addOnFailureListener { e ->
                 Log.i(TAG, e.toString())
             }
@@ -242,7 +274,7 @@ class FireStoreUtils : AppCompatActivity() {
         }
     }
 
-    // 판매내역 제거
+    // 판매자의 판매내역 제거
     private fun deleteSellList(pid: String) {
         val db = FirebaseFirestore.getInstance()
         db.collection(activity.resources.getString(R.string.db_user))

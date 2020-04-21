@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +14,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.R
 import com.u.marketapp.activity.EditActivity
@@ -21,8 +23,10 @@ import com.u.marketapp.adapter.SalesHistoryRVAdapter
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.utils.FireStoreUtils
+import com.u.marketapp.vo.ChatRoomVO
 import kotlinx.android.synthetic.main.fragment_history.view.*
 import java.util.*
+import kotlin.collections.HashMap
 
 class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
@@ -101,9 +105,9 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             })
             adapterSales.setStateClickListener(object : SalesHistoryRVAdapter.StateClickListener {
                 override fun onClick(view: View, position: Int) {
-                    Log.i(TAG, "State Click : $position")
                     selectPosition = position
-                    tradeChangeItem2()
+                    Log.i(TAG, "State Click : $selectPosition")
+                    searchChatRoomList()
                 }
             })
         }
@@ -252,8 +256,91 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         }
     }
 
+    // 채팅 대상 목록 검색
+    private fun searchChatRoomList() {
+        if (selectPosition != -1) {
+            val pid = adapterSales.getItem(selectPosition).id
+            val db = FirebaseFirestore.getInstance()
+            db.collection(resources.getString(R.string.db_product))
+                .document(pid)
+                .get()
+                .addOnSuccessListener { documentSnapshot ->
+                    val item = documentSnapshot.toObject(ProductEntity::class.java)!!
+                    val array = item.chattingRoom
+                    if (array.size > 0) {
+                        val map = HashMap<String, String>()
+                        for (room in array) {
+                            db.collection(resources.getString(R.string.db_chatting))
+                                .document(room)
+                                .get()
+                                .addOnSuccessListener { documentSnapshot2 ->
+                                    val roomVO = documentSnapshot2.toObject(ChatRoomVO::class.java)!!
+                                    val key = roomVO.buyer
+                                    key?.let {
+                                        db.collection(resources.getString(R.string.db_user))
+                                            .document(key)
+                                            .get()
+                                            .addOnSuccessListener { documentSnapshot3 ->
+                                                val user = documentSnapshot3.toObject(UserEntity::class.java)!!
+                                                map[key] = user.name
+                                                if (map.size >= array.size) {
+                                                    showPopUpCompleteUser(map)
+                                                }
+                                            }.addOnFailureListener { e ->
+                                                Log.i(TAG, e.toString())
+                                            }
+                                    }
+                                }.addOnFailureListener { e ->
+                                    Log.i(TAG, e.toString())
+                                }
+                        }
+                    } else {
+                        Toast.makeText(context, "구매 희망자가 없습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }.addOnFailureListener { e ->
+                    Log.i(TAG, e.toString())
+                }
+        }
+    }
+
+    // 거래완료 대상자 검색
+    private fun showPopUpCompleteUser(map: HashMap<String, String>) {
+        val array = getKeyToValueList(map)
+        var choiceItem = -1
+        val builder = MaterialAlertDialogBuilder(context)
+        builder.setTitle("구매자 선택")
+        builder.setSingleChoiceItems(array, -1) { _, which ->
+            choiceItem = which
+        }
+        builder.setPositiveButton("확인") { dialog, _ ->
+            if (choiceItem != -1) {
+                val key = map.keys.elementAt(choiceItem)
+                if (map[key] == array[choiceItem]) {
+                    tradeChangeItem2(key)
+                    dialog.dismiss()
+                } else {
+                    Log.i(TAG, "구매자 선택 오류!@!@!@")
+                }
+            } else {
+                Toast.makeText(context, "구매자를 선택해주세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        builder.setNegativeButton("취소", null)
+        builder.create().show()
+    }
+
+    // Key to Value
+    private fun getKeyToValueList(map: HashMap<String, String>) : Array<String> {
+        val array = Array(map.size) {""}
+        for ((cnt, i) in map.keys.withIndex()) {
+            val value = map[i]
+            value?.let { array[cnt] = it }
+        }
+        return array
+    }
+
     // 거래완료 상태로 변경
-    private fun tradeChangeItem2() {
+    private fun tradeChangeItem2(uid: String) {
         if (selectPosition != -1) {
             val pid = adapterSales.getItem(selectPosition).id
             val db = FirebaseFirestore.getInstance()
@@ -262,7 +349,8 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 .update("transactionStatus", 2)
                 .addOnSuccessListener {
                     adapterSales.removeItem(selectPosition)
-                    // TODO 채팅방 목록에 해당하는 유저들을 팝업창에 띄우고 1명 선택 후 구매자로 등록, 구매자는 구매 목록에 추가
+                    addBuyer(pid, uid)
+                    addPurchase(pid, uid)
                 }
                 .addOnFailureListener { e ->
                     Log.i(TAG, e.toString())
@@ -270,6 +358,32 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         } else {
             Log.i(TAG, "선택이 잘못되었습니다.....")
         }
+    }
+
+    // 구매자 등록
+    private fun addBuyer(pid: String, uid: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_product))
+            .document(pid)
+            .update("buyer", uid)
+            .addOnSuccessListener {
+                Log.i(TAG, "구매자 등록 성공!!")
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
+    }
+
+    // 구매자의 구매목록 추가
+    private fun addPurchase(uid: String, pid: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(resources.getString(R.string.db_user))
+            .document(uid)
+            .update("purchaseArray", FieldValue.arrayUnion(pid))
+            .addOnSuccessListener {
+                Log.i(TAG, "구매자의 구매목록 등록 성공!!")
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }
     }
 
     // 상품 끌어올리기
