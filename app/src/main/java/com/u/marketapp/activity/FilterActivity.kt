@@ -40,6 +40,7 @@ class FilterActivity : AppCompatActivity() {
         actionbar = supportActionBar!!
         actionbar.title = resources.getString(R.string.title_filter)
         actionbar.setDisplayHomeAsUpEnabled(true)
+        actionbar.setDisplayShowTitleEnabled(false)
     }
 
     // 체크박스 설정

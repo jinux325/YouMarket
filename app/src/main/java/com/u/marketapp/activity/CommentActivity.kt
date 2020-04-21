@@ -82,6 +82,7 @@ class CommentActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
         val actionbar = supportActionBar!!
         actionbar.title = resources.getString(R.string.comment_app_title)
         actionbar.setDisplayHomeAsUpEnabled(true)
+        actionbar.setDisplayShowTitleEnabled(false)
     }
 
     // 어댑터 설정

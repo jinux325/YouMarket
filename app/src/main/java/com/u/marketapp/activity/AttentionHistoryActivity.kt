@@ -59,6 +59,7 @@ class AttentionHistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefre
         actionbar = supportActionBar!!
         actionbar.title = "관심목록"
         actionbar.setDisplayHomeAsUpEnabled(true)
+        actionbar.setDisplayShowTitleEnabled(false)
     }
 
     // 리사이클뷰 레이아웃 매니저 설정
@@ -128,9 +129,13 @@ class AttentionHistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefre
             .document(pid)
             .get()
             .addOnSuccessListener { documentSnapshot ->
-                if (getActiveProductItem(documentSnapshot)) {
-                    adapter.addItem(documentSnapshot)
-                    checkItemsData(false)
+                if (documentSnapshot.exists()) {
+                    if (getActiveProductItem(documentSnapshot)) {
+                        adapter.addItem(documentSnapshot)
+                        checkItemsData(false)
+                    }
+                } else {
+                    Log.i(TAG, "No such DocumentSnapshot!")
                 }
             }.addOnFailureListener { e ->
                 Log.i(TAG, e.toString())
@@ -229,8 +234,12 @@ class AttentionHistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefre
             .document(pid)
             .get()
             .addOnSuccessListener { documentSnapshot ->
-                if (getActiveProductItem(documentSnapshot)) {
-                    adapter.addItem(position, documentSnapshot)
+                if (documentSnapshot.exists()) {
+                    if (getActiveProductItem(documentSnapshot)) {
+                        adapter.addItem(position, documentSnapshot)
+                    }
+                } else {
+                    Log.i(TAG, "No such DocumentSnapshot!")
                 }
             }
             .addOnFailureListener { e ->

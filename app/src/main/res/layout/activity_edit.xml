@@ -22,7 +22,21 @@
             android:background="@color/white"
             app:menu="@menu/toolbar_edit"
             app:titleTextColor="@color/black"
-            app:popupTheme="@style/ThemeOverlay.MaterialComponents.ActionBar"/>
+            app:popupTheme="@style/ThemeOverlay.MaterialComponents.ActionBar">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/text_view_app_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text="@string/edit_app_title"
+                tools:text="중고거래 글쓰기"/>
+
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
