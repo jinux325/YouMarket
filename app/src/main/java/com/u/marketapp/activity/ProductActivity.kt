@@ -31,6 +31,7 @@ import com.u.marketapp.entity.CommentEntity
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.utils.BaseApplication
+import com.u.marketapp.utils.FireStoreUtils
 import kotlinx.android.synthetic.main.activity_product.*
 
 class ProductActivity : AppCompatActivity(), View.OnClickListener {
@@ -582,8 +583,12 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     // 삭제 확인 팝업창
     private fun showPopupForDelete() {
         MaterialAlertDialogBuilder(this)
-            .setTitle("삭제하시겠습니까?")
-            .setPositiveButton("확인") { _, _ -> deleteProduct() }
+            .setTitle("거래중인 게시글이 삭제되면 거래 상대방이 당황할 수 있어요. 게시글을 정말 삭제하시겠어요?")
+            .setPositiveButton("삭제") { _, _ ->
+                FireStoreUtils.instance.deleteProduct(this, pid)
+                Activity.RESULT_OK
+                finish()
+            }
             .setNegativeButton("취소", null)
             .show()
     }
@@ -591,8 +596,8 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     // 수정 확인 팝업창
     private fun showPopupForUpdate() {
         MaterialAlertDialogBuilder(this)
-            .setTitle("수정하시겠습니까?")
-            .setPositiveButton("확인") { _, _ -> updateProduct() }
+            .setTitle("수정페이지로 이동 하시겠습니까?")
+            .setPositiveButton("이동") { _, _ -> updateProduct() }
             .setNegativeButton("취소", null)
             .show()
     }
@@ -600,8 +605,8 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     // 숨김 확인 팝업창
     private fun showPopupForHide() {
         MaterialAlertDialogBuilder(this)
-            .setTitle("상품을 숨기시겠습니까?")
-            .setPositiveButton("확인") { _, _ -> unActiveProduct() }
+            .setTitle("게시물이 목록에서 제거됩니다.")
+            .setPositiveButton("숨기기") { _, _ -> unActiveProduct() }
             .setNegativeButton("취소", null)
             .show()
     }
@@ -610,7 +615,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     private fun showPopupForShare() {
         MaterialAlertDialogBuilder(this)
             .setTitle("상품을 공유하시겠습니까?(카톡)")
-            .setPositiveButton("확인") { _, _ -> share() }
+            .setPositiveButton("공유") { _, _ -> share() }
             .setNegativeButton("취소", null)
             .show()
     }

@@ -13,8 +13,11 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.u.marketapp.activity.MainActivity
 import com.u.marketapp.R
+import com.u.marketapp.activity.AttentionHistoryActivity
+import com.u.marketapp.activity.MainActivity
+import com.u.marketapp.activity.PurchaseHistoryActivity
+import com.u.marketapp.activity.SalesHistoryActivity
 import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.setting.*
 import kotlinx.android.synthetic.main.fragment_account.*
@@ -42,6 +45,10 @@ class AccountFragment : Fragment() {
         view.notice_setting.setOnClickListener { startActivity(Intent(activity, NoticeActivity::class.java)) }
         view.sendEmail.setOnClickListener { startActivity(Intent(activity, MailActivity::class.java)) }
        // view.app_send.setOnClickListener{ msgDialog() }
+
+        view.sell_list.setOnClickListener { startActivity(Intent(activity, SalesHistoryActivity::class.java)) }
+        view.buy_list.setOnClickListener { startActivity(Intent(activity, PurchaseHistoryActivity::class.java)) }
+        view.like_list.setOnClickListener { startActivity(Intent(activity, AttentionHistoryActivity::class.java)) }
 
         return view
     }

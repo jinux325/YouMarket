@@ -12,7 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
+        android:layout_marginTop="5dp"
         android:focusable="true"
         android:clickable="true"
         android:elevation="1dp"
@@ -20,12 +20,12 @@
         android:stateListAnimator="@animator/elevation_state">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_root"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:padding="10dp"
             android:background="?attr/selectableItemBackground"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
 
@@ -56,7 +56,7 @@
 
             <!-- 제목 & 주소 & 시간 & 가격 -->
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layout_root"
+                android:id="@+id/layout_contents"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:padding="5dp"
@@ -69,7 +69,7 @@
                 <!-- 제목 -->
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/text_view_title"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:maxLines="2"
                     android:ellipsize="end"
@@ -79,9 +79,19 @@
                     android:hint="제목이 없습니다."
                     android:text="@{item.title}"
                     app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/check_box"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="제목입니다."
                     tools:ignore="HardcodedText" />
+
+                <!-- 관심 여부 -->
+                <CheckBox
+                    android:id="@+id/check_box"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:button="@drawable/selector_custom_check"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <!-- 주소 & 시간 -->
                 <LinearLayout

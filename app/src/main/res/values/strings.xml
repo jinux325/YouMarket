@@ -13,6 +13,8 @@
 
     <string name="trade_1">예약중</string>
     <string name="trade_2">거래완료</string>
+    <string name="text_review">후기 작성 완료</string>
+    <string name="text_visible">숨기기 해제</string>
 
     <string name="feature_to_be_added">기능 추가 예정입니다.</string>
 

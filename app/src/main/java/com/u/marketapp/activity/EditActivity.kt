@@ -304,10 +304,14 @@ class EditActivity : AppCompatActivity() {
                 Log.i(TAG, "추가된 상품 문서 : ${it.result!!.id}")
                 if (adapter.itemCount > 0) {
                     saveImage(it.result!!.id)
+
                 } else {
                     updateActiveProduct(it.result!!.id)
                 }
                 addSellList(it.result!!.id)
+                BaseApplication.instance.progressOFF()
+                setResult(Activity.RESULT_OK)
+                finish() // 종료
             } else {
                 BaseApplication.instance.progressOFF()
             }
@@ -329,6 +333,9 @@ class EditActivity : AppCompatActivity() {
                     Log.i(TAG, "상품 이미지 없어서 그냥 활성화!!")
                     updateActiveProduct(pid)
                 }
+                BaseApplication.instance.progressOFF()
+                setResult(Activity.RESULT_OK)
+                finish() // 종료
             } else {
                 BaseApplication.instance.progressOFF()
             }
@@ -420,9 +427,6 @@ class EditActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_product)).document(item!!).update("status", true).addOnCompleteListener {
             if (it.isSuccessful) {
                 Log.i(TAG, "상품 업데이트 성공 : ${it.result}")
-                BaseApplication.instance.progressOFF()
-                setResult(Activity.RESULT_OK)
-                finish() // 종료
             }
         }
     }

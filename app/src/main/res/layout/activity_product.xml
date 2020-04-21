@@ -216,7 +216,7 @@
                                     android:id="@+id/text_view_date"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    bindDate="@{product.regDate}"
+                                    bindDate="@{product}"
                                     tools:text="등록일"/>
 
                             </LinearLayout>
@@ -300,6 +300,7 @@
                     <View style="@style/Divider" />
 
                     <!-- 댓글 -->
+
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/layout_comment"
                         android:layout_width="match_parent"
@@ -311,32 +312,32 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
+                            android:text="@{@string/format_comment(product.commentSize)}"
+                            android:textColor="@color/black"
                             android:textSize="16sp"
                             android:textStyle="bold"
-                            android:textColor="@color/black"
-                            android:text="@{@string/format_comment(product.commentSize)}"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            tools:text="댓글 0개"/>
+                            tools:text="댓글 0개" />
 
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/text_view_comment_buttom"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingStart="20dp"
-                            android:paddingEnd="20dp"
-                            android:paddingTop="20dp"
-                            android:paddingBottom="20dp"
                             android:background="?attr/selectableItemBackground"
-                            android:focusable="true"
                             android:clickable="true"
+                            android:focusable="true"
+                            android:paddingStart="20dp"
+                            android:paddingTop="20dp"
+                            android:paddingEnd="20dp"
+                            android:paddingBottom="20dp"
+                            android:text="@string/product_add_comment"
                             android:textSize="16sp"
                             android:textStyle="bold"
-                            android:text="@string/product_add_comment"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"/>
+                            app:layout_constraintTop_toTopOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_pull"
+        android:enabled="true"
+        android:title="@string/context_pull" />
+
+    <item
+        android:id="@+id/action_update"
+        android:enabled="true"
+        android:title="@string/context_update" />
+
+    <item
+        android:id="@+id/action_hide"
+        android:enabled="true"
+        android:title="@string/context_hide" />
+
+    <item
+        android:id="@+id/action_item_delete"
+        android:enabled="true"
+        android:title="@string/context_item_delete" />
+
+</menu>
