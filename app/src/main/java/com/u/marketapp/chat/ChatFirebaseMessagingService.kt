@@ -19,15 +19,11 @@ import com.u.marketapp.activity.ReplyActivity
 
 
 class ChatFirebaseMessagingService : FirebaseMessagingService() {
-    //var open: PendingIntent? = null
     private val db = FirebaseFirestore.getInstance()
-   // private val TAG = "ChatFirebase"
     override fun onNewToken(s: String) {
         super.onNewToken(s)
-       /// val token = s
         Log.e(" @@ token", " $s")
 
-      // Log.e(" @@ token ", FirebaseInstanceId.getInstance().token)
         if (FirebaseAuth.getInstance().currentUser != null) {
             val uid = FirebaseAuth.getInstance().currentUser!!.uid
             db.collection(resources.getString(R.string.db_user)).document(uid)

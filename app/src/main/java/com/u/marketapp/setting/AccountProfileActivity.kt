@@ -89,25 +89,16 @@ class AccountProfileActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.join -> {
                 val name = profile_name.text.toString()
-                Log.e("imgPath 1111 ", " $name  $profileImage")
-
                 if (name.length >= 11) Toast.makeText(this, "10자 이하로 적어주세요.", Toast.LENGTH_LONG).show() else {
-
-                        Log.e("imgPath 2222 ", " $name  $profileImage")
-
                         try {
-                            Log.e("imgPath 3333 ", " $name  $profileImage")
                             if(name.replace(" ", "").isEmpty()){
                                 update(dbName, profileImage)
                             }else{
                                 update(name, profileImage)
                             }
-
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
-
-
                 }
                 true
             }

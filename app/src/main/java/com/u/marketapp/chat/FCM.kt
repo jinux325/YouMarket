@@ -2,8 +2,10 @@ package com.u.marketapp.chat
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.u.marketapp.R
 import org.json.JSONObject
 import java.net.HttpURLConnection
+import javax.mail.Quota
 
 class FCM(private val token:String, private val myName:String?, private val comment:String?, private val docId:String, private val partnerName:String?, private val str:String) : Thread() {
 
@@ -12,8 +14,8 @@ class FCM(private val token:String, private val myName:String?, private val comm
     override fun run() {
         try {
             Log.e("@@ FCM class ", "token: $token  chatRoomUid: $docId")
-            val serverKey =
-                "AAAACA4EsA0:APA91bGdb7Oxa49X6z23tXjCn48DiosjzqYFZXM6G67I_gH5sFI_AKuoFJ6ayLyqBHGAmckEkMSO8UU5qD8XFesWRSlDKBVdx6zHI_cCEaz6xCTg4CbgWkKCNxVBzM3SupUJXio41w6a"
+            val serverKey = R.string.serverKey
+                // "AAAACA4EsA0:APA91bGdb7Oxa49X6z23tXjCn48DiosjzqYFZXM6G67I_gH5sFI_AKuoFJ6ayLyqBHGAmckEkMSO8UU5qD8XFesWRSlDKBVdx6zHI_cCEaz6xCTg4CbgWkKCNxVBzM3SupUJXio41w6a"
             val registrationToken: String = token
             val fcmUrl = "https://fcm.googleapis.com/fcm/send"
             val title = myName

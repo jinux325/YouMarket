@@ -55,11 +55,9 @@ class LocationSettingActivity : AppCompatActivity() {
             val intent = Intent(this@LocationSettingActivity, AddressActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
             if(myData.address == ""){
-                Log.e("addr2_add 1", " 클릭 ")
                 intent.putExtra("update", "update1")
                 startActivity(intent)
             }else if(myData.address2 == ""){
-                Log.e("addr2_add 2", " 클릭 ")
                 intent.putExtra("update", "update2")
                 startActivity(intent)
             }

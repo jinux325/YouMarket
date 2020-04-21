@@ -75,9 +75,7 @@ class ChatFragment : Fragment() {
             FirebaseFirestore.getInstance().collection("Chatting").document(i).get()
                 .addOnCompleteListener{ task ->
                     val chatRoomVO: ChatRoomVO? = task.result!!.toObject<ChatRoomVO>(ChatRoomVO::class.java)
-                    Log.e("ChatFragment ", "chattingRoomList 2 ")
                     if(chatRoomVO != null ){
-                        Log.e("ChatFragment ", "chattingRoomList 3 ")
                         if (task.isSuccessful) {
                             Log.e(" chattingRoom : ", "$chatRoomVO")
                             Log.d(chatRoomVO.buyer, chatRoomVO.buyer)
@@ -90,12 +88,10 @@ class ChatFragment : Fragment() {
 
                             chatRoomVO.cId=i
                             chattingRoomList.add(chatRoomVO)
-                            Log.d("chattingRoomList 11111 ", chattingRoomList[0].comment+"  "+chattingRoomList[0].cId)
+                            Log.d("chattingRoomList ", chattingRoomList[0].comment+"  "+chattingRoomList[0].cId)
                             chattingRoomList.sortWith(Comparator { data1, data2 -> data2.registDate!!.compareTo(data1.registDate)})
 
                         }
-                        Log.d("chattingRoomList 4444444 ", chattingRoomList[0].buyer)
-
                         if(list.size == chattingRoomUidList.size){
                             chat_recyclerView.layoutManager = LinearLayoutManager(context)
                             chat_recyclerView.adapter = ChatAdapter(context, chattingRoomList)
