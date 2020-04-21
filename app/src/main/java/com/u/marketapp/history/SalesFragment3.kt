@@ -260,46 +260,19 @@ class SalesFragment3 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         }
     }
 
-    // 상품 삭제
-    private fun removeItem() {
-        if (selectPosition != -1) {
-            val pid = adapterSales.getItem(selectPosition).id
-            val db = FirebaseFirestore.getInstance()
-            db.collection(resources.getString(R.string.db_product))
-                .document(pid)
-                .delete()
-                .addOnSuccessListener {
-                    adapterSales.removeItem(selectPosition)
-                    removeUserSalesItem(pid)
-                }
-                .addOnFailureListener { e ->
-                    Log.i(TAG, e.toString())
-                }
-        } else {
-            Log.i(TAG, "선택이 잘못되었습니다.....")
-        }
-    }
-
-    // 유저 판매목록 제거
-    private fun removeUserSalesItem(pid: String) {
-        val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_user))
-            .document(FirebaseAuth.getInstance().currentUser!!.uid)
-            .update("salesArray", FieldValue.arrayRemove(pid))
-            .addOnSuccessListener {
-                Log.i(TAG, "판매목록에서 제거!")
-            }
-            .addOnFailureListener { e ->
-                Log.i(TAG, e.toString())
-            }
-    }
-
     // 상품 재정의
     private fun refreshItem() {
         if (selectPosition != -1) {
-            val pid = adapterSales.getItem(selectPosition).id
-            adapterSales.removeItem(selectPosition)
-            checkGetItem(selectPosition, pid)
+            Log.i(TAG, "일시정지에서 돌아옴 : 상품 재정의")
+            if (adapterSales.itemCount > selectPosition) {
+                val pid = adapterSales.getItem(selectPosition).id
+                adapterSales.removeItem(selectPosition)
+                checkGetItem(selectPosition, pid)
+            } else {
+                Log.i(TAG, "해당되는 상품이 없음!")
+            }
+        } else {
+            Log.i(TAG, "일시정지에서 돌아옴 : 재정의 실패!!")
         }
     }
 

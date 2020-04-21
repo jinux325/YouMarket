@@ -355,7 +355,7 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 .addOnSuccessListener {
                     adapterSales.removeItem(selectPosition)
                     addBuyer(pid, uid)
-                    addPurchase(pid, uid)
+                    addPurchase(uid, pid)
                 }
                 .addOnFailureListener { e ->
                     Log.i(TAG, e.toString())
@@ -365,7 +365,7 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         }
     }
 
-    // 구매자 등록
+    // 상품의 구매자 등록
     private fun addBuyer(pid: String, uid: String) {
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product))
@@ -434,9 +434,13 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private fun refreshItem() {
         if (selectPosition != -1) {
             Log.i(TAG, "일시정지에서 돌아옴 : 상품 재정의")
-            val pid = adapterSales.getItem(selectPosition).id
-            adapterSales.removeItem(selectPosition)
-            checkGetItem(selectPosition, pid)
+            if (adapterSales.itemCount > selectPosition) {
+                val pid = adapterSales.getItem(selectPosition).id
+                adapterSales.removeItem(selectPosition)
+                checkGetItem(selectPosition, pid)
+            } else {
+                Log.i(TAG, "해당되는 상품이 없음!")
+            }
         } else {
             Log.i(TAG, "일시정지에서 돌아옴 : 재정의 실패!!")
         }
