@@ -229,11 +229,7 @@ class ChatActivity : AppCompatActivity() {
             "comment" to comment,
             "registDate" to Date(System.currentTimeMillis())
         )
-
-
         getDocumentId(pid, myUid)
-
-
     }
 
     private fun token(){
