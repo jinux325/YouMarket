@@ -37,6 +37,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
             android:orientation="vertical">
 
             <!-- 디지털/가전 -->
@@ -44,7 +46,10 @@
                 android:id="@+id/layout_category_digital"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingStart="25dp"
+                android:paddingEnd="25dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:background="?attr/selectableItemBackground"
@@ -55,13 +60,13 @@
                 <ImageView
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:src="@drawable/ic_launcher_background"
+                    android:src="@drawable/ic_digital"
                     android:contentDescription="@string/empty_image_view" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="20dp"
                     android:textSize="18sp"
                     android:textColor="@color/black"
                     android:text="@string/category_digital"/>
@@ -69,69 +74,79 @@
             </LinearLayout>
 
             <!-- 가구/인테리어 -->
+
+            <!-- 생활/가공식품 -->
             <LinearLayout
                 android:id="@+id/layout_category_furniture"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:background="?attr/selectableItemBackground"
-                android:focusable="true"
-                android:clickable="true"
+                android:paddingStart="25dp"
+                android:paddingEnd="25dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
                 tools:ignore="UseCompoundDrawables">
 
                 <ImageView
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:src="@drawable/ic_launcher_background"
-                    android:contentDescription="@string/empty_image_view" />
+                    android:contentDescription="@string/empty_image_view"
+                    android:src="@drawable/ic_furniture" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:textSize="18sp"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/category_furniture"
                     android:textColor="@color/black"
-                    android:text="@string/category_furniture"/>
-
-            </LinearLayout>
-
-            <!-- 생활/가공식품 -->
-            <LinearLayout
-                android:id="@+id/layout_category_life"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:background="?attr/selectableItemBackground"
-                android:focusable="true"
-                android:clickable="true"
-                tools:ignore="UseCompoundDrawables">
-
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_launcher_background"
-                    android:contentDescription="@string/empty_image_view" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:textSize="18sp"
-                    android:textColor="@color/black"
-                    android:text="@string/category_life"/>
+                    android:textSize="18sp" />
 
             </LinearLayout>
 
             <!-- 여성패션/잡화 -->
             <LinearLayout
+                android:id="@+id/layout_category_life"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="25dp"
+                android:paddingEnd="25dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:contentDescription="@string/empty_image_view"
+                    android:src="@drawable/ic_life" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/category_life"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/layout_category_woman"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingStart="25dp"
+                android:paddingEnd="25dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:background="?attr/selectableItemBackground"
@@ -142,13 +157,13 @@
                 <ImageView
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:src="@drawable/ic_launcher_background"
+                    android:src="@drawable/ic_woman"
                     android:contentDescription="@string/empty_image_view" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="20dp"
                     android:textSize="18sp"
                     android:textColor="@color/black"
                     android:text="@string/category_woman"/>
@@ -160,7 +175,10 @@
                 android:id="@+id/layout_category_man"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingStart="25dp"
+                android:paddingEnd="25dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:background="?attr/selectableItemBackground"
@@ -171,13 +189,13 @@
                 <ImageView
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:src="@drawable/ic_launcher_background"
+                    android:src="@drawable/ic_man"
                     android:contentDescription="@string/empty_image_view" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="20dp"
                     android:textSize="18sp"
                     android:textColor="@color/black"
                     android:text="@string/category_man"/>
@@ -189,7 +207,10 @@
                 android:id="@+id/layout_category_sport"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingStart="25dp"
+                android:paddingEnd="25dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:background="?attr/selectableItemBackground"
@@ -200,13 +221,13 @@
             <ImageView
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:src="@drawable/ic_launcher_background"
+                android:src="@drawable/ic_sport"
                 android:contentDescription="@string/empty_image_view" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="20dp"
                 android:textSize="18sp"
                 android:textColor="@color/black"
                 android:text="@string/category_sport"/>
@@ -218,7 +239,10 @@
                 android:id="@+id/layout_category_game"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingStart="25dp"
+                android:paddingEnd="25dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:background="?attr/selectableItemBackground"
@@ -229,13 +253,13 @@
                 <ImageView
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:src="@drawable/ic_launcher_background"
+                    android:src="@drawable/ic_game"
                     android:contentDescription="@string/empty_image_view" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="20dp"
                     android:textSize="18sp"
                     android:textColor="@color/black"
                     android:text="@string/category_game"/>
@@ -247,7 +271,10 @@
                 android:id="@+id/layout_category_book"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingStart="25dp"
+                android:paddingEnd="25dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:background="?attr/selectableItemBackground"
@@ -258,54 +285,62 @@
                 <ImageView
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:src="@drawable/ic_launcher_background"
+                    android:src="@drawable/ic_book"
                     android:contentDescription="@string/empty_image_view" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:textSize="18sp"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/category_book"
                     android:textColor="@color/black"
-                    android:text="@string/category_book"/>
+                    android:textSize="18sp" />
 
             </LinearLayout>
 
             <!-- 기타 중고물품 -->
+
+            <!-- 삽니다 -->
+
             <LinearLayout
                 android:id="@+id/layout_category_etc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:background="?attr/selectableItemBackground"
-                android:focusable="true"
-                android:clickable="true"
+                android:paddingStart="25dp"
+                android:paddingEnd="25dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
                 tools:ignore="UseCompoundDrawables">
 
                 <ImageView
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:src="@drawable/ic_launcher_background"
-                    android:contentDescription="@string/empty_image_view" />
+                    android:contentDescription="@string/empty_image_view"
+                    android:src="@drawable/ic_tree" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:textSize="18sp"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/category_etc"
                     android:textColor="@color/black"
-                    android:text="@string/category_etc"/>
+                    android:textSize="18sp" />
 
             </LinearLayout>
 
-            <!-- 삽니다 -->
             <LinearLayout
                 android:id="@+id/layout_category_buy"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingStart="25dp"
+                android:paddingEnd="25dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:background="?attr/selectableItemBackground"
@@ -316,13 +351,13 @@
                 <ImageView
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:src="@drawable/ic_launcher_background"
+                    android:src="@drawable/ic_buy"
                     android:contentDescription="@string/empty_image_view" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="20dp"
                     android:textSize="18sp"
                     android:textColor="@color/black"
                     android:text="@string/category_buy"/>
