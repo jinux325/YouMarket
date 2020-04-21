@@ -48,7 +48,7 @@ class CategoryFragment : Fragment(), View.OnClickListener {
         if (activity is AppCompatActivity) {
             (activity as AppCompatActivity).setSupportActionBar(toolbar)
             val actionbar = (activity as AppCompatActivity).supportActionBar!!
-            actionbar.setDisplayShowTitleEnabled(true)
+            actionbar.setDisplayShowTitleEnabled(false)
             actionbar.setDisplayHomeAsUpEnabled(false)
         }
     }

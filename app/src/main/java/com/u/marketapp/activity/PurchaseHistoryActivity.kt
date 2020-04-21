@@ -59,6 +59,7 @@ class PurchaseHistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefres
         actionbar = supportActionBar!!
         actionbar.title = "구매내역"
         actionbar.setDisplayHomeAsUpEnabled(true)
+        actionbar.setDisplayShowTitleEnabled(false)
     }
 
     // 리사이클뷰 레이아웃 매니저 설정
@@ -123,9 +124,13 @@ class PurchaseHistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefres
             .document(pid)
             .get()
             .addOnSuccessListener { documentSnapshot ->
-                if (getActiveProductItem(documentSnapshot)) {
-                    adapter.addItem(documentSnapshot)
-                    checkItemsData(false)
+                if (documentSnapshot.exists()) {
+                    if (getActiveProductItem(documentSnapshot)) {
+                        adapter.addItem(documentSnapshot)
+                        checkItemsData(false)
+                    }
+                } else {
+                    Log.i(TAG, "No such DocumentSnapshot!")
                 }
             }.addOnFailureListener { e ->
                 Log.i(TAG, e.toString())
@@ -221,8 +226,12 @@ class PurchaseHistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefres
             .document(pid)
             .get()
             .addOnSuccessListener { documentSnapshot ->
-                if (getActiveProductItem(documentSnapshot)) {
-                    adapter.addItem(position, documentSnapshot)
+                if (documentSnapshot.exists()) {
+                    if (getActiveProductItem(documentSnapshot)) {
+                        adapter.addItem(position, documentSnapshot)
+                    }
+                } else {
+                    Log.i(TAG, "No such DocumentSnapshot!")
                 }
             }
             .addOnFailureListener { e ->

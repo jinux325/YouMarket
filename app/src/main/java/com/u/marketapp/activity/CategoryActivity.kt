@@ -45,7 +45,8 @@ class CategoryActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         val actionbar = supportActionBar!!
         actionbar.setDisplayHomeAsUpEnabled(true)
-        actionbar.title = title
+        actionbar.setDisplayShowTitleEnabled(false)
+        text_view_app_title.text = title
         category = title
     }
 

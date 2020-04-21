@@ -72,6 +72,7 @@ class EditActivity : AppCompatActivity() {
         actionbar = supportActionBar!!
         actionbar.title = resources.getString(R.string.edit_app_title)
         actionbar.setDisplayHomeAsUpEnabled(true)
+        actionbar.setDisplayShowTitleEnabled(false)
     }
 
     // 어댑터 설정

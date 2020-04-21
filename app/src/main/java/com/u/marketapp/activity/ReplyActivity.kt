@@ -88,6 +88,7 @@ class ReplyActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
         val actionbar = supportActionBar!!
         actionbar.title = resources.getString(R.string.reply_app_title)
         actionbar.setDisplayHomeAsUpEnabled(true)
+        actionbar.setDisplayShowTitleEnabled(false)
     }
 
     // 어댑터 설정

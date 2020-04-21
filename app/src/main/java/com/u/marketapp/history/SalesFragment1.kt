@@ -143,9 +143,14 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             .document(pid)
             .get()
             .addOnSuccessListener { documentSnapshot ->
-                if (getActiveProductItem(documentSnapshot) && getStateProductItem(documentSnapshot) != 2) {
-                    adapterSales.addItem(documentSnapshot)
-                    checkItemsData(false)
+                Log.i(TAG, "문서 정보 상태 : ${documentSnapshot.exists()}")
+                if (documentSnapshot.exists()) {
+                    if (getActiveProductItem(documentSnapshot) && getStateProductItem(documentSnapshot) != 2) {
+                        adapterSales.addItem(documentSnapshot)
+                        checkItemsData(false)
+                    }
+                } else {
+                    Log.i(TAG, "No such DocumentSnapshot!")
                 }
             }.addOnFailureListener { e ->
                 Log.i(TAG, e.toString())
@@ -460,9 +465,13 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             .document(pid)
             .get()
             .addOnSuccessListener { documentSnapshot ->
-                val item = documentSnapshot.toObject(ProductEntity::class.java)!!
-                if (item.transactionStatus != 2) {
-                    adapterSales.addItem(position, documentSnapshot)
+                if (documentSnapshot.exists()) {
+                    val item = documentSnapshot.toObject(ProductEntity::class.java)!!
+                    if (item.transactionStatus != 2) {
+                        adapterSales.addItem(position, documentSnapshot)
+                    }
+                } else {
+                    Log.i(TAG, "No such DocumentSnapshot!")
                 }
             }
             .addOnFailureListener { e ->

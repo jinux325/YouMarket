@@ -42,6 +42,7 @@ class SalesHistoryActivity : AppCompatActivity() {
         actionbar = supportActionBar!!
         actionbar.title = "판매내역"
         actionbar.setDisplayHomeAsUpEnabled(true)
+        actionbar.setDisplayShowTitleEnabled(false)
     }
 
     private fun setStatePageAdapter() {
