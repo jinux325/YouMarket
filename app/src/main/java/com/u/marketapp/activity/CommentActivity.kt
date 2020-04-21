@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.ContextMenu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -195,7 +196,12 @@ class CommentActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
     // 추가 버튼 설정
     private fun setButtonListener() {
         // 작성 버튼
-        text_view_add_input.setOnClickListener {
+        text_view_add_input.setOnClickListener(null)
+    }
+
+    // 추가 버튼 클릭 이벤트
+    private val clickListener = View.OnClickListener {
+        if (edit_text_input.text.toString().trim().isNotEmpty()) {
             val msg = edit_text_input.text.toString()
             Log.i(TAG, "input : $msg")
             addComment(getData(msg))
@@ -356,16 +362,14 @@ class CommentActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(TextUtils.isEmpty(s.toString())) {
-                    text_view_add_input.isEnabled = false
-                    layout_add_input.background.setTint(ContextCompat.getColor(applicationContext,
-                        R.color.txt_white_gray
-                    ))
+                if (s.toString().trim().isNotEmpty()) {
+                    Log.i(TAG, "입력된 문자열이 존재 한다!!")
+                    text_view_add_input.setOnClickListener(clickListener)
+                    layout_add_input.background.setTint(ContextCompat.getColor(applicationContext, R.color.hintcolor))
                 } else {
-                    text_view_add_input.isEnabled = true
-                    layout_add_input.background.setTint(ContextCompat.getColor(applicationContext,
-                        R.color.hintcolor
-                    ))
+                    Log.i(TAG, "입력된 문자열이 존재하지 않음!!")
+                    text_view_add_input.setOnClickListener(null)
+                    layout_add_input.background.setTint(ContextCompat.getColor(applicationContext, R.color.txt_white_gray))
                 }
             }
         })
@@ -410,6 +414,7 @@ class CommentActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
         return when (item?.itemId) {
             R.id.action_declaration -> {
                 Log.i(TAG, "action_declaration!!")
+                Toast.makeText(this, resources.getString(R.string.feature_to_be_added), Toast.LENGTH_SHORT).show()
                 true
             }
             R.id.action_delete -> {
