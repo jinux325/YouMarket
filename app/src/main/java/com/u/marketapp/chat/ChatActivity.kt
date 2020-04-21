@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.R
 import com.u.marketapp.adapter.ChattingAdapter
+import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.vo.ChatRoomVO
 import com.u.marketapp.vo.ChattingVO
@@ -51,6 +52,7 @@ class ChatActivity : AppCompatActivity() {
 
         if(intentItems.hasExtra("chatRoomUid")) {
             chatRoomUid = intentItems.getStringExtra("chatRoomUid")
+            pid = intentItems.getStringExtra("chatPid")
             getChattingList()
         }else{
             getChattingRoom()
@@ -145,8 +147,12 @@ class ChatActivity : AppCompatActivity() {
             "message" to comment ,
             "registDate" to registDate
         )
-        FirebaseFirestore.getInstance().collection("Chatting").document(documentId).collection("comment").document().set(chat).addOnSuccessListener {
-            FirebaseFirestore.getInstance().collection("Chatting").document(chatRoomUid).update("comment", comment,"registDate", registDate).addOnSuccessListener { token() }
+        FirebaseFirestore.getInstance().collection("Chatting").document(documentId)
+            .collection("comment").document().set(chat).addOnSuccessListener {
+            FirebaseFirestore.getInstance().collection("Chatting").document(chatRoomUid)
+                .update("comment", comment,"registDate", registDate).addOnSuccessListener {
+                    token()
+                }
         }
 
 
@@ -175,6 +181,8 @@ class ChatActivity : AppCompatActivity() {
                     }
                     FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(buyerUid)
                         .update("chatting", FieldValue.arrayUnion(document.id))
+                    FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_product)).document(pid)
+                        .update("chattingRoom", FieldValue.arrayUnion(document.id))
                     FirebaseFirestore.getInstance().collection("Chatting").document(document.id)
                         .update("comment", comment,"registDate", registDate)
                     token()
@@ -278,29 +286,73 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    private fun productChattingListDel(){
+        db.collection(resources.getString(R.string.db_product)).document(pid).get()
+            .addOnSuccessListener {
+                val productEntity: ProductEntity? = it.toObject(ProductEntity::class.java)
+
+                val arr : MutableList<String> = productEntity!!.chattingRoom
+                for(i in 0 until arr.size){
+                    if(arr[i] == chatRoomUid){
+                        arr.removeAt(i)
+                        break
+                    }
+                }
+                val delete = hashMapOf<String, Any>(
+                    "chattingRoom" to arr
+                )
+
+                db.collection(resources.getString(R.string.db_product)).document(pid).update(delete)
+
+            }
+
+
+    }
+
     private fun chattingMyUidDel(){
         db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).get()
             .addOnSuccessListener { document ->
                 val chatRoomVO: ChatRoomVO? = document.toObject(ChatRoomVO::class.java)
                 if(myUid == chatRoomVO?.buyer){
-                    if(chatRoomVO.seller == ""){
-                        //chattingCommentDel(document.reference)
-                        document.reference.collection("comment").get()
-                            .addOnSuccessListener { result ->
-                                for(documents in result){
-                                    documents.reference.delete().addOnSuccessListener {
-                                        db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).delete().addOnSuccessListener {
-                                            finish()
+                    Log.e(" 글 채팅리스트 삭제 ", " $pid   $chatRoomUid ")
+                    when {
+                        myUid == chatRoomVO.seller -> {
+                            //chattingCommentDel(document.reference)
+                            document.reference.collection("comment").get()
+                                .addOnSuccessListener { result ->
+                                    for(documents in result){
+                                        documents.reference.delete().addOnSuccessListener {
+                                            db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).delete().addOnSuccessListener {
+                                                finish()
+                                            }
+                                            productChattingListDel()
                                         }
+
+
                                     }
-
-
                                 }
-                            }
-                    }else{
-                        db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid)
-                            .update("buyer", "").addOnSuccessListener { finish() }
+                        }
+                        chatRoomVO.seller == "" -> {
+                            //chattingCommentDel(document.reference)
+                            document.reference.collection("comment").get()
+                                .addOnSuccessListener { result ->
+                                    for(documents in result){
+                                        documents.reference.delete().addOnSuccessListener {
+                                            db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).delete().addOnSuccessListener {
+                                                finish()
+                                            }
+                                            productChattingListDel()
+                                        }
 
+
+                                    }
+                                }
+                        }
+                        else -> {
+                            db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid)
+                                .update("buyer", "").addOnSuccessListener { finish() }
+
+                        }
                     }
 
                 }else{

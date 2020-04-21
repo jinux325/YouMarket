@@ -58,9 +58,9 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
         holder.cardView.setOnClickListener {
             Log.e("chatIntent: "," $myUid  ${chatList[position].comment}  ${chatList[position].buyer}  ${chatList[position].seller}   ${chatList[position].cId}")
             if(myUid == chatList[position].buyer){
-                chattingIntent(chatList[position].seller!! , chatList[position].cId!!)
+                chattingIntent(chatList[position].seller!! , chatList[position].cId!!, chatList[position].pid!!)
             }else{
-                chattingIntent(chatList[position].buyer!! , chatList[position].cId!!)
+                chattingIntent(chatList[position].buyer!! , chatList[position].cId!!, chatList[position].pid!!)
             }
         }
 
@@ -135,7 +135,7 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
             }
     }
 
-    private fun chattingIntent(uid:String, chatRoomUid:String){
+    private fun chattingIntent(uid:String, chatRoomUid:String, pid:String){
         if(uid != ""){
         db.collection(context!!.resources.getString(R.string.db_user)).document(uid).get()
             .addOnCompleteListener{ task ->
@@ -144,6 +144,7 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
                     val intent = Intent(context, ChatActivity::class.java)
                     intent.putExtra("chatRoomUid", chatRoomUid)
                     intent.putExtra("name", userEntity?.name.toString())
+                    intent.putExtra("chatPid", pid)
                     context.startActivity(intent)
                 }
             }
@@ -151,6 +152,7 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
             val intent = Intent(context, ChatActivity::class.java)
             intent.putExtra("chatRoomUid", chatRoomUid)
             intent.putExtra("name", "알 수 없음")
+            intent.putExtra("chatPid", pid)
             context!!.startActivity(intent)
         }
     }
