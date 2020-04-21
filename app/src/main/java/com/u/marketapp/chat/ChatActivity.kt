@@ -42,6 +42,7 @@ class ChatActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         val intentItems = intent
         tv_partner_nickname.text = intentItems.getStringExtra("name")
@@ -77,6 +78,10 @@ class ChatActivity : AppCompatActivity() {
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                return true
+            }
             R.id.delete_chatting -> {
                 if(chatRoomUid == ""){
                     // 채팅방 아직 없음

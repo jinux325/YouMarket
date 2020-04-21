@@ -8,7 +8,7 @@
     android:background="@android:color/background_light">
 
     <RelativeLayout
-        android:layout_margin="10dp"
+        android:padding="15dp"
         android:id="@+id/chat_cardview"
         android:orientation="horizontal"
         android:layout_width="match_parent"
