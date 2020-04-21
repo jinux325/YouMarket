@@ -86,14 +86,13 @@
                 android:paddingEnd="10dp"
                 android:paddingTop="7dp"
                 android:paddingBottom="7dp"
-                android:drawableEnd="@drawable/ic_smiling_emoticon_square_face"
                 android:textStyle="normal"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:textColorHint="@color/colorLightGyay"
                 android:hint="메시지를 입력해주세요."
                 android:importantForAutofill="no"
-                android:inputType="text"
+                android:inputType="textMultiLine"
                 tools:ignore="NestedWeights,NestedWeights,HardcodedText" />
 
             <ImageView
