@@ -58,7 +58,6 @@ class SmsActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val uid = FirebaseAuth.getInstance().currentUser!!.uid
-                    Log.d(" userExist(uid) 유저 확인", uid)
 
                     val intentItems = intent
                     if(intentItems.getStringExtra("delete")!=null){
