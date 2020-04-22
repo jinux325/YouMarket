@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.view.ContextMenu
@@ -23,7 +22,6 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.u.marketapp.BR
-import com.u.marketapp.utils.BaseApplication
 import com.u.marketapp.R
 import com.u.marketapp.adapter.CommentRVAdapter
 import com.u.marketapp.chat.FCM
@@ -32,6 +30,7 @@ import com.u.marketapp.entity.CommentEntity
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.listener.EndlessRecyclerViewScrollListener
+import com.u.marketapp.utils.BaseApplication
 import kotlinx.android.synthetic.main.activity_reply.*
 
 class ReplyActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
