@@ -59,26 +59,26 @@ class ChattingAdapter(val context: Context?, private val chattingList:MutableLis
             holder.imageMsg.visibility=GONE
             Log.e(" 이미지 else ", chattingList[position].message +"  "+chattingList[position].image)
             Log.e(" 이미지 else > if ", chattingList[position].uid +" ::::::::: "+myUid)
-           if(chattingList[position].uid.equals(myUid)){
-               Log.e(" 이미지 else > if ", " >>>> if")
-               holder.image.visibility = GONE
-               holder.linearLayout.gravity = Gravity.RIGHT
-               holder.leftTime.visibility = VISIBLE
-               holder.leftTime.text = date.format(chattingList[position].registDate).toString()
-               holder.rightTime.visibility = GONE
+            if(chattingList[position].uid.equals(myUid)){
+                Log.e(" 이미지 else > if ", " >>>> if ")
+                holder.image.visibility = GONE
+                holder.linearLayout.gravity = Gravity.RIGHT
+                holder.leftTime.visibility = VISIBLE
+                holder.leftTime.text = date.format(chattingList[position].registDate).toString()
+                holder.rightTime.visibility = GONE
 
-           }else{
-               Log.e(" 이미지 else > if ", " >>>> else")
-               holder.image.visibility = VISIBLE
-               holder.linearLayout.gravity = Gravity.LEFT
-               holder.leftTime.visibility = GONE
-               holder.rightTime.visibility = VISIBLE
-               holder.rightTime.text = date.format(chattingList[position].registDate)
-           }
-           holder.message.text = chattingList[position].message
-           Log.d("chattingAdapter 22 ", context.toString()+" "+chattingList[position].message +"  "+chattingList[position].image)
-           Glide.with(context!!).load(chattingList[position].image)
-               .apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.image)
+            }else{
+                Log.e(" 이미지 else > if ", " >>>> else ")
+                holder.image.visibility = VISIBLE
+                holder.linearLayout.gravity = Gravity.LEFT
+                holder.leftTime.visibility = GONE
+                holder.rightTime.visibility = VISIBLE
+                holder.rightTime.text = date.format(chattingList[position].registDate)
+            }
+            holder.message.text = chattingList[position].message
+            Log.d("chattingAdapter 22 ", context.toString()+" "+chattingList[position].message +"  "+chattingList[position].image)
+            Glide.with(context!!).load(chattingList[position].image)
+                .apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.image)
 
         }
 
@@ -97,12 +97,11 @@ class ChattingAdapter(val context: Context?, private val chattingList:MutableLis
         val message = itemView.chatting_text!!
         val image = itemView.chatting_image!!
         val linearLayout = itemView.layout!!
-       // val cardView = itemView.chatting_cardview
+
         val rightTime = itemView.chatting_time_right!!
         val leftTime = itemView.chatting_time_left!!
         val msg = itemView.chatting_text!!
         val imageMsg = itemView.chatting_image_msg!!
-       // val dateLinear = itemView.linear_date_text
-       // val dateTxt = itemView.date_text
+
     }
 }

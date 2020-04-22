@@ -1,6 +1,7 @@
 package com.u.marketapp.chat
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -24,6 +25,10 @@ import com.u.marketapp.vo.ChattingVO
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.activity_chat.toolbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -386,7 +391,10 @@ class ChatActivity : AppCompatActivity() {
                 }
                 recyclerView.layoutManager = LinearLayoutManager(this)
                 recyclerView.adapter = ChattingAdapter(this, chattingList)
-                recyclerView.scrollToPosition(recyclerView.adapter!!.itemCount -1)
+                CoroutineScope(Dispatchers.Main).launch {
+                    delay(500)
+                    recyclerView.scrollToPosition(recyclerView.adapter!!.itemCount -1)
+                }
             }
     }
 

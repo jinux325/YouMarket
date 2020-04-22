@@ -142,7 +142,6 @@ class SmsActivity : AppCompatActivity() {
                     edit.putString("address2", userEntity?.address2)
                     edit.putString("imgPath", userEntity?.imgPath)
                     edit.putString("phoneNumber", phone)
-                    edit.putString("log", "IN")
                     edit.apply()
                 } else {
                     Log.d(tag, "Error getting Users", task.exception)
