@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.common.io.Files.getFileExtension
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -387,7 +386,7 @@ class ChatActivity : AppCompatActivity() {
                 }
                 recyclerView.layoutManager = LinearLayoutManager(this)
                 recyclerView.adapter = ChattingAdapter(this, chattingList)
-                recyclerView.scrollToPosition(chattingList.size - 1)
+                recyclerView.scrollToPosition(recyclerView.adapter!!.itemCount -1)
             }
     }
 

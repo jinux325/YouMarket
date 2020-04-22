@@ -15,7 +15,6 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.u.marketapp.activity.CommentActivity
 import com.u.marketapp.R
-import com.u.marketapp.activity.ReplyActivity
 
 
 class ChatFirebaseMessagingService : FirebaseMessagingService() {

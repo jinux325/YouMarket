@@ -15,7 +15,6 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.u.marketapp.R
-import com.u.marketapp.chat.ChatActivity
 import com.u.marketapp.setting.FullImageActivity
 import com.u.marketapp.vo.ChattingVO
 import kotlinx.android.synthetic.main.item_chatting.view.*
@@ -28,7 +27,7 @@ class ChattingAdapter(val context: Context?, private val chattingList:MutableLis
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(parent)
 
-    override fun getItemCount(): Int =chattingList.size
+    override fun getItemCount(): Int = chattingList.size
 
     @SuppressLint("RtlHardcoded", "SimpleDateFormat")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -36,8 +35,32 @@ class ChattingAdapter(val context: Context?, private val chattingList:MutableLis
         val date = SimpleDateFormat("a hh:mm")
         Log.e("chattingAdapter  ", chattingList[position].message +"  "+chattingList[position].image)
         Log.e("chattingAdapter if ", chattingList[position].uid +"   $myUid")
-       if(chattingList[position].imageMsg == ""){
+
+
+        if(chattingList[position].imageMsg != ""){
+            Log.e(" 이미지 if ", chattingList[position].message +"  "+chattingList[position].image)
            if(chattingList[position].uid.equals(myUid)){
+               holder.linearLayout.gravity = Gravity.RIGHT
+               holder.leftTime.visibility = VISIBLE
+               holder.leftTime.text = date.format(chattingList[position].registDate).toString()
+               holder.rightTime.visibility = GONE
+
+           }else{
+               holder.linearLayout.gravity = Gravity.LEFT
+               holder.leftTime.visibility = GONE
+               holder.rightTime.visibility = VISIBLE
+               holder.rightTime.text = date.format(chattingList[position].registDate)
+           }
+           holder.msg.visibility = GONE
+           holder.imageMsg.visibility = VISIBLE
+           Glide.with(context!!).load(chattingList[position].imageMsg).into(holder.imageMsg)
+        }else{
+            holder.msg.visibility= VISIBLE
+            holder.imageMsg.visibility=GONE
+            Log.e(" 이미지 else ", chattingList[position].message +"  "+chattingList[position].image)
+            Log.e(" 이미지 else > if ", chattingList[position].uid +" ::::::::: "+myUid)
+           if(chattingList[position].uid.equals(myUid)){
+               Log.e(" 이미지 else > if ", " >>>> if")
                holder.image.visibility = GONE
                holder.linearLayout.gravity = Gravity.RIGHT
                holder.leftTime.visibility = VISIBLE
@@ -45,6 +68,7 @@ class ChattingAdapter(val context: Context?, private val chattingList:MutableLis
                holder.rightTime.visibility = GONE
 
            }else{
+               Log.e(" 이미지 else > if ", " >>>> else")
                holder.image.visibility = VISIBLE
                holder.linearLayout.gravity = Gravity.LEFT
                holder.leftTime.visibility = GONE
@@ -56,24 +80,7 @@ class ChattingAdapter(val context: Context?, private val chattingList:MutableLis
            Glide.with(context!!).load(chattingList[position].image)
                .apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.image)
 
-       }else{
-           if(chattingList[position].uid.equals(myUid)){
-               holder.linearLayout.gravity = Gravity.RIGHT
-               holder.leftTime.visibility = VISIBLE
-               holder.leftTime.text = date.format(chattingList[position].registDate).toString()
-               holder.rightTime.visibility = GONE
-
-           }else{
-               holder.linearLayout.gravity = Gravity.LEFT
-               holder.leftTime.visibility = GONE
-               holder.rightTime.visibility = VISIBLE
-               holder.rightTime.text = date.format(chattingList[position].registDate)
-           }
-           Log.e("chattingAdapter 33 ", chattingList[position].imageMsg)
-           holder.msg.visibility = GONE
-           holder.imageMsg.visibility = VISIBLE
-           Glide.with(context!!).load(chattingList[position].imageMsg).into(holder.imageMsg)
-       }
+        }
 
         holder.imageMsg.setOnClickListener {
             val intent = Intent(context, FullImageActivity::class.java)
