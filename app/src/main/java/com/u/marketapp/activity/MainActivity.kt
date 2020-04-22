@@ -38,7 +38,17 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         bottom_navigation.setOnNavigationItemSelectedListener(this)
         address = getSharedAddress()
         Log.i(TAG, "주소 : $address")
+        testLog()
         initView()
+    }
+
+    private fun testLog() {
+        val pref = getSharedPreferences("User", Context.MODE_PRIVATE)
+        Log.i(TAG, "UID : ${pref.getString("uid", "없어!")}")
+        Log.i(TAG, "NAME : ${pref.getString("name", "없어!")}")
+        Log.i(TAG, "IMAGE : ${pref.getString("imgPath", "없어!")}")
+        Log.i(TAG, "PHONE : ${pref.getString("phoneNumber", "없어!")}")
+        Log.i(TAG, "ADDRESS : ${pref.getString("address", "없어!")}")
     }
 
     private fun initView() {
