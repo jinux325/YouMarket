@@ -133,10 +133,9 @@ class SmsActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_user)).document(uid).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(
-                        UserEntity::class.java)
+                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
                     Log.d(tag, userEntity?.name+"  "+userEntity?.address)
-                    val prefs = getSharedPreferences("User", Context.MODE_PRIVATE)
+                  /*  val prefs = getSharedPreferences("User", Context.MODE_PRIVATE)
                     val edit = prefs.edit()
                     edit.putString("uid", uid)
                     edit.putString("name", userEntity?.name)
@@ -144,11 +143,30 @@ class SmsActivity : AppCompatActivity() {
                     edit.putString("address2", userEntity?.address2)
                     edit.putString("imgPath", userEntity?.imgPath)
                     edit.putString("phoneNumber", phone)
-                    edit.apply()
+                    edit.apply()*/
+                    pref(uid, userEntity?.name, userEntity?.address, userEntity?.address2, userEntity?.imgPath )
+
+
+
                 } else {
                     Log.d(tag, "Error getting Users", task.exception)
                 }
             }
+    }
+
+    private fun pref(uid:String, name:String?, address:String?, address2:String?, imgPath:String?){
+        val prefs = getSharedPreferences("User", Context.MODE_PRIVATE)
+        val edit = prefs.edit()
+        edit.putString("uid", uid)
+        edit.putString("name", name)
+        edit.putString("address", address)
+        edit.putString("address2", address2)
+        edit.putString("imgPath", imgPath)
+        edit.putString("phoneNumber", phone)
+        edit.apply()
+
+        tokenUpdate()
+
     }
 
     private fun userExist(uid:String){
@@ -159,12 +177,9 @@ class SmsActivity : AppCompatActivity() {
                 if(document.id == uid){
                     // 로그인
                     Log.d("유저 확인", "true  로그인")
-                    val intent = Intent(this, MainActivity::class.java)
-                    intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
-                    intent.putExtra("phoneNumber", phone)
+
                     userData()
-                    tokenUpdate()
-                    startActivity(intent)
+
                     break
                 }else if(count ==  result.size()){
                     Log.d("유저 확인", "false  가입")
@@ -200,6 +215,11 @@ class SmsActivity : AppCompatActivity() {
         val uid = mAuth.currentUser!!.uid
         db.collection(resources.getString(R.string.db_user)).document(uid)
             .update("token", token)
+
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+
     }
 
 }
