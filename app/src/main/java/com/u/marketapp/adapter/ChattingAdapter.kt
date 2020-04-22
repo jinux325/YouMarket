@@ -2,6 +2,7 @@ package com.u.marketapp.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -14,6 +15,8 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.u.marketapp.R
+import com.u.marketapp.chat.ChatActivity
+import com.u.marketapp.setting.FullImageActivity
 import com.u.marketapp.vo.ChattingVO
 import kotlinx.android.synthetic.main.item_chatting.view.*
 import java.text.SimpleDateFormat
@@ -33,24 +36,50 @@ class ChattingAdapter(val context: Context?, private val chattingList:MutableLis
         val date = SimpleDateFormat("a hh:mm")
         Log.e("chattingAdapter  ", chattingList[position].message +"  "+chattingList[position].image)
         Log.e("chattingAdapter if ", chattingList[position].uid +"   $myUid")
-        if(chattingList[position].uid.equals(myUid)){
-            holder.image.visibility = GONE
-            holder.linearLayout.gravity = Gravity.RIGHT
-            holder.leftTime.visibility = VISIBLE
-            holder.leftTime.text = date.format(chattingList[position].registDate).toString()
-            holder.rightTime.visibility = GONE
+       if(chattingList[position].imageMsg == ""){
+           if(chattingList[position].uid.equals(myUid)){
+               holder.image.visibility = GONE
+               holder.linearLayout.gravity = Gravity.RIGHT
+               holder.leftTime.visibility = VISIBLE
+               holder.leftTime.text = date.format(chattingList[position].registDate).toString()
+               holder.rightTime.visibility = GONE
 
-        }else{
-            holder.image.visibility = VISIBLE
-            holder.linearLayout.gravity = Gravity.LEFT
-            holder.leftTime.visibility = GONE
-            holder.rightTime.visibility = VISIBLE
-            holder.rightTime.text = date.format(chattingList[position].registDate)
+           }else{
+               holder.image.visibility = VISIBLE
+               holder.linearLayout.gravity = Gravity.LEFT
+               holder.leftTime.visibility = GONE
+               holder.rightTime.visibility = VISIBLE
+               holder.rightTime.text = date.format(chattingList[position].registDate)
+           }
+           holder.message.text = chattingList[position].message
+           Log.d("chattingAdapter 22 ", context.toString()+" "+chattingList[position].message +"  "+chattingList[position].image)
+           Glide.with(context!!).load(chattingList[position].image)
+               .apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.image)
+
+       }else{
+           if(chattingList[position].uid.equals(myUid)){
+               holder.linearLayout.gravity = Gravity.RIGHT
+               holder.leftTime.visibility = VISIBLE
+               holder.leftTime.text = date.format(chattingList[position].registDate).toString()
+               holder.rightTime.visibility = GONE
+
+           }else{
+               holder.linearLayout.gravity = Gravity.LEFT
+               holder.leftTime.visibility = GONE
+               holder.rightTime.visibility = VISIBLE
+               holder.rightTime.text = date.format(chattingList[position].registDate)
+           }
+           Log.e("chattingAdapter 33 ", chattingList[position].imageMsg)
+           holder.msg.visibility = GONE
+           holder.imageMsg.visibility = VISIBLE
+           Glide.with(context!!).load(chattingList[position].imageMsg).into(holder.imageMsg)
+       }
+
+        holder.imageMsg.setOnClickListener {
+            val intent = Intent(context, FullImageActivity::class.java)
+            intent.putExtra("image", chattingList[position].imageMsg)
+            context.startActivity(intent)
         }
-        holder.message.text = chattingList[position].message
-            Log.d("chattingAdapter 22 ", context.toString()+" "+chattingList[position].message +"  "+chattingList[position].image)
-        Glide.with(context!!).load(chattingList[position].image)
-            .apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.image)
 
 
 
@@ -64,6 +93,8 @@ class ChattingAdapter(val context: Context?, private val chattingList:MutableLis
        // val cardView = itemView.chatting_cardview
         val rightTime = itemView.chatting_time_right!!
         val leftTime = itemView.chatting_time_left!!
+        val msg = itemView.chatting_text!!
+        val imageMsg = itemView.chatting_image_msg!!
        // val dateLinear = itemView.linear_date_text
        // val dateTxt = itemView.date_text
     }

@@ -1,6 +1,7 @@
 package com.u.marketapp.chat
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -8,15 +9,20 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.common.io.Files.getFileExtension
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.u.marketapp.R
 import com.u.marketapp.adapter.ChattingAdapter
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.vo.ChatRoomVO
 import com.u.marketapp.vo.ChattingVO
+import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.activity_chat.toolbar
 import java.util.*
@@ -34,7 +40,11 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var myData: UserEntity
     private lateinit var pid:String
     private lateinit var seller:String
+    private var imageMsg:String = ""
+
+    private lateinit var imageUri:Uri
     private lateinit var token:String
+    private var mStorageRef: StorageReference? = FirebaseStorage.getInstance().getReference("Chatting")
 
     @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +66,14 @@ class ChatActivity : AppCompatActivity() {
             getChattingList()
         }else{
             getChattingRoom()
+        }
+
+        iv_add_menu.setOnClickListener {
+            //permission()
+            TedImagePicker.with(this)
+                .start { uri ->
+                    imageUri = uri
+                    getImageList() }
         }
 
         iv_send.setOnClickListener {
@@ -107,7 +125,8 @@ class ChatActivity : AppCompatActivity() {
 
                     db.collection(resources.getString(R.string.db_user)).document(myUid)
                         .update(delete).addOnSuccessListener {
-                            chattingMyUidDel()
+                            storageImageDel()
+                           // chattingMyUidDel()
                             Toast.makeText(applicationContext, "채팅 나가기", Toast.LENGTH_LONG).show()
                         }
 
@@ -120,6 +139,141 @@ class ChatActivity : AppCompatActivity() {
                 super.onOptionsItemSelected(item)
             }
         }
+    }
+
+    // 퍼미션 권한 설정
+   /* private fun permission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                Log.d("TAG", "권한 설정 완료")
+                TedImagePicker.with(this)
+                    .start { uriList -> getImageList(uriList) }
+            } else {
+                Log.d("TAG", "권한 설정 요청")
+                ActivityCompat.requestPermissions( this, arrayOf(
+                    Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.INTERNET), 1 )
+            }
+        }else{
+            TedImagePicker.with(this)
+                .start { uriList -> getImageList(uriList) }
+        }
+
+    }*/
+
+    private fun getImageList(){
+
+        if(chatRoomUid == ""){
+            val ref = db.collection("Chatting").document()
+            chatRoomUid = ref.id
+
+            val fileReference: StorageReference = mStorageRef!!.child(chatRoomUid)
+                .child(System.currentTimeMillis().toString() + "." + getFileExtension(imageUri.toString())
+                )
+            fileReference.putFile(imageUri).continueWithTask { task ->
+                if (!task.isSuccessful) {
+                    throw task.exception!!
+                }
+                fileReference.downloadUrl
+            }.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val downloadUri = task.result
+                    imageMsg = downloadUri.toString()
+
+                    FirebaseFirestore.getInstance().collection("Chatting").document(ref.id)
+                        .set(chatRoom).addOnSuccessListener {
+                            addChatComment(myUid, pid, comment, seller)
+                        }
+                } else {
+                    Toast.makeText(
+                        this,
+                        "upload failed: " + task.exception!!.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            /*
+            FirebaseFirestore.getInstance().collection("Chatting").document(ref.id)
+                .set(chatRoom).addOnSuccessListener {
+                    FirebaseFirestore.getInstance().collection("Chatting")
+                        .whereEqualTo("pid", pid).whereEqualTo("buyer", myUid).get().addOnSuccessListener { result ->
+                            for(document in result){
+                                val registDate = Date(System.currentTimeMillis())
+
+                                val chat = hashMapOf(
+                                    "image" to myData.imgPath,
+                                    "name" to myData.name,
+                                    "uid" to myUid,
+                                    "message" to comment ,
+                                    "imageMsg" to imageMsg ,
+                                    "registDate" to registDate
+                                )
+                                FirebaseFirestore.getInstance().collection("Chatting").document(document.id)
+                                    .collection("comment").document().set(chat).addOnSuccessListener { getChattingList() }
+                                if(myUid != seller){
+                                    FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(seller)
+                                        .update("chatting", FieldValue.arrayUnion(document.id))
+                                }
+                                FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(myUid)
+                                    .update("chatting", FieldValue.arrayUnion(document.id))
+                                FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_product)).document(pid)
+                                    .update("chattingRoom", FieldValue.arrayUnion(document.id))
+                                FirebaseFirestore.getInstance().collection("Chatting").document(document.id)
+                                    .update("comment", comment,"registDate", registDate)
+                                token()
+
+
+                            }
+                        }
+                }
+*/
+        }else{
+            val fileReference: StorageReference = mStorageRef!!.child(chatRoomUid)
+                .child(System.currentTimeMillis().toString() + "." + getFileExtension(imageUri.toString())
+                )
+            fileReference.putFile(imageUri).continueWithTask { task ->
+                if (!task.isSuccessful) {
+                    throw task.exception!!
+                }
+                fileReference.downloadUrl
+            }.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val downloadUri = task.result
+
+                    imageMsg = downloadUri.toString()
+
+                    val intentItem = intent
+                    if(intentItem.hasExtra("pid")){
+                        addChatRoom(myUid, pid, seller)
+                    }else{
+                        addChatComment(myUid, et_message.text.toString().trim(), chatRoomUid)
+                    }
+                    // et_message.text.clear()
+
+/*
+                db.collection(resources.getString(R.string.db_user)).document(myUid)
+                    .update("imgPath", downloadUri.toString(), "name", name)
+                    .addOnSuccessListener {
+                        finish()
+                    }*/
+
+
+                } else {
+                    Toast.makeText(
+                        this,
+                        "upload failed: " + task.exception!!.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+
+
+
     }
 
     @SuppressLint("LongLogTag")
@@ -149,6 +303,7 @@ class ChatActivity : AppCompatActivity() {
             "name" to myData.name,
             "uid" to uid,
             "message" to comment ,
+            "imageMsg" to imageMsg ,
             "registDate" to registDate
         )
         FirebaseFirestore.getInstance().collection("Chatting").document(documentId)
@@ -174,6 +329,7 @@ class ChatActivity : AppCompatActivity() {
                         "name" to myData.name,
                         "uid" to buyerUid,
                         "message" to comment ,
+                        "imageMsg" to imageMsg ,
                         "registDate" to registDate
                     )
                     chatRoomUid = document.id
@@ -208,11 +364,13 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun getDocumentId(pid:String, myUid:String){
+
         FirebaseFirestore.getInstance().collection("Chatting")
             .whereEqualTo("pid", pid).whereEqualTo("buyer", myUid).get().addOnSuccessListener { result ->
                 for(document in result){
                     chatRoomUid = document.id
                     getChattingList()
+
                 }
             }
 
@@ -233,6 +391,21 @@ class ChatActivity : AppCompatActivity() {
             }
     }
 
+/*
+    private fun getChattingRoom(){
+        val intentItems = intent
+        pid = intentItems.getStringExtra("pid")
+        seller = intentItems.getStringExtra("seller")
+
+        chatRoom = hashMapOf(
+            "pid" to pid,
+            "buyer" to myUid,
+            "seller" to seller,
+            "comment" to comment,
+            "registDate" to Date(System.currentTimeMillis())
+        )
+        getDocumentId(pid, myUid,true)
+    }*/
 
     private fun getChattingRoom(){
         val intentItems = intent
@@ -246,7 +419,9 @@ class ChatActivity : AppCompatActivity() {
             "comment" to comment,
             "registDate" to Date(System.currentTimeMillis())
         )
+
         getDocumentId(pid, myUid)
+
     }
 
     private fun token(){
@@ -272,6 +447,10 @@ class ChatActivity : AppCompatActivity() {
                         UserEntity::class.java
                     )
                     token = userEntity!!.token
+                    if(imageMsg != ""){
+                        comment = "이미지"
+                    }
+
                     val fcm = FCM(
                         token,
                         myData.name,
@@ -281,12 +460,64 @@ class ChatActivity : AppCompatActivity() {
                         resources.getString(R.string.ChatActivity)
                     )
                     fcm.start()
-
-
+                    comment =""
+                    imageMsg=""
                 }
         }
     }
 
+    // 스토리지 이미지 삭제
+    private fun storageImageDel(){
+        db.collection("Chatting").document(chatRoomUid).collection("comment")
+            .addSnapshotListener{ snapshot, _ ->
+                for (doc in snapshot!!) {
+                    val chattingVO: ChattingVO = doc.toObject(ChattingVO::class.java)
+                    if(chattingVO.imageMsg!=""){
+                        chattingVO.imageMsg?.let { FirebaseStorage.getInstance().getReferenceFromUrl(it).delete() }
+                    }
+                }
+                chattingMyUidDel()
+            }
+
+      /*  db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).collection(resources.getString(R.string.db_comment))
+            .addSnapshotListener{ snapshot, _ ->
+                Log.e(" 스토리지 삭제 ", " 삭제 1")
+
+                for (doc in snapshot!!) {
+                    Log.e(" 스토리지 삭제 ", " 삭제 3 "+doc)
+                    val chattingVO: ChattingVO = doc.toObject(ChattingVO::class.java)
+                    Log.e(" 스토리지 삭제 ", " 삭제 2 "+chattingVO.imageMsg)
+                    chattingVO.imageMsg?.let { FirebaseStorage.getInstance().getReferenceFromUrl(it).delete() }
+                }
+
+              //  chattingMyUidDel()
+            }*/
+
+      /*  db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).collection(resources.getString(R.string.db_comment)).get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    Log.d("TWS @@@ ", "${document.id} => ${document.data}")
+                }
+            }*/
+            /*.addOnSuccessListener { document ->
+
+                val chattingVO: ChattingVO? = document.toObject(ChattingVO::class.java)
+
+            }
+            .addOnSuccessListener {
+
+                for(i in DocumentSnapshot){
+                    val chattingVO: ChattingVO? = it.toObject(ChattingVO::class.java)
+                }
+
+            }
+        val photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(mImageUrl)*/
+        //FirebaseStorage.getInstance().getReference("Chatting")
+        //mStorageRef!!.child(chatRoomUid).getFile()
+
+    }
+
+    // product채팅리스트 삭제
     private fun productChattingListDel(){
         db.collection(resources.getString(R.string.db_product)).document(pid).get()
             .addOnSuccessListener {
@@ -315,27 +546,37 @@ class ChatActivity : AppCompatActivity() {
             .addOnSuccessListener { document ->
                 val chatRoomVO: ChatRoomVO? = document.toObject(ChatRoomVO::class.java)
                 if(myUid == chatRoomVO?.buyer){
-                    Log.e(" 글 채팅리스트 삭제 ", " $pid   $chatRoomUid ")
                     when {
                         myUid == chatRoomVO.seller -> {
-                            //chattingCommentDel(document.reference)
-                            document.reference.collection("comment").get()
-                                .addOnSuccessListener { result ->
-                                    for(documents in result){
-                                        documents.reference.delete().addOnSuccessListener {
-                                            db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).delete().addOnSuccessListener {
-                                                finish()
-                                            }
-                                            productChattingListDel()
+                            document.reference.collection("comment")
+                                .addSnapshotListener{ snapshot, _ ->
+                                    for (doc in snapshot!!) {
+                                        val chattingVO: ChattingVO = doc.toObject(ChattingVO::class.java)
+                                        if(chattingVO.imageMsg!=""){
+                                            chattingVO.imageMsg?.let { FirebaseStorage.getInstance().getReferenceFromUrl(it).delete() }
                                         }
-
-
                                     }
+                                    document.reference.collection("comment").get()
+                                        .addOnSuccessListener { result ->
+                                            for(documents in result){
+                                                documents.reference.delete().addOnSuccessListener {
+                                                    db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).delete().addOnSuccessListener {
+                                                        finish()
+                                                    }
+                                                    productChattingListDel()
+                                                    // storageImageDel()
+                                                }
+
+
+                                            }
+                                        }
                                 }
+                            //chattingCommentDel(document.reference)
+
                         }
                         chatRoomVO.seller == "" -> {
                             //chattingCommentDel(document.reference)
-                            document.reference.collection("comment").get()
+                            /*document.reference.collection("comment").get()
                                 .addOnSuccessListener { result ->
                                     for(documents in result){
                                         documents.reference.delete().addOnSuccessListener {
@@ -343,10 +584,34 @@ class ChatActivity : AppCompatActivity() {
                                                 finish()
                                             }
                                             productChattingListDel()
+                                           // storageImageDel()
                                         }
 
 
                                     }
+                                }*/
+                            document.reference.collection("comment")
+                                .addSnapshotListener{ snapshot, _ ->
+                                    for (doc in snapshot!!) {
+                                        val chattingVO: ChattingVO = doc.toObject(ChattingVO::class.java)
+                                        if(chattingVO.imageMsg!=""){
+                                            chattingVO.imageMsg?.let { FirebaseStorage.getInstance().getReferenceFromUrl(it).delete() }
+                                        }
+                                    }
+                                    document.reference.collection("comment").get()
+                                        .addOnSuccessListener { result ->
+                                            for(documents in result){
+                                                documents.reference.delete().addOnSuccessListener {
+                                                    db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).delete().addOnSuccessListener {
+                                                        finish()
+                                                    }
+                                                    productChattingListDel()
+                                                    // storageImageDel()
+                                                }
+
+
+                                            }
+                                        }
                                 }
                         }
                         else -> {
@@ -359,19 +624,29 @@ class ChatActivity : AppCompatActivity() {
                 }else{
                     if(chatRoomVO?.buyer == ""){
                         //chattingCommentDel(document.reference)
-                       document.reference.collection("comment").get()
-                            .addOnSuccessListener { result ->
-                                for(documents in result){
-                                    documents.reference.delete().addOnSuccessListener {
-                                        db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).delete().addOnSuccessListener {
-                                            finish()
+                        document.reference.collection("comment")
+                            .addSnapshotListener{ snapshot, _ ->
+                                for (doc in snapshot!!) {
+                                    val chattingVO: ChattingVO = doc.toObject(ChattingVO::class.java)
+                                    if(chattingVO.imageMsg!=""){
+                                        chattingVO.imageMsg?.let { FirebaseStorage.getInstance().getReferenceFromUrl(it).delete() }
+                                    }
+                                }
+                                document.reference.collection("comment").get()
+                                    .addOnSuccessListener { result ->
+                                        for(documents in result){
+                                            documents.reference.delete().addOnSuccessListener {
+                                                db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).delete().addOnSuccessListener {
+                                                    finish()
+                                                }
+                                                productChattingListDel()
+                                                // storageImageDel()
+                                            }
+
+
                                         }
                                     }
-
-
-                                }
                             }
-
                     }else{
                         db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid)
                             .update("seller", "").addOnSuccessListener { finish() }

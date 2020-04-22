@@ -195,8 +195,6 @@ class ProfileActivity : AppCompatActivity() {
 
                 db.collection(resources.getString(R.string.db_user)).document(uid!!)
                     .set(user)
-                    .addOnSuccessListener { Log.d(tag, "DocumentSnapshot successfully written!") }
-                    .addOnFailureListener { e -> Log.w(tag, "Error writing document", e) }
 
                 edit.putString("address", address)
 

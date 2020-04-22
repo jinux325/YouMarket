@@ -7,5 +7,6 @@ class ChattingVO (
     var registDate : Date? = null,
     var uid : String? = null,
     var image : String? = null,
-    var name : String? = null
+    var name : String? = null,
+    var imageMsg: String? = null
 )

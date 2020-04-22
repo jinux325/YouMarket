@@ -54,7 +54,13 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
         //chatList[position].pid?.let { chatFragment.getProductImage(it, holder, context!!) }
         chatList[position].pid?.let { getProductImage(it, holder) }
 
-        holder.comment.text = chatList[position].comment
+        if(chatList[position].comment==""){
+            holder.comment.text = "이미지"
+        }else{
+            holder.comment.text = chatList[position].comment
+        }
+
+
         holder.cardView.setOnClickListener {
             Log.e("chatIntent: "," $myUid  ${chatList[position].comment}  ${chatList[position].buyer}  ${chatList[position].seller}   ${chatList[position].cId}")
             if(myUid == chatList[position].buyer){
