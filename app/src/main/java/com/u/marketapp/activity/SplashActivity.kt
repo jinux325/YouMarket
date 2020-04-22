@@ -15,21 +15,16 @@ import com.u.marketapp.signup.SmsActivity
 
 class SplashActivity : AppCompatActivity() {
 
-
     @SuppressLint("LongLogTag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-
-
-
 
         val hd = Handler()
         hd.postDelayed({
             val user = FirebaseAuth.getInstance().currentUser
             if (user != null) {
                 val uid = FirebaseAuth.getInstance().currentUser!!.uid
-
                 var count = 0
                 FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user))
                     .get().addOnSuccessListener { result ->
@@ -52,13 +47,11 @@ class SplashActivity : AppCompatActivity() {
                                 break
                             }
                         }
-
                     }
             }else{
                 val intent = Intent(this@SplashActivity, SmsActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
-
             }
         }, 1000) // 1초 후 이미지를 닫습니다
 
