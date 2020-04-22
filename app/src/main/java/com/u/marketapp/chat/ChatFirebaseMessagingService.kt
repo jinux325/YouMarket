@@ -166,7 +166,7 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
-            .setSmallIcon(R.drawable.ic_tree)
+            .setSmallIcon(R.drawable.ic_orange)
             .setContentTitle(remoteMessage.data["title"])
             .setContentText(remoteMessage.data["body"])
             .setContentIntent(pendingIntent)
