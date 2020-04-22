@@ -35,6 +35,8 @@ class SmsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sms)
 
+        text_view_contents.text = String.format(resources.getString(R.string.sms_contents), resources.getString(R.string.app_name))
+
         buttonContinue.setOnClickListener {
             Toast.makeText(this,"잠시만 기다려 주세요.", Toast.LENGTH_SHORT).show()
             buttonContinue.isEnabled = false

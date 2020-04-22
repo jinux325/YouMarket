@@ -17,9 +17,6 @@
         app:title="번호 인증"
         android:elevation="2dp"/>
 
-
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,6 +25,7 @@
         android:layout_marginRight="40dp"
         android:layout_marginLeft="40dp"
         tools:ignore="UseCompoundDrawables">
+
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
@@ -35,19 +33,15 @@
             android:layout_marginEnd="10dp"
             android:src="@drawable/ic_locked"
             tools:ignore="ContentDescription" />
+
         <TextView
+            android:id="@+id/text_view_contents"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:textSize="15sp"
-            android:text="UMarket은 휴대폰 번호로 가입해요. 번호는 안전하게 보관되며 어디에도 공개되지 않아요."
-            tools:ignore="HardcodedText"
-            />
-
+            android:textSize="15sp" />
 
     </LinearLayout>
-
-
 
     <EditText
         android:id="@+id/editTextMobile"
@@ -78,7 +72,6 @@
         android:textSize="18sp"
         android:textColor="@color/colorwhite"
         tools:ignore="HardcodedText"/>
-
 
     <EditText
         android:id="@+id/verifyEditText"
@@ -111,8 +104,5 @@
         android:textSize="18sp"
         android:textColor="@color/colorwhite"
         tools:ignore="HardcodedText"/>
-
-
-
 
 </LinearLayout>
