@@ -82,6 +82,7 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
                 intent = Intent(this, ReplyActivity::class.java).apply {
                     flags = FLAG_ACTIVITY_NO_HISTORY
                     putExtra("pid", remoteMessage.data["documentId"])
+                    putExtra("cid", remoteMessage.data["cId"])
                 }
             }
         }

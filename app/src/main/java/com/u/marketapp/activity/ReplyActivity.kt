@@ -25,6 +25,7 @@ import com.u.marketapp.BR
 import com.u.marketapp.R
 import com.u.marketapp.adapter.CommentRVAdapter
 import com.u.marketapp.chat.FCM
+import com.u.marketapp.chat.FcmReply
 import com.u.marketapp.databinding.ActivityReplyBinding
 import com.u.marketapp.entity.CommentEntity
 import com.u.marketapp.entity.ProductEntity
@@ -387,7 +388,7 @@ class ReplyActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
     }
 
     private fun sendFCM(token: String, name: String, msg: String) {
-        val fcm = FCM(token, name, msg, pid, "",resources.getString(R.string.ReplyActivity))
+        val fcm = FcmReply(token, name, msg, pid, "",resources.getString(R.string.ReplyActivity),cid)
         fcm.start()
     }
 
