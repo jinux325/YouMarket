@@ -1,7 +1,6 @@
 package com.u.marketapp.chat
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -10,8 +9,6 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSmoothScroller
-import androidx.recyclerview.widget.RecyclerView
 import com.google.common.io.Files.getFileExtension
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -27,10 +24,6 @@ import com.u.marketapp.vo.ChattingVO
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.activity_chat.toolbar
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -68,7 +61,7 @@ class ChatActivity : AppCompatActivity() {
 
         if(intentItems.hasExtra("chatRoomUid")) {
             chatRoomUid = intentItems.getStringExtra("chatRoomUid")
-            pid = intentItems.getStringExtra("chatPid")
+            //pid = intentItems.getStringExtra("chatPid")
             getChattingList()
         }else{
             getChattingRoom()
