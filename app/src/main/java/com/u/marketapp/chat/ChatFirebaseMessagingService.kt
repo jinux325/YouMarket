@@ -186,6 +186,7 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
             .setContentTitle(remoteMessage.data["title"])
             .setContentText(remoteMessage.data["body"])
             .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
             .setShowWhen(true)
 
         notificationManager.notify(0, notificationBuilder.build())

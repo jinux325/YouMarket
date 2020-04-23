@@ -62,6 +62,7 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
 
 
         holder.cardView.setOnClickListener {
+            Log.e("chatIntent: "," list size:  ${chatList.size}  ")
             Log.e("chatIntent: "," $myUid  ${chatList[position].comment}  ${chatList[position].buyer}  ${chatList[position].seller}   ${chatList[position].cId}")
             if(myUid == chatList[position].buyer){
                 chattingIntent(chatList[position].seller!! , chatList[position].cId!!, chatList[position].pid!!)
