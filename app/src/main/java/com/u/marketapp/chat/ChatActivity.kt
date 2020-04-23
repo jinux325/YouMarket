@@ -10,6 +10,8 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.RecyclerView
 import com.google.common.io.Files.getFileExtension
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -389,12 +391,21 @@ class ChatActivity : AppCompatActivity() {
                     val chattingVO: ChattingVO = doc.toObject(ChattingVO::class.java)
                     chattingList.add(chattingVO)
                 }
+
                 recyclerView.layoutManager = LinearLayoutManager(this)
                 recyclerView.adapter = ChattingAdapter(this, chattingList)
-                CoroutineScope(Dispatchers.Main).launch {
-                    delay(500)
-                    recyclerView.scrollToPosition(recyclerView.adapter!!.itemCount -1)
+                recyclerView.scrollToPosition(chattingList.size -1)
+/*
+                Log.e(" 스크롤 ", "${chattingList.size}")
+                val smoothScroller: RecyclerView.SmoothScroller by lazy {
+                    object : LinearSmoothScroller(this) {
+                        override fun getVerticalSnapPreference() = SNAP_TO_START
+                    }
                 }
+                smoothScroller.targetPosition = chattingList.size -1
+                recyclerView.layoutManager?.startSmoothScroll(smoothScroller)*/
+                //recyclerView.scrollToPosition(20)
+
             }
     }
 

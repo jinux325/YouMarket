@@ -19,6 +19,7 @@ import com.u.marketapp.setting.FullImageActivity
 import com.u.marketapp.vo.ChattingVO
 import kotlinx.android.synthetic.main.item_chatting.view.*
 import java.text.SimpleDateFormat
+import java.util.*
 
 class ChattingAdapter(val context: Context?, private val chattingList:MutableList<ChattingVO>):
     RecyclerView.Adapter<ChattingAdapter.ViewHolder>() {
@@ -36,24 +37,71 @@ class ChattingAdapter(val context: Context?, private val chattingList:MutableLis
         Log.e("chattingAdapter  ", chattingList[position].message +"  "+chattingList[position].image)
         Log.e("chattingAdapter if ", chattingList[position].uid +"   $myUid")
 
+        val yearTime = SimpleDateFormat("yyyy년 MM월 dd일")
+
+        /*if(chattingList.size != 0){
+            holder.dateLinear.visibility = VISIBLE
+            holder.dateTxt.text = yearTime.format(Date(System.currentTimeMillis()))
+        }else{
+            holder.dateLinear.visibility = GONE
+        }*/
+        Log.e(" position ", " ${chattingList[position].message}  ${position} " )
+
+
+        if(position != 0 ){
+            if (yearTime.format(chattingList[position].registDate) != yearTime.format(chattingList[position - 1].registDate)) {
+                holder.dateLinear.visibility = VISIBLE
+                holder.dateTxt.text = yearTime.format(chattingList[position].registDate)
+            }else{
+                holder.dateLinear.visibility = GONE
+            }
+        }else{
+            holder.dateLinear.visibility = VISIBLE
+            holder.dateTxt.text = yearTime.format(chattingList[position].registDate)
+        }
+
+
+
+
+       /* holder.dateLinear.visibility = VISIBLE
+        holder.dateTxt.text = yearTime.format(chattingList[position].registDate)
+*/
+       /* if(chattingList.size == 0){
+            holder.dateLinear.visibility = VISIBLE
+            holder.dateTxt.text = yearTime.format(Date(System.currentTimeMillis()))
+        }else {
+            if(position > 1) {
+                if (yearTime.format(chattingList[position].registDate) != yearTime.format(
+                        chattingList[position - 1].registDate
+                    )
+                ) {
+                    holder.dateLinear.visibility = VISIBLE
+                    holder.dateTxt.text = yearTime.format(Date(System.currentTimeMillis()))
+                }
+            }
+        }*/
 
         if(chattingList[position].imageMsg != ""){
             Log.e(" 이미지 if ", chattingList[position].message +"  "+chattingList[position].image)
-           if(chattingList[position].uid.equals(myUid)){
-               holder.linearLayout.gravity = Gravity.RIGHT
-               holder.leftTime.visibility = VISIBLE
-               holder.leftTime.text = date.format(chattingList[position].registDate).toString()
-               holder.rightTime.visibility = GONE
+            if(chattingList[position].uid.equals(myUid)){
+                holder.image.visibility = GONE
+                holder.linearLayout.gravity = Gravity.RIGHT
+                holder.leftTime.visibility = VISIBLE
+                holder.leftTime.text = date.format(chattingList[position].registDate).toString()
+                holder.rightTime.visibility = GONE
 
-           }else{
-               holder.linearLayout.gravity = Gravity.LEFT
-               holder.leftTime.visibility = GONE
-               holder.rightTime.visibility = VISIBLE
-               holder.rightTime.text = date.format(chattingList[position].registDate)
-           }
-           holder.msg.visibility = GONE
-           holder.imageMsg.visibility = VISIBLE
-           Glide.with(context!!).load(chattingList[position].imageMsg).into(holder.imageMsg)
+            }else{
+                holder.image.visibility = VISIBLE
+                holder.linearLayout.gravity = Gravity.LEFT
+                holder.leftTime.visibility = GONE
+                holder.rightTime.visibility = VISIBLE
+                holder.rightTime.text = date.format(chattingList[position].registDate)
+            }
+            holder.msg.visibility = GONE
+            holder.imageMsg.visibility = VISIBLE
+            Glide.with(context!!).load(chattingList[position].image)
+               .apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.image)
+            Glide.with(context).load(chattingList[position].imageMsg).into(holder.imageMsg)
         }else{
             holder.msg.visibility= VISIBLE
             holder.imageMsg.visibility=GONE
@@ -103,5 +151,7 @@ class ChattingAdapter(val context: Context?, private val chattingList:MutableLis
         val msg = itemView.chatting_text!!
         val imageMsg = itemView.chatting_image_msg!!
 
+        val dateLinear = itemView.linear_date_text
+        val dateTxt = itemView.date_text
     }
 }

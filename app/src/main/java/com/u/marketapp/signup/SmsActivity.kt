@@ -214,11 +214,13 @@ class SmsActivity : AppCompatActivity() {
         val token = pref.getString("token", "")
         val uid = mAuth.currentUser!!.uid
         db.collection(resources.getString(R.string.db_user)).document(uid)
-            .update("token", token)
+            .update("token", token).addOnSuccessListener {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
 
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
+
 
     }
 

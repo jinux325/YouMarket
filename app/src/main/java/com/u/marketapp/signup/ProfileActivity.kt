@@ -31,7 +31,7 @@ import java.util.*
 
 class ProfileActivity : AppCompatActivity() {
 
-    private val tag = "ProfileActivity"
+    //private val tag = "ProfileActivity"
     private var profileImage : Uri? =null
     private lateinit var phoneNumber:String
     lateinit var address:String
