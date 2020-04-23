@@ -31,6 +31,8 @@
     <string name="app_version">v1.0</string>
     <string name="msg">업데이트 예정입니다.</string>
 
+    <string name="account_msg">오렌지 마켓에 오류가 있다면 문의를 남겨주세요! :)</string>
+
     <string name="ChatActivity">ChatActivity</string>
     <string name="ReplyActivity">ReplyActivity</string>
     <string name="CommentActivity">CommentActivity</string>
