@@ -215,12 +215,6 @@ class SalesFragment3 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.i(TAG, "Selected Item : $selectPosition")
-        refreshItem()
-    }
-
     // 상품 끌어올리기
     private fun pullUpItem() {
         if (selectPosition != -1) {
@@ -285,7 +279,7 @@ class SalesFragment3 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             .addOnSuccessListener { documentSnapshot ->
                 val user = documentSnapshot.toObject(UserEntity::class.java)!!
                 if (user.salesArray.contains(pid)) {
-                    getItem(position, documentSnapshot.id)
+                    getItem(position, pid)
                 }
             }.addOnFailureListener { e ->
                 Log.i(TAG, e.toString())
@@ -301,7 +295,7 @@ class SalesFragment3 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
                     val item = documentSnapshot.toObject(ProductEntity::class.java)!!
-                    if (item.transactionStatus == 2) {
+                    if (!item.status) {
                         adapterSales.addItem(position, documentSnapshot)
                     }
                 } else {
@@ -375,6 +369,12 @@ class SalesFragment3 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         }
 
         return result
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i(TAG, "Selected Item : $selectPosition")
+        refreshItem()
     }
 
 }

@@ -3,16 +3,12 @@ package com.u.marketapp.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.R
-import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.fragment.AccountFragment
 import com.u.marketapp.fragment.CategoryFragment
 import com.u.marketapp.fragment.ChatFragment
