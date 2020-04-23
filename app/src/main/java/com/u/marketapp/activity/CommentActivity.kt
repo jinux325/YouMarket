@@ -334,7 +334,7 @@ class CommentActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
 
     }
 
-    private fun getTargetUser(uid: String, msg: String) {
+    private fun getTargetUser(uid: String, msg: String) { // 판매자의 토큰 전달
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_user)).document(uid).get()
             .addOnSuccessListener { documentSnapshot ->

@@ -362,14 +362,15 @@ class ReplyActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
         adapter.removeItem(document)
     }
 
-    private fun getToken(msg: String) {
+    private fun getToken(msg: String) { // 댓글 등록자의 토큰 전달
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid).get()
+        db.collection(resources.getString(R.string.db_product)).document(pid)
+            .collection(resources.getString(R.string.db_comment)).document(cid)
+            .get()
             .addOnSuccessListener { documentSnapshot ->
-                val item = documentSnapshot.toObject(ProductEntity::class.java)
-                item?.let {
-                    if (item.seller != FirebaseAuth.getInstance().currentUser!!.uid) {
-                        getTargetUser(item.seller, msg)
+                if (documentSnapshot.exists()) {
+                    if (documentSnapshot.id != FirebaseAuth.getInstance().currentUser!!.uid) {
+                        getTargetUser(documentSnapshot.id, msg)
                     }
                 }
             }
@@ -404,7 +405,7 @@ class ReplyActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
     }
 
     private fun sendFCM(token: String, name: String, msg: String) {
-        val fcm = FcmReply(token, name, msg, pid, "",resources.getString(R.string.ReplyActivity),cid)
+        val fcm = FcmReply(token, name, msg, pid, "", resources.getString(R.string.ReplyActivity), cid)
         fcm.start()
     }
 
