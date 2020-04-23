@@ -93,7 +93,9 @@ class ReplyActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
                 override fun onVisibilityChanged(isOpen: Boolean) {
                     // some code depending on keyboard visiblity status
                     if (isOpen) {
-                        binding.recyclerView.smoothScrollToPosition(adapter.itemCount-1)
+                        if (adapter.itemCount > 0) {
+                            binding.recyclerView.smoothScrollToPosition(adapter.itemCount-1)
+                        }
                     }
                 }
             })
