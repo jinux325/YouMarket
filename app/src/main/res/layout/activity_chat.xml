@@ -20,20 +20,20 @@
         app:contentInsetStart="0dp"
         tools:ignore="RtlSymmetry">
         <!-- 타이틀 -->
-            <LinearLayout
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="2dp"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tv_partner_nickname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginBottom="2dp"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/tv_partner_nickname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black"
-                    android:textSize="20sp"/>
-            </LinearLayout>
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"/>
+        </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/ic_add"
+                android:background="@drawable/ic_photo_camera_24px"
                 tools:ignore="ContentDescription" />
 
             <EditText

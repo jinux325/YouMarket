@@ -78,7 +78,7 @@ class ChatActivity : AppCompatActivity() {
         iv_send.setOnClickListener {
             comment= et_message.text.toString()
 
-            if(comment.trim() != ""){
+            if(!(comment.isBlank())){
                 val intentItem = intent
                 if(intentItem.hasExtra("pid")){
                     addChatRoom(myUid, pid, seller)
