@@ -1,5 +1,6 @@
 package com.u.marketapp.history
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -204,12 +205,6 @@ class SalesFragment2 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.i(TAG, "Selected Item : $selectPosition")
-        refreshItem()
-    }
-
     // 거래 상태 변경
     private fun tradeChangeItem1() {
         if (selectPosition != -1) {
@@ -316,7 +311,7 @@ class SalesFragment2 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             .addOnSuccessListener { documentSnapshot ->
                 val user = documentSnapshot.toObject(UserEntity::class.java)!!
                 if (user.salesArray.contains(pid)) {
-                    getItem(position, documentSnapshot.id)
+                    getItem(position, pid)
                 }
             }.addOnFailureListener { e ->
                 Log.i(TAG, e.toString())
@@ -332,7 +327,7 @@ class SalesFragment2 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
                     val item = documentSnapshot.toObject(ProductEntity::class.java)!!
-                    if (item.transactionStatus == 2) {
+                    if (item.status && item.transactionStatus == 2) {
                         adapterSales.addItem(position, documentSnapshot)
                     }
                 } else {
@@ -360,6 +355,12 @@ class SalesFragment2 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             .setPositiveButton("숨기기") { _, _ -> hideItem() }
             .setNegativeButton("취소", null)
             .show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i(TAG, "Selected Item : $selectPosition")
+        refreshItem()
     }
 
 }

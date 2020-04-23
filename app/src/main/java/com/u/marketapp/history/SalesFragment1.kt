@@ -1,9 +1,14 @@
 package com.u.marketapp.history
 
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -19,14 +24,16 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.u.marketapp.R
 import com.u.marketapp.activity.EditActivity
 import com.u.marketapp.activity.ProductActivity
+import com.u.marketapp.adapter.CustomChoiceAdapter
 import com.u.marketapp.adapter.SalesHistoryRVAdapter
+import com.u.marketapp.entity.ListViewItem
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.utils.FireStoreUtils
 import com.u.marketapp.vo.ChatRoomVO
 import kotlinx.android.synthetic.main.fragment_history.view.*
 import java.util.*
-import kotlin.collections.HashMap
+import kotlin.collections.ArrayList
 
 class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
@@ -229,12 +236,6 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.i(TAG, "Selected Item : $selectPosition")
-        refreshItem()
-    }
-
     // 거래 상태 변경
     private fun tradeChangeItem1() {
         if (selectPosition != -1) {
@@ -273,12 +274,14 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                     val item = documentSnapshot.toObject(ProductEntity::class.java)!!
                     val array = item.chattingRoom
                     if (array.size > 0) {
-                        val map = HashMap<String, String>()
+                        val itemList = ArrayList<ListViewItem>()
+                        Log.i(TAG, "Chatting Room Size : ${array.size}")
                         for (room in array) {
                             db.collection(resources.getString(R.string.db_chatting))
                                 .document(room)
                                 .get()
                                 .addOnSuccessListener { documentSnapshot2 ->
+                                    Log.i(TAG, "Chatting Room : ${documentSnapshot2.id}")
                                     val roomVO = documentSnapshot2.toObject(ChatRoomVO::class.java)!!
                                     val key = roomVO.buyer
                                     key?.let {
@@ -286,10 +289,15 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                                             .document(key)
                                             .get()
                                             .addOnSuccessListener { documentSnapshot3 ->
+                                                Log.i(TAG, "User : ${documentSnapshot3.id}")
                                                 val user = documentSnapshot3.toObject(UserEntity::class.java)!!
-                                                map[key] = user.name
-                                                if (map.size >= array.size) {
-                                                    showPopUpCompleteUser(map)
+                                                val viewItem = ListViewItem()
+                                                viewItem.uid = documentSnapshot3.id
+                                                viewItem.icon = user.imgPath
+                                                viewItem.name = user.name
+                                                itemList.add(viewItem)
+                                                if (itemList.size >= array.size) {
+                                                    showPopUpCompleteUser(itemList)
                                                 }
                                             }.addOnFailureListener { e ->
                                                 Log.i(TAG, e.toString())
@@ -309,39 +317,47 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     // 거래완료 대상자 검색
-    private fun showPopUpCompleteUser(map: HashMap<String, String>) {
-        val array = getKeyToValueList(map)
+    private fun showPopUpCompleteUser(list: List<ListViewItem>) {
+        Log.i(TAG, list.toString())
         var choiceItem = -1
+        val view = ListView(context)
+        view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        view.choiceMode = ListView.CHOICE_MODE_SINGLE
+        view.divider = ColorDrawable(Color.TRANSPARENT).current
+        view.adapter = CustomChoiceAdapter(requireActivity(), list)
+        view.setOnItemClickListener { parent, view, position, id ->
+            choiceItem = position
+            Log.i(TAG, "Selected Item : $choiceItem")
+        }
+
         val builder = MaterialAlertDialogBuilder(context)
         builder.setTitle("구매자 선택")
-        builder.setSingleChoiceItems(array, -1) { _, which ->
-            choiceItem = which
-        }
-        builder.setPositiveButton("확인") { dialog, _ ->
+        builder.setView(view)
+        builder.setPositiveButton("확인", null)
+        builder.setNegativeButton("취소", null)
+
+        val diaogView = builder.create()
+        diaogView.show()
+        diaogView.setButton(AlertDialog.BUTTON_POSITIVE, "선택") { dialog, which ->
+            var wantToCloseDialog = true
+
             if (choiceItem != -1) {
-                val key = map.keys.elementAt(choiceItem)
-                if (map[key] == array[choiceItem]) {
-                    tradeChangeItem2(key)
-                    dialog.dismiss()
-                } else {
-                    Log.i(TAG, "구매자 선택 오류!@!@!@")
-                }
+                val uid = list[choiceItem].uid
+                tradeChangeItem2(uid)
+                dialog.dismiss()
+            } else {
+                wantToCloseDialog = false
+            }
+
+            if (wantToCloseDialog) {
+                dialog.dismiss()
             } else {
                 Toast.makeText(context, "구매자를 선택해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
-        builder.setNegativeButton("취소", null)
-        builder.create().show()
-    }
-
-    // Key to Value
-    private fun getKeyToValueList(map: HashMap<String, String>) : Array<String> {
-        val array = Array(map.size) {""}
-        for ((cnt, i) in map.keys.withIndex()) {
-            val value = map[i]
-            value?.let { array[cnt] = it }
+        diaogView.setButton(AlertDialog.BUTTON_NEGATIVE, "취소") { dialog, which ->
+            dialog.dismiss()
         }
-        return array
     }
 
     // 거래완료 상태로 변경
@@ -455,7 +471,10 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             .addOnSuccessListener { documentSnapshot ->
                 val user = documentSnapshot.toObject(UserEntity::class.java)!!
                 if (user.salesArray.contains(pid)) {
-                    getItem(position, documentSnapshot.id)
+                    Log.i(TAG, "판매내역에 상품 있음!!")
+                    getItem(position, pid)
+                } else {
+                    Log.i(TAG, "판매내역에 상품 없음!!")
                 }
             }.addOnFailureListener { e ->
                 Log.i(TAG, e.toString())
@@ -464,6 +483,7 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     // 상품 로드
     private fun getItem(position: Int, pid: String) {
+        Log.i(TAG, "PID : $pid")
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product))
             .document(pid)
@@ -471,8 +491,11 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
                     val item = documentSnapshot.toObject(ProductEntity::class.java)!!
-                    if (item.transactionStatus != 2) {
+                    if (item.status && item.transactionStatus != 2) {
+                        Log.i(TAG, "상품 추가!!")
                         adapterSales.addItem(position, documentSnapshot)
+                    } else {
+                        Log.i(TAG, "상품 상태 또는 거래상태가 달라서 추가 안함!!")
                     }
                 } else {
                     Log.i(TAG, "No such DocumentSnapshot!")
@@ -523,7 +546,6 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             MaterialAlertDialogBuilder(context)
                 .setTitle(str)
                 .setPositiveButton("확인", null)
-                .setNegativeButton("취소", null)
                 .show()
         }
     }
@@ -549,6 +571,12 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 "??"
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i(TAG, "Selected Item : $selectPosition")
+        refreshItem()
     }
 
 }

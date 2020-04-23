@@ -330,13 +330,13 @@ class EditActivity : AppCompatActivity() {
                     Log.i(TAG, "상품 이미지 수정!!")
                     deleteImage(pid)
                     saveImage(pid)
+                    BaseApplication.instance.progressOFF()
+                    setResult(Activity.RESULT_OK)
+                    finish() // 종료
                 } else {
                     Log.i(TAG, "상품 이미지 없어서 그냥 활성화!!")
                     updateActiveProduct(pid)
                 }
-                BaseApplication.instance.progressOFF()
-                setResult(Activity.RESULT_OK)
-                finish() // 종료
             } else {
                 BaseApplication.instance.progressOFF()
             }
@@ -427,7 +427,10 @@ class EditActivity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_product)).document(item!!).update("status", true).addOnCompleteListener {
             if (it.isSuccessful) {
-                Log.i(TAG, "상품 업데이트 성공 : ${it.result}")
+                Log.i(TAG, "상품 업데이트 성공!")
+                BaseApplication.instance.progressOFF()
+                setResult(Activity.RESULT_OK)
+                finish() // 종료
             }
         }
     }

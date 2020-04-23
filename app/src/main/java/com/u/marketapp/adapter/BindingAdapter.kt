@@ -8,6 +8,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.textview.MaterialTextView
 import com.u.marketapp.R
 import com.u.marketapp.entity.ProductEntity
@@ -39,6 +41,20 @@ fun bindViewFromUrl(view: ImageView?, image: String?) {
                 .load(image)
                 .thumbnail(0.1f)
                 .error(R.drawable.ic_no_photo)
+                .into(view)
+        }
+    }
+}
+
+@BindingAdapter("bindUrlIcon")
+fun bindViewFromUrlIcon(view: ImageView?, image: String?) {
+    view?.let {
+        if (image != null) {
+            Glide.with(view.context)
+                .load(image)
+                .apply(RequestOptions.bitmapTransform(CircleCrop()))
+                .thumbnail(0.1f)
+                .error(R.drawable.ic_orange)
                 .into(view)
         }
     }
