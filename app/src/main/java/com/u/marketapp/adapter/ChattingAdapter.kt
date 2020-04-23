@@ -19,7 +19,6 @@ import com.u.marketapp.setting.FullImageActivity
 import com.u.marketapp.vo.ChattingVO
 import kotlinx.android.synthetic.main.item_chatting.view.*
 import java.text.SimpleDateFormat
-import java.util.*
 
 class ChattingAdapter(val context: Context?, private val chattingList:MutableList<ChattingVO>):
     RecyclerView.Adapter<ChattingAdapter.ViewHolder>() {
@@ -45,7 +44,6 @@ class ChattingAdapter(val context: Context?, private val chattingList:MutableLis
         }else{
             holder.dateLinear.visibility = GONE
         }*/
-        Log.e(" position ", " ${chattingList[position].message}  ${position} " )
 
 
         if(position != 0 ){
@@ -96,12 +94,12 @@ class ChattingAdapter(val context: Context?, private val chattingList:MutableLis
                 holder.leftTime.visibility = GONE
                 holder.rightTime.visibility = VISIBLE
                 holder.rightTime.text = date.format(chattingList[position].registDate)
+                Glide.with(context!!).load(chattingList[position].image)
+                    .apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.image)
             }
             holder.msg.visibility = GONE
             holder.imageMsg.visibility = VISIBLE
-            Glide.with(context!!).load(chattingList[position].image)
-               .apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.image)
-            Glide.with(context).load(chattingList[position].imageMsg).into(holder.imageMsg)
+            Glide.with(context!!).load(chattingList[position].imageMsg).into(holder.imageMsg)
         }else{
             holder.msg.visibility= VISIBLE
             holder.imageMsg.visibility=GONE
@@ -114,20 +112,18 @@ class ChattingAdapter(val context: Context?, private val chattingList:MutableLis
                 holder.leftTime.visibility = VISIBLE
                 holder.leftTime.text = date.format(chattingList[position].registDate).toString()
                 holder.rightTime.visibility = GONE
-
             }else{
                 Log.e(" 이미지 else > if ", " >>>> else ")
                 holder.image.visibility = VISIBLE
                 holder.linearLayout.gravity = Gravity.LEFT
-                holder.leftTime.visibility = GONE
                 holder.rightTime.visibility = VISIBLE
                 holder.rightTime.text = date.format(chattingList[position].registDate)
+                holder.leftTime.visibility = GONE
             }
-            holder.message.text = chattingList[position].message
             Log.d("chattingAdapter 22 ", context.toString()+" "+chattingList[position].message +"  "+chattingList[position].image)
             Glide.with(context!!).load(chattingList[position].image)
                 .apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.image)
-
+            holder.message.text = chattingList[position].message
         }
 
         holder.imageMsg.setOnClickListener {
@@ -151,7 +147,7 @@ class ChattingAdapter(val context: Context?, private val chattingList:MutableLis
         val msg = itemView.chatting_text!!
         val imageMsg = itemView.chatting_image_msg!!
 
-        val dateLinear = itemView.linear_date_text
-        val dateTxt = itemView.date_text
+        val dateLinear = itemView.linear_date_text!!
+        val dateTxt = itemView.date_text!!
     }
 }

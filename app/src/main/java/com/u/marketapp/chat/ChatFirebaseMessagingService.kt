@@ -15,6 +15,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.u.marketapp.activity.CommentActivity
 import com.u.marketapp.R
+import com.u.marketapp.activity.ReplyActivity
 
 
 class ChatFirebaseMessagingService : FirebaseMessagingService() {
@@ -45,6 +46,7 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
         val prefReplySwitch = pref.getString("replySwitch", "")
         val prefChatttingSwitch = pref.getString("chattingSwitch", "")
 
+        Log.e(" 알림설정 ", " 채팅: $prefChatttingSwitch  댓글: $prefReplySwitch ")
         if(remoteMessage.data["partnerName"] != ""){
             if(prefChatttingSwitch=="true"){
                 sendNotification(remoteMessage)
@@ -57,17 +59,31 @@ class ChatFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun sendNotification(remoteMessage: RemoteMessage) {
+        Log.e("@@ sendNotification", "remoteMessage : "+ remoteMessage.data["click_action"]+"  "+remoteMessage.data["documentId"]+"  "+remoteMessage.data["partnerName"])
         val intent:Intent
-        if(remoteMessage.data["partnerName"] != ""){
-            intent = Intent(this, ChatActivity::class.java).apply {
-                flags = FLAG_ACTIVITY_NO_HISTORY
-                putExtra("chatRoomUid", remoteMessage.data["documentId"])
-                putExtra("name", remoteMessage.data["partnerName"])
+        when {
+            remoteMessage.data["click_action"] == resources.getString(R.string.ChatActivity) -> {
+                Log.e(" @@ sendNotification ", "Chatting ")
+                intent = Intent(this, ChatActivity::class.java).apply {
+                    flags = FLAG_ACTIVITY_NO_HISTORY
+                    putExtra("chatRoomUid", remoteMessage.data["documentId"])
+                    putExtra("name", remoteMessage.data["partnerName"])
+                }
             }
-        }else{
-            intent = Intent(this, CommentActivity::class.java).apply {
-                flags = FLAG_ACTIVITY_NO_HISTORY
-                putExtra("pid", remoteMessage.data["documentId"])
+            remoteMessage.data["click_action"] == resources.getString(R.string.CommentActivity) -> {
+                Log.e(" @@ sendNotification ", " Comment ")
+                intent = Intent(this, CommentActivity::class.java).apply {
+                    flags = FLAG_ACTIVITY_NO_HISTORY
+                    putExtra("pid", remoteMessage.data["documentId"])
+                }
+            }
+            else -> {
+                Log.e(" @@ sendNotification ", " Reply ")
+                intent = Intent(this, ReplyActivity::class.java).apply {
+                    flags = FLAG_ACTIVITY_NO_HISTORY
+                    putExtra("pid", remoteMessage.data["documentId"])
+                    putExtra("cid", remoteMessage.data["cId"])
+                }
             }
         }
 
