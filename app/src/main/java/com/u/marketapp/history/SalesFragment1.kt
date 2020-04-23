@@ -454,6 +454,7 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 val pid = adapterSales.getItem(selectPosition).id
                 adapterSales.removeItem(selectPosition)
                 checkGetItem(selectPosition, pid)
+                selectPosition = -1 // 초기화
             } else {
                 Log.i(TAG, "해당되는 상품이 없음!")
             }
@@ -577,6 +578,7 @@ class SalesFragment1 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         super.onResume()
         Log.i(TAG, "Selected Item : $selectPosition")
         refreshItem()
+
     }
 
 }

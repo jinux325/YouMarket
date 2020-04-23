@@ -41,6 +41,8 @@ dependencies {
     kapt "com.android.databinding:compiler:3.1.4"
     // Material Design - URL : https://material.io/develop/android/ - Github : https://github.com/material-components/material-components-android
     implementation 'com.google.android.material:material:1.2.0-alpha05'
+    // Keyboard Visible - Github : https://github.com/yshrsmz/KeyboardVisibilityEvent
+    implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC2'
     // Glide - Github : https://github.com/bumptech/glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     kapt 'com.github.bumptech.glide:compiler:4.11.0'

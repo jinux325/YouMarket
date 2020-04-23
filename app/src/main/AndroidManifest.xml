@@ -22,8 +22,6 @@
         tools:ignore="AllowBackup"
         tools:replace="allowBackup"
         tools:targetApi="m">
-        <activity android:name=".setting.FullImageActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
 
         <service
             android:name=".chat.ChatFirebaseMessagingService"
@@ -33,6 +31,9 @@
             </intent-filter>
         </service>
 
+        <activity
+            android:name=".setting.FullImageActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.PurchaseHistoryActivity"
             android:theme="@style/MaterialTheme" />
