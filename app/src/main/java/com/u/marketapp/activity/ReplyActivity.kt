@@ -24,7 +24,6 @@ import com.google.firebase.firestore.Query
 import com.u.marketapp.BR
 import com.u.marketapp.R
 import com.u.marketapp.adapter.CommentRVAdapter
-import com.u.marketapp.chat.FCM
 import com.u.marketapp.chat.FcmReply
 import com.u.marketapp.databinding.ActivityReplyBinding
 import com.u.marketapp.entity.CommentEntity
@@ -33,6 +32,8 @@ import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.listener.EndlessRecyclerViewScrollListener
 import com.u.marketapp.utils.BaseApplication
 import kotlinx.android.synthetic.main.activity_reply.*
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
 
 class ReplyActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
@@ -81,6 +82,23 @@ class ReplyActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
         requestItems()
         setButtonListener() // 버튼 클릭 설정
         setEditTextChangedListener()
+        setSoftKeyboardListener()
+    }
+
+    // 소프트 키보드 이벤트
+    private fun setSoftKeyboardListener() {
+        KeyboardVisibilityEvent.setEventListener(
+            this,
+            object : KeyboardVisibilityEventListener {
+                override fun onVisibilityChanged(isOpen: Boolean) {
+                    // some code depending on keyboard visiblity status
+                    if (isOpen) {
+                        if (adapter.itemCount > 0) {
+                            binding.recyclerView.smoothScrollToPosition(adapter.itemCount-1)
+                        }
+                    }
+                }
+            })
     }
 
     // 액션바
@@ -346,14 +364,15 @@ class ReplyActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
         adapter.removeItem(document)
     }
 
-    private fun getToken(msg: String) {
+    private fun getToken(msg: String) { // 댓글 등록자의 토큰 전달
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid).get()
+        db.collection(resources.getString(R.string.db_product)).document(pid)
+            .collection(resources.getString(R.string.db_comment)).document(cid)
+            .get()
             .addOnSuccessListener { documentSnapshot ->
-                val item = documentSnapshot.toObject(ProductEntity::class.java)
-                item?.let {
-                    if (item.seller != FirebaseAuth.getInstance().currentUser!!.uid) {
-                        getTargetUser(item.seller, msg)
+                if (documentSnapshot.exists()) {
+                    if (documentSnapshot.id != FirebaseAuth.getInstance().currentUser!!.uid) {
+                        getTargetUser(documentSnapshot.id, msg)
                     }
                 }
             }
@@ -388,7 +407,7 @@ class ReplyActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
     }
 
     private fun sendFCM(token: String, name: String, msg: String) {
-        val fcm = FcmReply(token, name, msg, pid, "",resources.getString(R.string.ReplyActivity),cid)
+        val fcm = FcmReply(token, name, msg, pid, "", resources.getString(R.string.ReplyActivity), cid)
         fcm.start()
     }
 

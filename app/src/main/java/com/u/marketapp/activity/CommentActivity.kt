@@ -31,6 +31,8 @@ import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.listener.EndlessRecyclerViewScrollListener
 import com.u.marketapp.utils.BaseApplication
 import kotlinx.android.synthetic.main.activity_reply.*
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
 
 class CommentActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
@@ -74,6 +76,23 @@ class CommentActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
         requestItems()
         setButtonListener() // 버튼 클릭 설정
         setEditTextChangedListener()
+        setSoftKeyboardListener()
+    }
+
+    // 소프트 키보드 이벤트
+    private fun setSoftKeyboardListener() {
+        KeyboardVisibilityEvent.setEventListener(
+            this,
+            object : KeyboardVisibilityEventListener {
+                override fun onVisibilityChanged(isOpen: Boolean) {
+                    // some code depending on keyboard visiblity status
+                    if (isOpen) {
+                        if (adapter.itemCount > 0) {
+                            binding.recyclerView.smoothScrollToPosition(adapter.itemCount-1)
+                        }
+                    }
+                }
+            })
     }
 
     // 액션바
@@ -317,7 +336,7 @@ class CommentActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListene
 
     }
 
-    private fun getTargetUser(uid: String, msg: String) {
+    private fun getTargetUser(uid: String, msg: String) { // 판매자의 토큰 전달
         val db = FirebaseFirestore.getInstance()
         db.collection(resources.getString(R.string.db_user)).document(uid).get()
             .addOnSuccessListener { documentSnapshot ->

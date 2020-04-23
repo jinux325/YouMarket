@@ -262,6 +262,7 @@ class SalesFragment3 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 val pid = adapterSales.getItem(selectPosition).id
                 adapterSales.removeItem(selectPosition)
                 checkGetItem(selectPosition, pid)
+                selectPosition = -1 // 초기화
             } else {
                 Log.i(TAG, "해당되는 상품이 없음!")
             }
