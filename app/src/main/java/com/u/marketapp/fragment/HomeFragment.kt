@@ -48,6 +48,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private lateinit var binding : FragmentHomeBinding
     private lateinit var scrollListener : EndlessRecyclerViewScrollListener
     private val info : ArrayList<String> = ArrayList()
+    private var selectPosition = -1
 
     // 새로고침
     override fun onRefresh() {
@@ -145,6 +146,7 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
             binding.recyclerView.adapter = adapter
             adapter.setItemClickListener(object : ProductRVAdapter.ItemClickListener {
                 override fun onClick(view: View, position: Int) {
+                    selectPosition = position
                     moveProductActivity(adapter.getItem(position).id)
                 }
             })
@@ -358,8 +360,11 @@ class HomeFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 REQUEST_PRODUCT -> { // 상품 페이지에서 리턴
-                    adapter.clear()
-                    requestItems()
+                    Log.i(TAG, "상품 페이지에서 리턴! : $selectPosition")
+                    if (selectPosition != -1) {
+                        adapter.removeItem(selectPosition)
+                        selectPosition = -1 // 초기화
+                    }
                 }
                 REQUEST_FILTER -> { // 필터 페이지에서 리턴
                     val list = SharedPreferencesUtils.instance.getStringArrayPref(requireContext(), "category")

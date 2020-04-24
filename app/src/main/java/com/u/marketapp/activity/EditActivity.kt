@@ -12,6 +12,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.webkit.MimeTypeMap
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -450,7 +451,12 @@ class EditActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
             R.id.action_done -> {
-                showPopupForSave()
+                if (edit_text_title.text.trim().isNotEmpty()) {
+                    showPopupForSave()
+                } else {
+                    Toast.makeText(this, "제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                    edit_text_title.requestFocus()
+                }
                 true
             }
             android.R.id.home -> {
