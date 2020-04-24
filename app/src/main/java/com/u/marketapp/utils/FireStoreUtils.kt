@@ -33,12 +33,16 @@ class FireStoreUtils : AppCompatActivity() {
         db.collection(activity.resources.getString(R.string.db_user))
             .document(FirebaseAuth.getInstance().currentUser!!.uid)
             .get()
-            .addOnSuccessListener { document ->
-                val user = document.toObject(UserEntity::class.java)!!
-                if (user.salesArray.size > 0) {
-                    for (sale in user.salesArray) {
-                        deleteProduct(sale)
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val user = documentSnapshot.toObject(UserEntity::class.java)!!
+                    if (user.salesArray.size > 0) {
+                        for (sale in user.salesArray) {
+                            deleteProduct(sale)
+                        }
                     }
+                } else {
+                    Log.i(TAG, "유저 정보가 없음!")
                 }
             }.addOnFailureListener { e ->
                 Log.i(TAG, e.toString())

@@ -319,34 +319,50 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
             R.string.loading
         ))
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid).get().addOnCompleteListener { document ->
-            if (document.isSuccessful) {
-                Log.i(TAG, "Successful! ${document.result!!.id}")
-                val item = document.result!!.toObject(ProductEntity::class.java)!!
-                binding.setVariable(BR.product, item)
-                productEntity = item
-                uid = item.seller
-                setPagerAdater(item.imageArray)
-                checkLookup(item.lookup)
-                checkAttention(item.attention)
-                getUserData()
-                initCommentView()
+        db.collection(resources.getString(R.string.db_product))
+            .document(pid)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    Log.i(TAG, "Successful! ${documentSnapshot.id}")
+                    val item = documentSnapshot.toObject(ProductEntity::class.java)!!
+                    binding.setVariable(BR.product, item)
+                    productEntity = item
+                    uid = item.seller
+                    setPagerAdater(item.imageArray)
+                    checkLookup(item.lookup)
+                    checkAttention(item.attention)
+                    getUserData()
+                    initCommentView()
+                    BaseApplication.instance.progressOFF()
+                } else {
+                    Log.i(TAG, "상품 정보가 없습니다.")
+                    BaseApplication.instance.progressOFF()
+                    finish()
+                }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
             }
-            BaseApplication.instance.progressOFF()
-        }
     }
 
     // 유저 정보 가져오기
     private fun getUserData() {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_user)).document(uid).get().addOnCompleteListener { document ->
-            if (document.isSuccessful) {
-                Log.i(TAG, "Successful! ${document.result!!.id}")
-                val user = document.result!!.toObject(UserEntity::class.java)
-                userName = user?.name.toString()
-                binding.setVariable(BR.user, user)
+        db.collection(resources.getString(R.string.db_user))
+            .document(uid)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    Log.i(TAG, "Successful! ${documentSnapshot.id}")
+                    val user = documentSnapshot.toObject(UserEntity::class.java)!!
+                    userName = user.name
+                    binding.setVariable(BR.user, user)
+                } else {
+                    Log.i(TAG, "유저 정보가 없습니다.")
+                }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
             }
-        }
     }
 
     // 이미지 페이저 정의
@@ -411,20 +427,26 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     // 댓글 데이터 설정
     private fun setCommentItemsData() {
         val db = FirebaseFirestore.getInstance()
-        db.collection(resources.getString(R.string.db_product)).document(pid)
+        db.collection(resources.getString(R.string.db_product))
+            .document(pid)
             .collection(resources.getString(R.string.db_comment)).orderBy("regDate", Query.Direction.ASCENDING)
             .limit(REQUEST_ITEM_LIMIT)
             .get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.i(TAG, "$pid -> Document Size : ${task.result?.documents!!.size}")
-                    if (task.result?.documents!!.size > 0) {
-                        for (document in task.result?.documents!!) {
+            .addOnSuccessListener { documentSnapshot ->
+                Log.i(TAG, "$pid -> Document Size : ${documentSnapshot.documents.size}")
+                if (documentSnapshot.documents.size > 0) {
+                    for (document in documentSnapshot.documents) {
+                        if (document.exists()) {
                             Log.i(TAG, "Added Comment : ${document.id}")
                             commentAdapter.addItem(document)
+                        } else {
+                            Log.i(TAG, "댓글 정보가 없음")
                         }
                     }
                 }
+            }
+            .addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
             }
     }
 
