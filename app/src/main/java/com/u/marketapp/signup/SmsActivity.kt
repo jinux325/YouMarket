@@ -16,10 +16,12 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.u.marketapp.activity.MainActivity
 import com.u.marketapp.R
 import com.u.marketapp.activity.SplashActivity
 import com.u.marketapp.entity.UserEntity
+import com.u.marketapp.utils.FireStoreUtils
 import kotlinx.android.synthetic.main.activity_sms.*
 import java.util.concurrent.TimeUnit
 
@@ -27,6 +29,7 @@ class SmsActivity : AppCompatActivity() {
 
     private val tag = "SmsActivity"
     private val mAuth= FirebaseAuth.getInstance()
+   // private val mStorage = FirebaseStorage.getInstance().getReference("Profile")
     var codeSent : String = ""
     private var phone=""
     private val db = FirebaseFirestore.getInstance()
@@ -38,12 +41,12 @@ class SmsActivity : AppCompatActivity() {
         text_view_contents.text = String.format(resources.getString(R.string.sms_contents), resources.getString(R.string.app_name))
 
         buttonContinue.setOnClickListener {
-            Toast.makeText(this,"잠시만 기다려 주세요.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,"잠시만 기다려 주세요.", Toast.LENGTH_LONG).show()
             buttonContinue.isEnabled = false
             sendVerification()
         }
         verifyButton.setOnClickListener {
-            Toast.makeText(this,"잠시만 기다려 주세요.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,"잠시만 기다려 주세요.", Toast.LENGTH_LONG).show()
             verifySignIn()
         }
 
@@ -61,8 +64,10 @@ class SmsActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val uid = FirebaseAuth.getInstance().currentUser!!.uid
 
-                    val intentItems = intent
-                    if(intentItems.getStringExtra("delete")!=null){
+                    Log.e(" 탈퇴하기 ", " signInWithPhoneAuthCredential  4  " + intent.getStringExtra("delete"))
+                    //val intentItems = intent
+                    if(intent.getStringExtra("delete")!=null){
+                        Log.e(" 탈퇴하기 ", " signInWithPhoneAuthCredential 5  ")
                         userDelete()
                     }
 
@@ -118,6 +123,7 @@ class SmsActivity : AppCompatActivity() {
                 Toast.makeText(this@SmsActivity, " 인증 많이함. 나중에 다시 해주세요. ", Toast.LENGTH_LONG).show()
             }
             buttonContinue.isEnabled = true
+            buttonContinue.text = "재인증"
         }
 
         override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
@@ -197,16 +203,63 @@ class SmsActivity : AppCompatActivity() {
     }
 
     private fun userDelete(){
-        val uid = mAuth.currentUser!!.uid
+       /* val uid = mAuth.currentUser!!.uid
+        Log.e(" 탈퇴하기 ", "탈퇴하기 0")
         FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener { task ->
             if(task.isSuccessful){
                 FirebaseAuth.getInstance().signOut()
-                db.collection(resources.getString(R.string.db_user)).document(uid).update("status", 0)
-                val intent = Intent(this, SplashActivity::class.java)
-                intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
+                Log.e(" 탈퇴하기 ", "탈퇴하기 1")
+                FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(uid).update("status", 0)
+                    .addOnSuccessListener {
+                        Log.e(" 탈퇴하기 ", "탈퇴하기 2")
+                        // val product = FireStoreUtils()
+                        FirebaseFirestore.getInstance().collection("User").document(uid).get().addOnSuccessListener {
+                            val userEntity: UserEntity? = it.toObject<UserEntity>(UserEntity::class.java)
+                            if (userEntity != null) {
+                                FirebaseStorage.getInstance().getReferenceFromUrl(userEntity.imgPath).delete()
+                            }
+
+                           // FireStoreUtils().allDeleteProduct(this)
+
+                            Log.e(" 탈퇴하기 ", "탈퇴하기 3")
+                            val intent = Intent(this, SplashActivity::class.java)
+                            intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                        }
+                    }
+
             }
-        }
+        }*/
+
+        val uid = FirebaseAuth.getInstance().currentUser!!.uid
+
+        FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(uid).update("status", 0)
+            .addOnSuccessListener {
+                Log.e(" 탈퇴하기 ", "탈퇴하기 1")
+                // val product = FireStoreUtils()
+                FirebaseFirestore.getInstance().collection("User").document(uid).get().addOnSuccessListener {
+                    val userEntity: UserEntity? = it.toObject<UserEntity>(UserEntity::class.java)
+                    if (userEntity != null) {
+                        FirebaseStorage.getInstance().getReferenceFromUrl(userEntity.imgPath).delete()
+                    }
+
+                    Log.e(" 탈퇴하기 ", "탈퇴하기 2")
+
+                    FireStoreUtils().allDeleteProduct(this)
+
+                    FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener {
+                        Log.e(" 탈퇴하기 ", "탈퇴하기 3")
+                        FirebaseAuth.getInstance().signOut()
+                        Log.e(" 탈퇴하기 ", "탈퇴하기 4")
+                        val intent = Intent(this, SplashActivity::class.java)
+                        intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                    }
+                }
+            }
+
+
+
     }
 
     private fun tokenUpdate(){

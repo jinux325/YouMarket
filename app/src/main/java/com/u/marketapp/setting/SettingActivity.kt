@@ -1,20 +1,24 @@
 package com.u.marketapp.setting
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.u.marketapp.R
 import com.u.marketapp.activity.SplashActivity
+import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.signup.SmsActivity
+import com.u.marketapp.utils.FireStoreUtils
 import kotlinx.android.synthetic.main.activity_setting.*
 
 class SettingActivity : AppCompatActivity() {
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +68,41 @@ class SettingActivity : AppCompatActivity() {
     }
 
     private fun deleteDialog(){
-        val dialog = AlertDialog.Builder(this)
+
+
+        val uid = FirebaseAuth.getInstance().currentUser!!.uid
+
+        FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(uid).update("status", 0)
+            .addOnSuccessListener {
+                Log.e(" 탈퇴하기 ", "탈퇴하기 1")
+                // val product = FireStoreUtils()
+                FirebaseFirestore.getInstance().collection("User").document(uid).get().addOnSuccessListener {
+                    val userEntity: UserEntity? = it.toObject<UserEntity>(UserEntity::class.java)
+                    if (userEntity != null) {
+                        FirebaseStorage.getInstance().getReferenceFromUrl(userEntity.imgPath).delete()
+                    }
+
+                    Log.e(" 탈퇴하기 ", "탈퇴하기 2")
+
+                    FireStoreUtils().allDeleteProduct(this)
+
+                    FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener {
+                        Log.e(" 탈퇴하기 ", "탈퇴하기 3")
+                        FirebaseAuth.getInstance().signOut()
+                        Log.e(" 탈퇴하기 ", "탈퇴하기 4")
+                        val intent = Intent(this, SplashActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                    }
+
+
+                }
+            }
+
+
+
+
+    /*    val dialog = AlertDialog.Builder(this)
         dialog.setMessage("탈퇴는 재인증이 필요합니다. 탈퇴하시겠습니까?").setCancelable(false)
         fun pos(){
             val intent = Intent(this, SmsActivity::class.java)
@@ -81,8 +119,10 @@ class SettingActivity : AppCompatActivity() {
         dialog.setPositiveButton("확인",dialogListener)
         dialog.setNegativeButton("취소",dialogListener)
         dialog.show()
-
+*/
     }
+
+
 
 
 

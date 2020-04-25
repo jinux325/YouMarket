@@ -140,28 +140,6 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    // 퍼미션 권한 설정
-   /* private fun permission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                Log.d("TAG", "권한 설정 완료")
-                TedImagePicker.with(this)
-                    .start { uriList -> getImageList(uriList) }
-            } else {
-                Log.d("TAG", "권한 설정 요청")
-                ActivityCompat.requestPermissions( this, arrayOf(
-                    Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.INTERNET), 1 )
-            }
-        }else{
-            TedImagePicker.with(this)
-                .start { uriList -> getImageList(uriList) }
-        }
-
-    }*/
 
     private fun getImageList(){
 
@@ -195,41 +173,7 @@ class ChatActivity : AppCompatActivity() {
                 }
             }
 
-            /*
-            FirebaseFirestore.getInstance().collection("Chatting").document(ref.id)
-                .set(chatRoom).addOnSuccessListener {
-                    FirebaseFirestore.getInstance().collection("Chatting")
-                        .whereEqualTo("pid", pid).whereEqualTo("buyer", myUid).get().addOnSuccessListener { result ->
-                            for(document in result){
-                                val registDate = Date(System.currentTimeMillis())
 
-                                val chat = hashMapOf(
-                                    "image" to myData.imgPath,
-                                    "name" to myData.name,
-                                    "uid" to myUid,
-                                    "message" to comment ,
-                                    "imageMsg" to imageMsg ,
-                                    "registDate" to registDate
-                                )
-                                FirebaseFirestore.getInstance().collection("Chatting").document(document.id)
-                                    .collection("comment").document().set(chat).addOnSuccessListener { getChattingList() }
-                                if(myUid != seller){
-                                    FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(seller)
-                                        .update("chatting", FieldValue.arrayUnion(document.id))
-                                }
-                                FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(myUid)
-                                    .update("chatting", FieldValue.arrayUnion(document.id))
-                                FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_product)).document(pid)
-                                    .update("chattingRoom", FieldValue.arrayUnion(document.id))
-                                FirebaseFirestore.getInstance().collection("Chatting").document(document.id)
-                                    .update("comment", comment,"registDate", registDate)
-                                token()
-
-
-                            }
-                        }
-                }
-*/
         }else{
             val fileReference: StorageReference = mStorageRef!!.child(chatRoomUid)
                 .child(System.currentTimeMillis().toString() + "." + getFileExtension(imageUri.toString())
@@ -251,15 +195,6 @@ class ChatActivity : AppCompatActivity() {
                     }else{
                         addChatComment(myUid, et_message.text.toString().trim(), chatRoomUid)
                     }
-                    // et_message.text.clear()
-
-/*
-                db.collection(resources.getString(R.string.db_user)).document(myUid)
-                    .update("imgPath", downloadUri.toString(), "name", name)
-                    .addOnSuccessListener {
-                        finish()
-                    }*/
-
 
                 } else {
                     Toast.makeText(

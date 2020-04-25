@@ -164,6 +164,9 @@ class AccountProfileActivity : AppCompatActivity() {
                     db.collection(resources.getString(R.string.db_user)).document(myUid)
                         .update("imgPath", downloadUri.toString(), "name", name)
                         .addOnSuccessListener {
+                            if(!(dbImage.isBlank())){
+                                FirebaseStorage.getInstance().getReferenceFromUrl(dbImage).delete()
+                            }
                             finish()
                         }
 
