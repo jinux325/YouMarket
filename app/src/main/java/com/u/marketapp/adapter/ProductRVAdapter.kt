@@ -54,6 +54,12 @@ class ProductRVAdapter : RecyclerView.Adapter<ProductRVAdapter.ViewHolder>() {
         return items[position]
     }
 
+    // 단일 삭제
+    fun removeItem(position: Int) {
+        items.removeAt(position)
+        notifyDataSetChanged()
+    }
+
     // 데이터 초기화
     fun clear() {
         items.clear()
