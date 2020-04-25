@@ -70,7 +70,8 @@ class SettingActivity : AppCompatActivity() {
     private fun deleteDialog(){
 
 
-        val uid = FirebaseAuth.getInstance().currentUser!!.uid
+        FireStoreUtils().allDeleteProduct(this)
+      /*  val uid = FirebaseAuth.getInstance().currentUser!!.uid
 
         FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(uid).update("status", 0)
             .addOnSuccessListener {
@@ -84,7 +85,6 @@ class SettingActivity : AppCompatActivity() {
 
                     Log.e(" 탈퇴하기 ", "탈퇴하기 2")
 
-                    FireStoreUtils().allDeleteProduct(this)
 
                     FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener {
                         Log.e(" 탈퇴하기 ", "탈퇴하기 3")
@@ -98,7 +98,7 @@ class SettingActivity : AppCompatActivity() {
 
                 }
             }
-
+*/
 
 
 

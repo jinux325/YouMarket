@@ -11,6 +11,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.u.marketapp.R
 import com.u.marketapp.signup.SmsActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class SplashActivity : AppCompatActivity() {
@@ -20,40 +24,45 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        val hd = Handler()
-        hd.postDelayed({
-            val user = FirebaseAuth.getInstance().currentUser
-            if (user != null) {
-                val uid = FirebaseAuth.getInstance().currentUser!!.uid
-                var count = 0
-                FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user))
-                    .get().addOnSuccessListener { result ->
-                        for(document in result){
-                            count++
-                            Log.e("splash ", " $uid  ${document.id}")
-                            Log.e("splash ", " $count  ${result.size()}")
-                            if(uid == document.id){
-                                Log.e("splash ", " 디비에 있음")
-                                val intent = Intent(this@SplashActivity, MainActivity::class.java)
-                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                startActivity(intent)
-                                break
-                            }else if(count == result.size()){
-                                Log.e("splash ", " 디비에 없음")
-                                FirebaseAuth.getInstance().signOut()
-                                val intent = Intent(this@SplashActivity, SmsActivity::class.java)
-                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                startActivity(intent)
-                                break
+        if(intent.getStringExtra("END").isNullOrBlank()){
+            val hd = Handler()
+            hd.postDelayed({
+                val user = FirebaseAuth.getInstance().currentUser
+                if (user != null) {
+                    val uid = FirebaseAuth.getInstance().currentUser!!.uid
+                    var count = 0
+                    FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user))
+                        .get().addOnSuccessListener { result ->
+                            for(document in result){
+                                count++
+                                Log.e("splash ", " $uid  ${document.id}")
+                                Log.e("splash ", " $count  ${result.size()}")
+                                if(uid == document.id){
+                                    Log.e("splash ", " 디비에 있음")
+                                    val intent = Intent(this@SplashActivity, MainActivity::class.java)
+                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    startActivity(intent)
+                                    break
+                                }else if(count == result.size()){
+                                    Log.e("splash ", " 디비에 없음")
+                                    FirebaseAuth.getInstance().signOut()
+                                    val intent = Intent(this@SplashActivity, SmsActivity::class.java)
+                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    startActivity(intent)
+                                    break
+                                }
                             }
                         }
-                    }
-            }else{
-                val intent = Intent(this@SplashActivity, SmsActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-            }
-        }, 1000) // 1초 후 이미지를 닫습니다
+                }else{
+                    val intent = Intent(this@SplashActivity, SmsActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                }
+            }, 1000) // 1초 후 이미지를 닫습니다
+        }else{
+            Log.e(" 탈퇴하기 ", "탈퇴하기 5")
+            finish()
+        }
 
 
 

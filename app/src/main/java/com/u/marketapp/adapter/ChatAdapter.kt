@@ -137,8 +137,10 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
                 if (task.isSuccessful) {
                     val productEntity: ProductEntity? = task.result!!.toObject<ProductEntity>(
                         ProductEntity::class.java)
-                    if (context != null)
-                        if(productEntity?.imageArray!!.isEmpty()){
+
+
+                    if (context != null && productEntity != null)
+                        if(productEntity.imageArray.isNullOrEmpty()){
                             Glide.with(context).load(R.drawable.ic_no_photo).into(holder.pImage)
                         }else{
                             Glide.with(context).load(productEntity.imageArray[0]).into(holder.pImage)

@@ -251,8 +251,10 @@ class SmsActivity : AppCompatActivity() {
                         Log.e(" 탈퇴하기 ", "탈퇴하기 3")
                         FirebaseAuth.getInstance().signOut()
                         Log.e(" 탈퇴하기 ", "탈퇴하기 4")
+
                         val intent = Intent(this, SplashActivity::class.java)
                         intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
+                        intent.putExtra("END","END")
                         startActivity(intent)
                     }
                 }
