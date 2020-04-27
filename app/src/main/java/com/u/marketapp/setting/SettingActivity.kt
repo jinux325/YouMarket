@@ -70,35 +70,39 @@ class SettingActivity : AppCompatActivity() {
     private fun deleteDialog(){
 
 
-        FireStoreUtils().allDeleteProduct(this)
-      /*  val uid = FirebaseAuth.getInstance().currentUser!!.uid
+
+        val uid = FirebaseAuth.getInstance().currentUser!!.uid
 
         FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(uid).update("status", 0)
             .addOnSuccessListener {
                 Log.e(" 탈퇴하기 ", "탈퇴하기 1")
                 // val product = FireStoreUtils()
                 FirebaseFirestore.getInstance().collection("User").document(uid).get().addOnSuccessListener {
+                    Log.e(" 탈퇴하기 ", "탈퇴하기 1-1")
                     val userEntity: UserEntity? = it.toObject<UserEntity>(UserEntity::class.java)
                     if (userEntity != null) {
-                        FirebaseStorage.getInstance().getReferenceFromUrl(userEntity.imgPath).delete()
+                        Log.e(" 탈퇴하기 ", "탈퇴하기 1-2  " + userEntity.imgPath)
+                        FirebaseStorage.getInstance().getReferenceFromUrl(userEntity.imgPath).delete().addOnSuccessListener {
+                            FireStoreUtils().allDeleteProduct(this)
+
+                            Log.e(" 탈퇴하기 ", "탈퇴하기 2")
+
+                            FirebaseAuth.getInstance().currentUser!!.delete().addOnSuccessListener {
+                                Log.e(" 탈퇴하기 ", "탈퇴하기 3")
+                                FirebaseAuth.getInstance().signOut()
+                                Log.e(" 탈퇴하기 ", "탈퇴하기 4")
+                                val intent = Intent(this, SplashActivity::class.java)
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                startActivity(intent)
+                            }
+                        }
                     }
 
-                    Log.e(" 탈퇴하기 ", "탈퇴하기 2")
-
-
-                    FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener {
-                        Log.e(" 탈퇴하기 ", "탈퇴하기 3")
-                        FirebaseAuth.getInstance().signOut()
-                        Log.e(" 탈퇴하기 ", "탈퇴하기 4")
-                        val intent = Intent(this, SplashActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent)
-                    }
 
 
                 }
             }
-*/
+
 
 
 

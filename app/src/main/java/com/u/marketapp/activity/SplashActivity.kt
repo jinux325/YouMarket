@@ -24,7 +24,6 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        if(intent.getStringExtra("END").isNullOrBlank()){
             val hd = Handler()
             hd.postDelayed({
                 val user = FirebaseAuth.getInstance().currentUser
@@ -59,10 +58,6 @@ class SplashActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
             }, 1000) // 1초 후 이미지를 닫습니다
-        }else{
-            Log.e(" 탈퇴하기 ", "탈퇴하기 5")
-            finish()
-        }
 
 
 

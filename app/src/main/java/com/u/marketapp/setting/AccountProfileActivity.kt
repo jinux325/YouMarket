@@ -91,6 +91,7 @@ class AccountProfileActivity : AppCompatActivity() {
                 val name = profile_name.text.toString()
                 if (name.length >= 11) Toast.makeText(this, "10자 이하로 적어주세요.", Toast.LENGTH_LONG).show() else {
                         try {
+                            Toast.makeText(this,"프로필 수정",Toast.LENGTH_SHORT).show()
                             if(name.replace(" ", "").isEmpty()){
                                 update(dbName, profileImage)
                             }else{
