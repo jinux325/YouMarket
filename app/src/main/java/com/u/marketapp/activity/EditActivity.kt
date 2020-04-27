@@ -112,7 +112,6 @@ class EditActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // TODO 특수문자 콤마를 제외한 문자 입력 안되도록!
                 var str = s.toString()
                 Log.i(TAG, "필터 전 : $str")
                 str = str.replace("[^0-9,]".toRegex(), "")
@@ -286,11 +285,14 @@ class EditActivity : AppCompatActivity() {
         item.category = text_view_category.text.toString() // 카테고리
         item.title = edit_text_title.text.toString() // 제목
         item.address = pref.getString(resources.getString(R.string.edit_address), userData.address)?:userData.address
-        if (edit_text_price.text.toString().isNotEmpty()) {
-            item.price = edit_text_price.text.toString().replace(",", "").toInt() // 가격
-        }
         item.suggestion = check_box_suggestion.isChecked // 가격 제안 여부
         item.contents = edit_text_contents.text.toString() // 내용
+        if (edit_text_price.text.toString().isNotEmpty()) {
+            var str = edit_text_price.text.toString()
+            str = str.replace("[^0-9]".toRegex(), "")
+            item.price = str.toInt() // 가격
+//            item.price = edit_text_price.text.toString().replace(",", "").toInt() // 가격
+        }
         return item
     }
 
@@ -306,7 +308,10 @@ class EditActivity : AppCompatActivity() {
         map["modDate"] = Date() // 수정일
         map["status"] = false // 비활성화
         if (edit_text_price.text.toString().isNotEmpty()) {
-            map["price"] = edit_text_price.text.toString().replace(",", "").toInt() // 가격
+            var str = edit_text_price.text.toString()
+            str = str.replace("[^0-9]".toRegex(), "")
+            map["price"] = str.toInt() // 가격
+//            map["price"] = edit_text_price.text.toString().replace(",", "").toInt() // 가격
         }
         return map
     }

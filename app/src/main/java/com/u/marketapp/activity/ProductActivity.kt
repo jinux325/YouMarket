@@ -264,6 +264,9 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         templateArgs["comment"] = productEntity.commentSize.toString()
         templateArgs["lookup"] = productEntity.lookup.size.toString()
         when (productEntity.imageArray.size) {
+            0 -> {
+
+            }
             1 -> {
                 templateArgs["url1"] = productEntity.imageArray[0]
             }
@@ -368,7 +371,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     // 이미지 페이저 정의
     private fun setPagerAdater(array: ArrayList<String>?) {
         if (array != null && array.size > 0) {
-            view_pager.visibility = View.VISIBLE
+            layout_view_pager.visibility = View.VISIBLE
             viewPagerAdapter = ViewPagerAdapter()
             viewPagerAdapter.addImageList(array)
             view_pager.adapter = viewPagerAdapter
@@ -378,7 +381,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         } else {
-            view_pager.visibility = View.GONE
+            layout_view_pager.visibility = View.GONE
         }
     }
 
