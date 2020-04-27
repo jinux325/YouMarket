@@ -314,8 +314,10 @@ class ChatActivity : AppCompatActivity() {
     private fun getChattingList(){
         db.collection("Chatting").document(chatRoomUid).collection("comment").orderBy("registDate")
             .addSnapshotListener{ snapshot, _ ->
+                if(snapshot != null ){
+
                 chattingList= mutableListOf()
-                for (doc in snapshot!!) {
+                for (doc in snapshot) {
                     val chattingVO: ChattingVO = doc.toObject(ChattingVO::class.java)
                     chattingList.add(chattingVO)
                 }
@@ -334,6 +336,7 @@ class ChatActivity : AppCompatActivity() {
                 recyclerView.layoutManager?.startSmoothScroll(smoothScroller)*/
                 //recyclerView.scrollToPosition(20)
 
+                }
             }
     }
 

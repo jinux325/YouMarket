@@ -57,22 +57,26 @@ class FireStoreUtils : AppCompatActivity() {
         db.collection(activity.resources.getString(R.string.db_product)).document(pid)
             .get()
             .addOnSuccessListener { documentSnapshot ->
-                val item = documentSnapshot.toObject(ProductEntity::class.java)!!
-                deleteImage(item.imageArray) // 이미지 제거
-                deleteCommentList(documentSnapshot) // 댓글 제거
-                deleteAttentionHistory(documentSnapshot) // 관심자 관심목록 제거
-                deleteSellList(documentSnapshot) // 사용자 판매목록 제거
-                deleteBuyerHistory(documentSnapshot) // 구매자 구매목록 제거
-                deleteChatRoomList(documentSnapshot) // 채팅방 제거
+                if (documentSnapshot.exists()) {
+                    val item = documentSnapshot.toObject(ProductEntity::class.java)!!
+                    deleteImage(item.imageArray) // 이미지 제거
+                    deleteCommentList(documentSnapshot) // 댓글 제거
+                    deleteAttentionHistory(documentSnapshot) // 관심자 관심목록 제거
+                    deleteSellList(documentSnapshot) // 사용자 판매목록 제거
+                    deleteBuyerHistory(documentSnapshot) // 구매자 구매목록 제거
+                    deleteChatRoomList(documentSnapshot) // 채팅방 제거
 
-                // 실제 상품 제거
-                documentSnapshot.reference
-                    .delete()
-                    .addOnSuccessListener {
-                        Log.i(TAG, "상품 삭제 성공!")
-                    }.addOnFailureListener { e ->
-                        Log.i(TAG, e.toString())
-                    }
+                    // 실제 상품 제거
+                    documentSnapshot.reference
+                        .delete()
+                        .addOnSuccessListener {
+                            Log.i(TAG, "상품 삭제 성공!")
+                        }.addOnFailureListener { e ->
+                            Log.i(TAG, e.toString())
+                        }
+                } else {
+                    Log.i(TAG, "상품 문저 정보 없음!")
+                }
             }.addOnFailureListener { e ->
                 Log.i(TAG, e.toString())
             }
@@ -289,9 +293,10 @@ class FireStoreUtils : AppCompatActivity() {
 
     // 판매자의 판매내역 제거
     private fun deleteSellList(documentSnapshot: DocumentSnapshot) {
+        val item = documentSnapshot.toObject(ProductEntity::class.java)!!
         val db = FirebaseFirestore.getInstance()
         db.collection(activity.resources.getString(R.string.db_user))
-            .document(FirebaseAuth.getInstance().currentUser!!.uid)
+            .document(item.seller)
             .update("salesArray", FieldValue.arrayRemove(documentSnapshot.id))
             .addOnSuccessListener {
                 Log.i(TAG, "판매내역 제거 성공! : ${documentSnapshot.id}")
