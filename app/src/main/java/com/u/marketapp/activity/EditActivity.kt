@@ -112,13 +112,27 @@ class EditActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(!TextUtils.isEmpty(s.toString()) && s.toString() != pointNumStr) {
-                    pointNumStr = makeCommaNumber(s.toString().replace(",","").toLong())
+                // TODO 특수문자 콤마를 제외한 문자 입력 안되도록!
+                var str = s.toString()
+                Log.i(TAG, "필터 전 : $str")
+                str = str.replace("[^0-9,]".toRegex(), "")
+                Log.i(TAG, "필터 후 : $str")
+                if(str.isNotEmpty() && str != pointNumStr) {
+                    pointNumStr = makeCommaNumber(str.replace(",", "").toLong())
                     edit_text_price.setText(pointNumStr)
                     edit_text_price.setSelection(pointNumStr.length)  //커서를 오른쪽 끝으로 보냄
                 }
             }
         })
+        edit_text_price.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                var str = edit_text_price.text.toString()
+                Log.i(TAG, "포커스 아웃 - 필터 전 : $str")
+                str = str.replace("[^0-9,]".toRegex(), "")
+                Log.i(TAG, "포커스 아웃 - 필터 후 : $str")
+                edit_text_price.setText(str)
+            }
+        }
     }
 
     // 콤마 처리
