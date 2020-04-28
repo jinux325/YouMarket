@@ -29,6 +29,11 @@ import com.u.marketapp.utils.BaseApplication
 import gun0912.tedimagepicker.builder.TedImagePicker
 import gun0912.tedimagepicker.builder.type.MediaType
 import kotlinx.android.synthetic.main.activity_edit.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -324,7 +329,7 @@ class EditActivity : AppCompatActivity() {
             if (it.isSuccessful) {
                 Log.i(TAG, "추가된 상품 문서 : ${it.result!!.id}")
                 if (adapter.itemCount > 0) {
-                    saveImage(it.result!!.id)
+                    saveImage1(it.result!!.id)
 
                 } else {
                     updateActiveProduct(it.result!!.id)
@@ -349,7 +354,7 @@ class EditActivity : AppCompatActivity() {
                 if (currentArray.size > 0 || delImageArray.size > 0) {
                     Log.i(TAG, "상품 이미지 수정!!")
                     deleteImage(pid)
-                    saveImage(pid)
+                    saveImage1(pid)
                     BaseApplication.instance.progressOFF()
                     setResult(Activity.RESULT_OK)
                     finish() // 종료
@@ -406,6 +411,41 @@ class EditActivity : AppCompatActivity() {
         } else {
             Log.i(TAG, "새로운 이미지가 없음!!!")
             updateActiveProduct(pid)
+        }
+    }
+
+    // 이미지 저장
+    private fun saveImage1(pid: String) {
+        Log.i(TAG, "새로운 이미지 추가!!")
+        CoroutineScope(Dispatchers.Main).launch {
+            if (currentArray.size > 0) {
+                var count = 0
+                for (uri in currentArray) {
+                    val downloadUrl = saveStorageImage(pid, uri)
+                    if (downloadUrl.isNullOrEmpty()) {
+                        Log.i(TAG, "이미지 저장 실패!")
+                    } else {
+                        Log.i(TAG, "이미지 추가 성공 : $downloadUrl")
+                        updateImage(pid, downloadUrl)
+                        if ((++count) >= currentArray.size) {
+                            updateActiveProduct(pid)
+                        }
+                    }
+                }
+            } else {
+                Log.i(TAG, "새로운 이미지 없음!")
+                updateActiveProduct(pid)
+            }
+        }
+    }
+
+    private suspend fun saveStorageImage(pid: String, uri: Uri) : String? {
+        val storage = FirebaseStorage.getInstance()
+        val dir = "${SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(Date())}/${FirebaseAuth.getInstance().currentUser!!.uid}/${pid}"
+        val fileName = "${System.currentTimeMillis()}.${getFileExtension(uri)}"
+        val ref = storage.getReference(resources.getString(R.string.db_product)).child(dir).child(fileName)
+        return withContext(Dispatchers.IO) {
+            ref.putFile(uri).await().storage.downloadUrl.await().toString()
         }
     }
 
