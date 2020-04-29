@@ -14,6 +14,9 @@ import com.u.marketapp.activity.SplashActivity
 import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.utils.FireStoreUtils
 import kotlinx.android.synthetic.main.activity_setting.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class SettingActivity : AppCompatActivity() {
@@ -84,6 +87,19 @@ class SettingActivity : AppCompatActivity() {
                     FirebaseFirestore.getInstance().collection("User").document(uid).update("status", 0)
                         .addOnSuccessListener {
                             Log.e(" 탈퇴하기 ", "탈퇴하기 3")
+
+                            CoroutineScope(Dispatchers.Main).launch {
+                                val isRemove = FireStoreUtils.instance.getIsAllRemove(this@SettingActivity)
+
+                                if(isRemove){
+                                    Log.e(" @@@ 탈퇴하기 1 @@@@ ", ""+isRemove.toString())
+                                }else{
+                                    Log.e(" @@@ 탈퇴하기 2 @@@@ ", ""+isRemove.toString())
+                                }
+
+                            }
+
+                            Log.e(" 탈퇴하기 ", "탈퇴하기 4")
                            /* FirebaseFirestore.getInstance().collection("User").document(uid).update("status", 1)
                                 .addOnSuccessListener {
 
