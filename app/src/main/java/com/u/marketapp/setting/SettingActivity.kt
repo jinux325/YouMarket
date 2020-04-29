@@ -12,8 +12,12 @@ import com.google.firebase.storage.FirebaseStorage
 import com.u.marketapp.R
 import com.u.marketapp.activity.SplashActivity
 import com.u.marketapp.entity.UserEntity
+import com.u.marketapp.utils.BaseApplication
 import com.u.marketapp.utils.FireStoreUtils
 import kotlinx.android.synthetic.main.activity_setting.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class SettingActivity : AppCompatActivity() {
@@ -78,12 +82,39 @@ class SettingActivity : AppCompatActivity() {
             if (userEntity != null) {
                 Log.e(" 탈퇴하기 ", "탈퇴하기 1-1  " + userEntity.imgPath)
                 FirebaseStorage.getInstance().getReferenceFromUrl(userEntity.imgPath).delete().addOnSuccessListener {
-                    FireStoreUtils().allDeleteProduct(this)
+
+
+//                    FireStoreUtils().allDeleteProduct(this)
 
                     Log.e(" 탈퇴하기 ", "탈퇴하기 2")
                     FirebaseFirestore.getInstance().collection("User").document(uid).update("status", 0)
                         .addOnSuccessListener {
                             Log.e(" 탈퇴하기 ", "탈퇴하기 3")
+
+                            CoroutineScope(Dispatchers.Main).launch {
+                                BaseApplication.instance.progressON(this@SettingActivity, resources.getString(R.string.loading))
+                                val isRemove = FireStoreUtils.instance.getIsAllRemove(this@SettingActivity)
+                                Log.i("SettingActivity", "상품 일괄 제거 : $isRemove")
+                                if (isRemove) {
+                                    Log.i("SettingActivity", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+
+                                    FirebaseAuth.getInstance().currentUser!!.delete().addOnSuccessListener {
+                                        Log.e(" 탈퇴하기 ", "탈퇴하기 4")
+                                        FirebaseAuth.getInstance().signOut()
+                                        Log.e(" 탈퇴하기 ", "탈퇴하기 5")
+                                        BaseApplication.instance.progressOFF()
+                                        val intent = Intent(this@SettingActivity, SplashActivity::class.java)
+                                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                        startActivity(intent)
+                                    }
+
+                                } else {
+                                    Log.i("SettingActivity", "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+                                }
+                            }
+
+
+
                            /* FirebaseFirestore.getInstance().collection("User").document(uid).update("status", 1)
                                 .addOnSuccessListener {
 
