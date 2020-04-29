@@ -1,12 +1,10 @@
 package com.u.marketapp.setting
 
+import android.app.Activity
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -14,9 +12,9 @@ import com.google.firebase.storage.FirebaseStorage
 import com.u.marketapp.R
 import com.u.marketapp.activity.SplashActivity
 import com.u.marketapp.entity.UserEntity
-import com.u.marketapp.signup.SmsActivity
 import com.u.marketapp.utils.FireStoreUtils
 import kotlinx.android.synthetic.main.activity_setting.*
+
 
 class SettingActivity : AppCompatActivity() {
 
@@ -73,34 +71,55 @@ class SettingActivity : AppCompatActivity() {
 
         val uid = FirebaseAuth.getInstance().currentUser!!.uid
 
-        FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(uid).update("status", 0)
-            .addOnSuccessListener {
+        FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(uid).get().addOnSuccessListener {
                 Log.e(" 탈퇴하기 ", "탈퇴하기 1")
                 // val product = FireStoreUtils()
-                FirebaseFirestore.getInstance().collection("User").document(uid).get().addOnSuccessListener {
-                    Log.e(" 탈퇴하기 ", "탈퇴하기 1-1")
-                    val userEntity: UserEntity? = it.toObject<UserEntity>(UserEntity::class.java)
-                    if (userEntity != null) {
-                        Log.e(" 탈퇴하기 ", "탈퇴하기 1-2  " + userEntity.imgPath)
-                        FirebaseStorage.getInstance().getReferenceFromUrl(userEntity.imgPath).delete().addOnSuccessListener {
-                            FireStoreUtils().allDeleteProduct(this)
+            val userEntity: UserEntity? = it.toObject<UserEntity>(UserEntity::class.java)
+            if (userEntity != null) {
+                Log.e(" 탈퇴하기 ", "탈퇴하기 1-1  " + userEntity.imgPath)
+                FirebaseStorage.getInstance().getReferenceFromUrl(userEntity.imgPath).delete().addOnSuccessListener {
+                    FireStoreUtils().allDeleteProduct(this)
 
-                            Log.e(" 탈퇴하기 ", "탈퇴하기 2")
+                    Log.e(" 탈퇴하기 ", "탈퇴하기 2")
+                    FirebaseFirestore.getInstance().collection("User").document(uid).update("status", 0)
+                        .addOnSuccessListener {
+                            Log.e(" 탈퇴하기 ", "탈퇴하기 3")
+                           /* FirebaseFirestore.getInstance().collection("User").document(uid).update("status", 1)
+                                .addOnSuccessListener {
 
-                            FirebaseAuth.getInstance().currentUser!!.delete().addOnSuccessListener {
-                                Log.e(" 탈퇴하기 ", "탈퇴하기 3")
-                                FirebaseAuth.getInstance().signOut()
+                                    Log.e(" 탈퇴하기 ", "탈퇴하기 4")
+                                }*/
+                            /*FirebaseAuth.getInstance().currentUser!!.delete().addOnSuccessListener {
                                 Log.e(" 탈퇴하기 ", "탈퇴하기 4")
+                                FirebaseAuth.getInstance().signOut()
+                                Log.e(" 탈퇴하기 ", "탈퇴하기 5")
                                 val intent = Intent(this, SplashActivity::class.java)
                                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                 startActivity(intent)
-                            }
+                            }*/
+                          /*  val intent = Intent(this, SplashActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)*/
+
+                            /*  FirebaseAuth.getInstance().currentUser!!.delete().addOnSuccessListener {
+                                  Log.e(" 탈퇴하기 ", "탈퇴하기 4")
+                                  FirebaseAuth.getInstance().signOut()
+                                  Log.e(" 탈퇴하기 ", "탈퇴하기 5")
+
+                                   val intent = Intent(activity, SplashActivity::class.java)
+                                  intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
+                                  activity.startActivity(intent)
+
+                              }
+*/
+
                         }
-                    }
-
-
 
                 }
+            }
+
+
+
             }
 
 
@@ -125,9 +144,5 @@ class SettingActivity : AppCompatActivity() {
         dialog.show()
 */
     }
-
-
-
-
 
 }
