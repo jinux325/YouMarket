@@ -16,7 +16,8 @@ import com.u.marketapp.vo.ChatRoomVO
 import com.u.marketapp.vo.ChattingVO
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.async
+import kotlinx.coroutines.tasks.await
 
 @SuppressLint("Registered")
 class FireStoreUtils : AppCompatActivity() {
@@ -29,17 +30,154 @@ class FireStoreUtils : AppCompatActivity() {
     private lateinit var activity: AppCompatActivity
 
     suspend fun getIsAllRemove(activity: AppCompatActivity) : Boolean {
-        withContext(CoroutineScope(Dispatchers.IO).coroutineContext) {
-            allDeleteProduct(activity)
-        }
+        this.activity = activity
+        CoroutineScope(Dispatchers.IO).async {
+            val document = getOwner()
+            if (document.exists()) {
+                val user = document.toObject(UserEntity::class.java)!!
+                if (user.salesArray.size > 0) {
+                    for (sale in user.salesArray) {
+                        val item = getProduct(sale)
+                        if (item.exists()) {
+                            val product = item.toObject(ProductEntity::class.java)!!
+                            removeImage(product.imageArray) // 이미지 제거
+                            removeCommentList(item) // 댓글 제거
+                            removeAttentionHistory(item) // 관심자 관심목록 제거
+                            removeSellList(item) // 사용자 판매목록 제거
+                            removeBuyerHistory(item) // 구매자 구매목록 제거
+                            removeChatRoomList(item)  // 채팅방 제거
+                            removeProduct(sale)
+                        }
+                    }
+                } else {
+                    Log.i(TAG, "판매 내역 정보 없음!")
+                }
+            } else {
+                Log.i(TAG, "유저 문서 정보 없음!")
+            }
+        }.await()
+
         return true
     }
 
-    suspend fun getIsRemove(activity: AppCompatActivity, pid: String) : Boolean {
-        withContext(CoroutineScope(Dispatchers.IO).coroutineContext) {
-            deleteProduct(activity, pid)
+    // 유저 정보 획득
+    suspend fun getOwner() = FirebaseFirestore.getInstance()
+        .collection(activity.resources.getString(R.string.db_user))
+        .document(FirebaseAuth.getInstance().currentUser!!.uid)
+        .get()
+        .await()
+
+    // 상품 정보 획득
+    suspend fun getProduct(pid: String) = FirebaseFirestore.getInstance()
+        .collection(activity.resources.getString(R.string.db_product))
+        .document(pid)
+        .get()
+        .await()
+
+    // 상품 제거
+    suspend fun removeProduct(pid: String) = FirebaseFirestore.getInstance()
+        .collection(activity.resources.getString(R.string.db_product))
+        .document(pid)
+        .delete()
+        .await()
+
+    // 댓글 목록 제거
+    suspend fun removeCommentList(documentSnapshot: DocumentSnapshot) {
+        val item = documentSnapshot.toObject(ProductEntity::class.java)!!
+        if (item.commentSize > 0) { // 댓글 목록 제거
+            val items = documentSnapshot.reference.collection(activity.resources.getString(R.string.db_comment)).get().await()
+            deleteCommentList(items.documents)
         }
-        return true
+    }
+
+    // 관심목록 제거
+    suspend fun removeAttentionHistory(documentSnapshot: DocumentSnapshot) {
+        val db = FirebaseFirestore.getInstance()
+        val item = documentSnapshot.toObject(ProductEntity::class.java)!!
+        if (item.attention.size > 0) {
+            for (uid in item.attention) {
+                db.collection(activity.resources.getString(R.string.db_user))
+                    .document(uid)
+                    .update("attentionArray", FieldValue.arrayRemove(documentSnapshot.id))
+                    .await()
+            }
+        }
+    }
+
+    // 판매자의 판매내역 제거
+    suspend fun removeSellList(documentSnapshot: DocumentSnapshot) {
+        val item = documentSnapshot.toObject(ProductEntity::class.java)!!
+        val db = FirebaseFirestore.getInstance()
+        db.collection(activity.resources.getString(R.string.db_user))
+            .document(item.seller)
+            .update("salesArray", FieldValue.arrayRemove(documentSnapshot.id))
+            .await()
+    }
+
+    // 구매자의 구매목록 제거
+    suspend fun removeBuyerHistory(documentSnapshot: DocumentSnapshot) {
+        val item = documentSnapshot.toObject(ProductEntity::class.java)!!
+        if (item.buyer.isNotEmpty()) {
+            val db = FirebaseFirestore.getInstance()
+            db.collection(activity.resources.getString(R.string.db_user))
+                .document(item.buyer)
+                .update("purchaseArray", FieldValue.arrayRemove(documentSnapshot.id))
+                .await()
+        }
+    }
+
+    // 채팅방 제거
+    suspend fun removeChatRoomList(documentSnapshot: DocumentSnapshot) {
+        val db = FirebaseFirestore.getInstance()
+        val item = documentSnapshot.toObject(ProductEntity::class.java)!!
+        if (item.chattingRoom.size > 0) {
+            for (room in item.chattingRoom) {
+                val roomDoc = db.collection(activity.resources.getString(R.string.db_chatting)).document(room).get().await()
+                val chatRoom = roomDoc.toObject(ChatRoomVO::class.java)
+                chatRoom?.apply {
+                    buyer?.let { removeBuyerChatRoom(it, room) } // 구매 희망자의 채팅방 제거
+                    seller?.let { removeSellerChatRoom(it, room) } // 판매자의 채팅방 제거
+                }
+
+                val chatDoc = roomDoc.reference.collection(activity.resources.getString(R.string.db_chatting_comment)).get().await()
+                // 채팅 내역 제거
+                for (document in chatDoc.documents) {
+                    val url = document.toObject(ChattingVO::class.java)!!.imageMsg
+                    url?.let { if (it.isNotEmpty()) deleteChatImage(it) } // 채팅에 포함된 이미지 (저장소) 삭제
+                    document.reference.delete().await()
+                }
+                // 실제 채팅방 제거
+                roomDoc.reference.delete().await()
+            }
+        }
+    }
+
+    // 구매자들 채팅방 제거
+    suspend fun removeBuyerChatRoom(buyer: String, room: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(activity.resources.getString(R.string.db_user))
+            .document(buyer)
+            .update("chatting", FieldValue.arrayRemove(room))
+            .await()
+    }
+
+    // 판매자 채팅방 제거
+    suspend fun removeSellerChatRoom(seller: String, room: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(activity.resources.getString(R.string.db_user))
+            .document(seller)
+            .update("chatting", FieldValue.arrayRemove(room))
+            .await()
+    }
+
+    // 이미지 삭제
+    suspend fun removeImage(imageArray: List<String>) {
+        val storage = FirebaseStorage.getInstance()
+        if (imageArray.isNotEmpty()) {
+            for (url in imageArray) {
+                storage.getReferenceFromUrl(url).delete().await()
+            }
+        }
     }
 
     // 전체 상품 제거
@@ -258,7 +396,6 @@ class FireStoreUtils : AppCompatActivity() {
 
     // 댓글목록 제거
     private fun deleteCommentList(list: List<DocumentSnapshot>) {
-        var isCheck = false
         for (document in list) {
             val item = document.toObject(CommentEntity::class.java)!!
             if (item.replySize > 0) {
@@ -275,36 +412,25 @@ class FireStoreUtils : AppCompatActivity() {
             document.reference
                 .delete()
                 .addOnSuccessListener {
-                    isCheck = true
+                    Log.i(TAG, "댓글 목록 삭제 성공!")
                 }.addOnFailureListener { e ->
                     Log.i(TAG, e.toString())
-                    isCheck = false
+                    Log.i(TAG, "댓글 목록 삭제 실패!")
                 }
-        }
-        if (isCheck) {
-            Log.i(TAG, "댓글 목록 삭제 성공!")
-        } else {
-            Log.i(TAG, "답글 목록 삭제 실패!")
         }
     }
 
     // 답글목록 제거
     private fun deleteReplyList(list: List<DocumentSnapshot>) {
-        var isCheck = false
         for (document in list) {
             // 답글 삭제
             document.reference.delete()
                 .addOnSuccessListener {
-                    isCheck = true
+                    Log.i(TAG, "답글 목록 삭제 성공!")
                 }.addOnFailureListener { e ->
                     Log.i(TAG, e.toString())
-                    isCheck = false
+                    Log.i(TAG, "답글 목록 삭제 실패!")
                 }
-        }
-        if (isCheck) {
-            Log.i(TAG, "답글 목록 삭제 성공!")
-        } else {
-            Log.i(TAG, "답글 목록 삭제 실패!")
         }
     }
 
