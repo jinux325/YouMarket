@@ -5,7 +5,6 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
@@ -29,6 +28,11 @@ import com.u.marketapp.utils.BaseApplication
 import gun0912.tedimagepicker.builder.TedImagePicker
 import gun0912.tedimagepicker.builder.type.MediaType
 import kotlinx.android.synthetic.main.activity_edit.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -112,13 +116,26 @@ class EditActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(!TextUtils.isEmpty(s.toString()) && s.toString() != pointNumStr) {
-                    pointNumStr = makeCommaNumber(s.toString().replace(",","").toLong())
+                var str = s.toString()
+                Log.i(TAG, "필터 전 : $str")
+                str = str.replace("[^0-9,]".toRegex(), "")
+                Log.i(TAG, "필터 후 : $str")
+                if(str.isNotEmpty() && str != pointNumStr) {
+                    pointNumStr = makeCommaNumber(str.replace(",", "").toLong())
                     edit_text_price.setText(pointNumStr)
                     edit_text_price.setSelection(pointNumStr.length)  //커서를 오른쪽 끝으로 보냄
                 }
             }
         })
+        edit_text_price.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                var str = edit_text_price.text.toString()
+                Log.i(TAG, "포커스 아웃 - 필터 전 : $str")
+                str = str.replace("[^0-9,]".toRegex(), "")
+                Log.i(TAG, "포커스 아웃 - 필터 후 : $str")
+                edit_text_price.setText(str)
+            }
+        }
     }
 
     // 콤마 처리
@@ -272,11 +289,14 @@ class EditActivity : AppCompatActivity() {
         item.category = text_view_category.text.toString() // 카테고리
         item.title = edit_text_title.text.toString() // 제목
         item.address = pref.getString(resources.getString(R.string.edit_address), userData.address)?:userData.address
-        if (edit_text_price.text.toString().isNotEmpty()) {
-            item.price = edit_text_price.text.toString().replace(",", "").toInt() // 가격
-        }
         item.suggestion = check_box_suggestion.isChecked // 가격 제안 여부
         item.contents = edit_text_contents.text.toString() // 내용
+        if (edit_text_price.text.toString().isNotEmpty()) {
+            var str = edit_text_price.text.toString()
+            str = str.replace("[^0-9]".toRegex(), "")
+            item.price = str.toInt() // 가격
+//            item.price = edit_text_price.text.toString().replace(",", "").toInt() // 가격
+        }
         return item
     }
 
@@ -292,7 +312,10 @@ class EditActivity : AppCompatActivity() {
         map["modDate"] = Date() // 수정일
         map["status"] = false // 비활성화
         if (edit_text_price.text.toString().isNotEmpty()) {
-            map["price"] = edit_text_price.text.toString().replace(",", "").toInt() // 가격
+            var str = edit_text_price.text.toString()
+            str = str.replace("[^0-9]".toRegex(), "")
+            map["price"] = str.toInt() // 가격
+//            map["price"] = edit_text_price.text.toString().replace(",", "").toInt() // 가격
         }
         return map
     }
@@ -305,7 +328,7 @@ class EditActivity : AppCompatActivity() {
             if (it.isSuccessful) {
                 Log.i(TAG, "추가된 상품 문서 : ${it.result!!.id}")
                 if (adapter.itemCount > 0) {
-                    saveImage(it.result!!.id)
+                    saveImage1(it.result!!.id)
 
                 } else {
                     updateActiveProduct(it.result!!.id)
@@ -330,7 +353,7 @@ class EditActivity : AppCompatActivity() {
                 if (currentArray.size > 0 || delImageArray.size > 0) {
                     Log.i(TAG, "상품 이미지 수정!!")
                     deleteImage(pid)
-                    saveImage(pid)
+                    saveImage1(pid)
                     BaseApplication.instance.progressOFF()
                     setResult(Activity.RESULT_OK)
                     finish() // 종료
@@ -387,6 +410,41 @@ class EditActivity : AppCompatActivity() {
         } else {
             Log.i(TAG, "새로운 이미지가 없음!!!")
             updateActiveProduct(pid)
+        }
+    }
+
+    // 이미지 저장
+    private fun saveImage1(pid: String) {
+        Log.i(TAG, "새로운 이미지 추가!!")
+        CoroutineScope(Dispatchers.Main).launch {
+            if (currentArray.size > 0) {
+                var count = 0
+                for (uri in currentArray) {
+                    val downloadUrl = saveStorageImage(pid, uri)
+                    if (downloadUrl.isNullOrEmpty()) {
+                        Log.i(TAG, "이미지 저장 실패!")
+                    } else {
+                        Log.i(TAG, "이미지 추가 성공 : $downloadUrl")
+                        updateImage(pid, downloadUrl)
+                        if ((++count) >= currentArray.size) {
+                            updateActiveProduct(pid)
+                        }
+                    }
+                }
+            } else {
+                Log.i(TAG, "새로운 이미지 없음!")
+                updateActiveProduct(pid)
+            }
+        }
+    }
+
+    private suspend fun saveStorageImage(pid: String, uri: Uri) : String? {
+        val storage = FirebaseStorage.getInstance()
+        val dir = "${SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(Date())}/${FirebaseAuth.getInstance().currentUser!!.uid}/${pid}"
+        val fileName = "${System.currentTimeMillis()}.${getFileExtension(uri)}"
+        val ref = storage.getReference(resources.getString(R.string.db_product)).child(dir).child(fileName)
+        return withContext(Dispatchers.IO) {
+            ref.putFile(uri).await().storage.downloadUrl.await().toString()
         }
     }
 

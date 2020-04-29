@@ -183,7 +183,7 @@ class SalesFragment3 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
         activity?.apply {
             menuInflater.apply {
-                inflate(R.menu.context_sales_complete, menu)
+                inflate(R.menu.context_sales_hide, menu)
             }
         }
     }

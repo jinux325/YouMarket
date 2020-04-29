@@ -32,6 +32,9 @@ import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.utils.BaseApplication
 import com.u.marketapp.utils.FireStoreUtils
 import kotlinx.android.synthetic.main.activity_product.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ProductActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -264,6 +267,9 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
         templateArgs["comment"] = productEntity.commentSize.toString()
         templateArgs["lookup"] = productEntity.lookup.size.toString()
         when (productEntity.imageArray.size) {
+            0 -> {
+
+            }
             1 -> {
                 templateArgs["url1"] = productEntity.imageArray[0]
             }
@@ -368,7 +374,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
     // 이미지 페이저 정의
     private fun setPagerAdater(array: ArrayList<String>?) {
         if (array != null && array.size > 0) {
-            view_pager.visibility = View.VISIBLE
+            layout_view_pager.visibility = View.VISIBLE
             viewPagerAdapter = ViewPagerAdapter()
             viewPagerAdapter.addImageList(array)
             view_pager.adapter = viewPagerAdapter
@@ -378,7 +384,7 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         } else {
-            view_pager.visibility = View.GONE
+            layout_view_pager.visibility = View.GONE
         }
     }
 
@@ -505,6 +511,10 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
             .setTitle("거래중인 게시글이 삭제되면 거래 상대방이 당황할 수 있어요. 게시글을 정말 삭제하시겠어요?")
             .setPositiveButton("삭제") { _, _ ->
                 FireStoreUtils.instance.deleteProduct(this, pid)
+//                CoroutineScope(Dispatchers.Main).launch {
+//                    val isRemove = FireStoreUtils.instance.getIsRemove(this@ProductActivity, pid)
+//                    Log.i(TAG, "삭제 유무 : $isRemove")
+//                }
 
                 val intent = Intent()
                 setResult(Activity.RESULT_OK, intent)
