@@ -14,6 +14,9 @@ import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.vo.ChatRoomVO
 import com.u.marketapp.vo.ChattingVO
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @SuppressLint("Registered")
 class FireStoreUtils : AppCompatActivity() {
@@ -24,6 +27,20 @@ class FireStoreUtils : AppCompatActivity() {
     }
 
     private lateinit var activity: AppCompatActivity
+
+    suspend fun getIsAllRemove(activity: AppCompatActivity) : Boolean {
+        withContext(CoroutineScope(Dispatchers.IO).coroutineContext) {
+            allDeleteProduct(activity)
+        }
+        return true
+    }
+
+    suspend fun getIsRemove(activity: AppCompatActivity, pid: String) : Boolean {
+        withContext(CoroutineScope(Dispatchers.IO).coroutineContext) {
+            deleteProduct(activity, pid)
+        }
+        return true
+    }
 
     // 전체 상품 제거
     fun allDeleteProduct(activity: AppCompatActivity) {

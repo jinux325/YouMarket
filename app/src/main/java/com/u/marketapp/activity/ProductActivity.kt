@@ -32,6 +32,9 @@ import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.utils.BaseApplication
 import com.u.marketapp.utils.FireStoreUtils
 import kotlinx.android.synthetic.main.activity_product.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ProductActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -508,6 +511,10 @@ class ProductActivity : AppCompatActivity(), View.OnClickListener {
             .setTitle("거래중인 게시글이 삭제되면 거래 상대방이 당황할 수 있어요. 게시글을 정말 삭제하시겠어요?")
             .setPositiveButton("삭제") { _, _ ->
                 FireStoreUtils.instance.deleteProduct(this, pid)
+//                CoroutineScope(Dispatchers.Main).launch {
+//                    val isRemove = FireStoreUtils.instance.getIsRemove(this@ProductActivity, pid)
+//                    Log.i(TAG, "삭제 유무 : $isRemove")
+//                }
 
                 val intent = Intent()
                 setResult(Activity.RESULT_OK, intent)
