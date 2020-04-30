@@ -25,6 +25,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.u.marketapp.activity.MainActivity
 import com.u.marketapp.R
+import com.u.marketapp.utils.BaseApplication
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.android.synthetic.main.activity_profile.*
 import java.util.*
@@ -101,6 +102,7 @@ class ProfileActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.join -> {
+                BaseApplication.instance.progressON(this@ProfileActivity, resources.getString(R.string.loading))
                 val name = profile_name.text.toString()
                 when {
                     name.replace(" ", "").isEmpty() -> {
@@ -205,6 +207,7 @@ class ProfileActivity : AppCompatActivity() {
                 edit.putString("log", "IN")
                 edit.apply()
 
+                BaseApplication.instance.progressOFF()
                 startActivity(intent)
 
             } else {

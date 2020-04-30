@@ -29,7 +29,9 @@ class MailActivity : AppCompatActivity() {
                         "registDate" to registDate
                     )
                     FirebaseFirestore.getInstance().collection("Email").document()
-                        .set(email).addOnSuccessListener { et_message.text = null }
+                        .set(email).addOnSuccessListener {
+                            et_message.text = null
+                        }
 
                 }
             }

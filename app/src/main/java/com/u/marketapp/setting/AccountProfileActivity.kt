@@ -22,6 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.u.marketapp.R
+import com.u.marketapp.utils.BaseApplication
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.android.synthetic.main.activity_profile.*
 
@@ -88,6 +89,8 @@ class AccountProfileActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.join -> {
+
+                BaseApplication.instance.progressON(this@AccountProfileActivity, resources.getString(R.string.loading))
                 val name = profile_name.text.toString()
                 if (name.length >= 11) Toast.makeText(this, "10자 이하로 적어주세요.", Toast.LENGTH_LONG).show() else {
                         try {
@@ -168,6 +171,8 @@ class AccountProfileActivity : AppCompatActivity() {
                             if(!(dbImage.isBlank())){
                                 FirebaseStorage.getInstance().getReferenceFromUrl(dbImage).delete()
                             }
+
+                            BaseApplication.instance.progressOFF()
                             finish()
                         }
 

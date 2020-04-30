@@ -11,10 +11,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.u.marketapp.R
 import com.u.marketapp.signup.SmsActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.u.marketapp.utils.BaseApplication
+import kotlinx.coroutines.*
 
 
 class SplashActivity : AppCompatActivity() {
