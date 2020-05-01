@@ -11,7 +11,6 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
@@ -20,7 +19,6 @@ import com.u.marketapp.R
 import com.u.marketapp.adapter.PurchaseHistoryRVAdapter
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
-import com.u.marketapp.utils.FireStoreUtils
 import kotlinx.android.synthetic.main.activity_purchase_history.*
 
 class PurchaseHistoryActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {

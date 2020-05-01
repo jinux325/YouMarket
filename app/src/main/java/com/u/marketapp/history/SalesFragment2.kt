@@ -1,6 +1,5 @@
 package com.u.marketapp.history
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -22,7 +21,7 @@ import com.u.marketapp.activity.ProductActivity
 import com.u.marketapp.adapter.CompleteHistoryRVAdapter
 import com.u.marketapp.entity.ProductEntity
 import com.u.marketapp.entity.UserEntity
-import com.u.marketapp.utils.FireStoreUtils
+import com.u.marketapp.utils.FirebaseUtils
 import kotlinx.android.synthetic.main.fragment_history.view.*
 
 class SalesFragment2 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
@@ -344,7 +343,7 @@ class SalesFragment2 : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     private fun showPopupForDelete() {
         MaterialAlertDialogBuilder(context)
             .setTitle("거래중인 게시글이 삭제되면 거래 상대방이 당황할 수 있어요. 게시글을 정말 삭제하시겠어요?")
-            .setPositiveButton("확인") { _, _ -> FireStoreUtils.instance.deleteProduct((context as AppCompatActivity), adapterSales.getItem(selectPosition).id) }
+            .setPositiveButton("확인") { _, _ -> FirebaseUtils.instance.deleteProduct((context as AppCompatActivity), adapterSales.getItem(selectPosition).id) }
             .setNegativeButton("취소", null)
             .show()
     }
