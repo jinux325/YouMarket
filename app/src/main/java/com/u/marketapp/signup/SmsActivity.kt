@@ -235,15 +235,11 @@ class SmsActivity : AppCompatActivity() {
                             FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(uid).delete()
                                 .addOnSuccessListener {
                                     FirebaseAuth.getInstance().currentUser!!.delete().addOnSuccessListener {
-
-
-                                            FirebaseAuth.getInstance().signOut()
-                                            Log.e("userDelete() "," 삭제 4 ")
-                                            BaseApplication.instance.progressOFF()
-                                            Log.e("userDelete() "," 삭제 5 ")
-                                            val intent = Intent(this@SmsActivity, SplashActivity::class.java)
-                                            intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
-                                            startActivity(intent)
+                                        FirebaseAuth.getInstance().signOut()
+                                        BaseApplication.instance.progressOFF()
+                                        val intent = Intent(this@SmsActivity, SplashActivity::class.java)
+                                        intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
+                                        startActivity(intent)
 
                                        // FirebaseAuth.getInstance().signOut()
                                       /*  Log.e("userDelete() "," 삭제 1 ")

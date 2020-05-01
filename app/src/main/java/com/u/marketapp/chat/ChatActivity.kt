@@ -55,7 +55,12 @@ class ChatActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         val intentItems = intent
-        tv_partner_nickname.text = intentItems.getStringExtra("name")
+        if(intentItems.getStringExtra("name") != null ){
+            tv_partner_nickname.text = intentItems.getStringExtra("name")
+        }else{
+            tv_partner_nickname.text = "알 수 없음"
+        }
+       // tv_partner_nickname.text = intentItems.getStringExtra("name")
 
         myData()
 

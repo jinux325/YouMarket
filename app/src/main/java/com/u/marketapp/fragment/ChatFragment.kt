@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -15,6 +16,10 @@ import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.vo.ChatRoomVO
 import kotlinx.android.synthetic.main.fragment_account.*
 import kotlinx.android.synthetic.main.fragment_chat.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -30,6 +35,17 @@ class ChatFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         (activity as MainActivity?)!!.setSupportActionBar(account_toolbar)
+/*
+
+        swipe.setOnRefreshListener{
+            chattingRoomList.clear()
+            chattingRoomUidList.clear()
+            userData()
+
+            swipe.isRefreshing= false
+        }
+*/
+
     }
 
     override fun onResume() {
