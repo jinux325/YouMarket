@@ -119,12 +119,17 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
         if(uid != ""){
             db.collection(context!!.resources.getString(R.string.db_user)).document(uid).get()
                 .addOnCompleteListener{ task ->
-                    if (task.isSuccessful) {
+                    if (task.isSuccessful) {Log.e("sss ", "111 ")
                         val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
                         //name = userEntity?.name.toString()
                         Log.d("getName 1231 231 2  ", userEntity?.name+"    image:   "+ userEntity?.imgPath)
                         holder.nickname.text = userEntity?.name
                         Glide.with(context).load(userEntity?.imgPath)
+                            .apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.image)
+                    }else{
+                        if (task.isSuccessful) {Log.e("sss ", "111 ")
+                        holder.nickname.text = "알 수 없음"
+                        Glide.with(context).load(R.drawable.ic_profile)
                             .apply(RequestOptions.bitmapTransform(CircleCrop())).into(holder.image)
                     }
                 }

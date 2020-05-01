@@ -46,11 +46,10 @@ class ChatFragment : Fragment() {
         Log.e("ChatFragment ", "userData")
         val uid = FirebaseAuth.getInstance().currentUser!!.uid
 
-        Log.e("ChatFragment ", "userData 2 "+uid)
         FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(uid).get()
             .addOnSuccessListener { documentSnapshot ->
                     val userEntity: UserEntity? = documentSnapshot.toObject<UserEntity>(UserEntity::class.java)
-                Log.e("ChatFragment ", "userData 1 "+userEntity?.chatting)
+                Log.e("ChatFragment ", "userData "+userEntity?.chatting)
                     if(userEntity?.chatting != null){
                         Log.e("ChatFragment ", "userData 2 ")
                         for(i in userEntity.chatting){

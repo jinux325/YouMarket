@@ -494,6 +494,9 @@ class ChatActivity : AppCompatActivity() {
         db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).get()
             .addOnSuccessListener { document ->
                 val chatRoomVO: ChatRoomVO? = document.toObject(ChatRoomVO::class.java)
+                if (chatRoomVO != null) {
+                    pid = chatRoomVO.pid!!
+                }
                 if(myUid == chatRoomVO?.buyer){
                     when {
                         myUid == chatRoomVO.seller -> {
@@ -509,10 +512,10 @@ class ChatActivity : AppCompatActivity() {
                                         .addOnSuccessListener { result ->
                                             for(documents in result){
                                                 documents.reference.delete().addOnSuccessListener {
+                                                    productChattingListDel()
                                                     db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).delete().addOnSuccessListener {
                                                         finish()
                                                     }
-                                                    productChattingListDel()
                                                     // storageImageDel()
                                                 }
 
@@ -551,10 +554,10 @@ class ChatActivity : AppCompatActivity() {
                                         .addOnSuccessListener { result ->
                                             for(documents in result){
                                                 documents.reference.delete().addOnSuccessListener {
+                                                    productChattingListDel()
                                                     db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).delete().addOnSuccessListener {
                                                         finish()
                                                     }
-                                                    productChattingListDel()
                                                     // storageImageDel()
                                                 }
 
@@ -585,10 +588,10 @@ class ChatActivity : AppCompatActivity() {
                                     .addOnSuccessListener { result ->
                                         for(documents in result){
                                             documents.reference.delete().addOnSuccessListener {
+                                                productChattingListDel()
                                                 db.collection(resources.getString(R.string.db_chatting)).document(chatRoomUid).delete().addOnSuccessListener {
                                                     finish()
                                                 }
-                                                productChattingListDel()
                                                 // storageImageDel()
                                             }
 
