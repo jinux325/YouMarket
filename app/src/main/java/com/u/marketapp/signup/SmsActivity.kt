@@ -22,7 +22,7 @@ import com.u.marketapp.R
 import com.u.marketapp.activity.SplashActivity
 import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.utils.BaseApplication
-import com.u.marketapp.utils.FireStoreUtils
+import com.u.marketapp.utils.FirebaseUtils
 import kotlinx.android.synthetic.main.activity_sms.*
 import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
@@ -230,7 +230,7 @@ class SmsActivity : AppCompatActivity() {
             if (userEntity != null) {
                 FirebaseStorage.getInstance().getReferenceFromUrl(userEntity.imgPath).delete().addOnSuccessListener {
                     CoroutineScope(Dispatchers.Main).launch {
-                        val isRemove = FireStoreUtils.instance.getIsAllRemove(this@SmsActivity)
+                        val isRemove = FirebaseUtils.instance.getIsAllRemove(this@SmsActivity)
                             if (isRemove) {
                             FirebaseFirestore.getInstance().collection(resources.getString(R.string.db_user)).document(uid).delete()
                                 .addOnSuccessListener {

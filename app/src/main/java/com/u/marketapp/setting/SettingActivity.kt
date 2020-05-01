@@ -1,6 +1,5 @@
 package com.u.marketapp.setting
 
-import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -9,18 +8,10 @@ import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import com.u.marketapp.R
 import com.u.marketapp.activity.SplashActivity
-import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.signup.SmsActivity
-import com.u.marketapp.utils.BaseApplication
-import com.u.marketapp.utils.FireStoreUtils
 import kotlinx.android.synthetic.main.activity_setting.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 class SettingActivity : AppCompatActivity() {

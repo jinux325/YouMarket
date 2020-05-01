@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -18,13 +19,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.await
+import java.lang.Exception
 
 @SuppressLint("Registered")
-class FireStoreUtils : AppCompatActivity() {
+class FirebaseUtils : AppCompatActivity() {
 
     companion object {
-        private val TAG = FireStoreUtils::class.java.simpleName
-        val instance = FireStoreUtils()
+        private val TAG = FirebaseUtils::class.java.simpleName
+        val instance = FirebaseUtils()
     }
 
     private lateinit var activity: AppCompatActivity
@@ -40,13 +42,21 @@ class FireStoreUtils : AppCompatActivity() {
                         val item = getProduct(sale)
                         if (item.exists()) {
                             val product = item.toObject(ProductEntity::class.java)!!
+                            Log.i(TAG, "전체 데이터 삭제 준비 완료")
                             removeImage(product.imageArray) // 이미지 제거
+                            Log.i(TAG, "이미지 제거 완료")
                             removeCommentList(item) // 댓글 제거
+                            Log.i(TAG, "댓글 제거 완료")
                             removeAttentionHistory(item) // 관심자 관심목록 제거
+                            Log.i(TAG, "관심대상의 관심목록 제거 완료")
                             removeSellList(item) // 사용자 판매목록 제거
+                            Log.i(TAG, "사용자의 판매목록 제거 완료")
                             removeBuyerHistory(item) // 구매자 구매목록 제거
+                            Log.i(TAG, "구매자의 구매목록 제거 완료")
                             removeChatRoomList(item)  // 채팅방 제거
+                            Log.i(TAG, "채팅방 제거 완료")
                             removeProduct(sale)
+                            Log.i(TAG, "상품 제거 완료")
                         }
                     }
                 } else {
@@ -78,51 +88,26 @@ class FireStoreUtils : AppCompatActivity() {
     suspend fun removeProduct(pid: String) = FirebaseFirestore.getInstance()
         .collection(activity.resources.getString(R.string.db_product))
         .document(pid)
-        .delete()
-        .await()
+        .get()
+        .addOnSuccessListener {
+          if (it.exists()) {
+              it.reference.delete()
+                  .addOnSuccessListener {
+                      Log.i(TAG, "상품 제거 완료!!")
+                  }.addOnFailureListener { e ->
+                      Log.i(TAG, e.toString())
+                  }
+          }
+        }.addOnFailureListener { e ->
+            Log.i(TAG, e.toString())
+        }.await()
 
     // 댓글 목록 제거
     suspend fun removeCommentList(documentSnapshot: DocumentSnapshot) {
         val item = documentSnapshot.toObject(ProductEntity::class.java)!!
         if (item.commentSize > 0) { // 댓글 목록 제거
             val items = documentSnapshot.reference.collection(activity.resources.getString(R.string.db_comment)).get().await()
-            deleteCommentList(items.documents)
-        }
-    }
-
-    // 관심목록 제거
-    suspend fun removeAttentionHistory(documentSnapshot: DocumentSnapshot) {
-        val db = FirebaseFirestore.getInstance()
-        val item = documentSnapshot.toObject(ProductEntity::class.java)!!
-        if (item.attention.size > 0) {
-            for (uid in item.attention) {
-                db.collection(activity.resources.getString(R.string.db_user))
-                    .document(uid)
-                    .update("attentionArray", FieldValue.arrayRemove(documentSnapshot.id))
-                    .await()
-            }
-        }
-    }
-
-    // 판매자의 판매내역 제거
-    suspend fun removeSellList(documentSnapshot: DocumentSnapshot) {
-        val item = documentSnapshot.toObject(ProductEntity::class.java)!!
-        val db = FirebaseFirestore.getInstance()
-        db.collection(activity.resources.getString(R.string.db_user))
-            .document(item.seller)
-            .update("salesArray", FieldValue.arrayRemove(documentSnapshot.id))
-            .await()
-    }
-
-    // 구매자의 구매목록 제거
-    suspend fun removeBuyerHistory(documentSnapshot: DocumentSnapshot) {
-        val item = documentSnapshot.toObject(ProductEntity::class.java)!!
-        if (item.buyer.isNotEmpty()) {
-            val db = FirebaseFirestore.getInstance()
-            db.collection(activity.resources.getString(R.string.db_user))
-                .document(item.buyer)
-                .update("purchaseArray", FieldValue.arrayRemove(documentSnapshot.id))
-                .await()
+            removeCommentList(items.documents)
         }
     }
 
@@ -144,11 +129,110 @@ class FireStoreUtils : AppCompatActivity() {
                 for (document in chatDoc.documents) {
                     val url = document.toObject(ChattingVO::class.java)!!.imageMsg
                     url?.let { if (it.isNotEmpty()) deleteChatImage(it) } // 채팅에 포함된 이미지 (저장소) 삭제
-                    document.reference.delete().await()
+                    document.reference.get()
+                        .addOnSuccessListener {
+                            if (it.exists()) {
+                                it.reference.delete()
+                                    .addOnSuccessListener {
+                                        Log.i(TAG, "채팅 내역 제거 완료!!")
+                                    }.addOnFailureListener { e ->
+                                        Log.i(TAG, e.toString())
+                                    }
+                            }
+                        }.addOnFailureListener { e ->
+                            Log.i(TAG, e.toString())
+                        }.await()
                 }
                 // 실제 채팅방 제거
-                roomDoc.reference.delete().await()
+                roomDoc.reference.get()
+                    .addOnSuccessListener {
+                        if (it.exists()) {
+                            it.reference.delete()
+                                .addOnSuccessListener {
+                                    Log.i(TAG, "채팅방 제거 완료!!")
+                                }.addOnFailureListener { e ->
+                                    Log.i(TAG, e.toString())
+                                }
+                        }
+                    }.addOnFailureListener { e ->
+                        Log.i(TAG, e.toString())
+                    }.await()
             }
+        }
+    }
+
+    // 관심목록 제거
+    suspend fun removeAttentionHistory(documentSnapshot: DocumentSnapshot) {
+        val db = FirebaseFirestore.getInstance()
+        val item = documentSnapshot.toObject(ProductEntity::class.java)!!
+        if (item.attention.size > 0) {
+            for (uid in item.attention) {
+                db.collection(activity.resources.getString(R.string.db_user))
+                    .document(uid)
+                    .get()
+                    .addOnSuccessListener {
+                        if (it.exists()) {
+                            it.reference.update("attentionArray", FieldValue.arrayRemove(documentSnapshot.id))
+                                .addOnSuccessListener {
+                                    Log.i(TAG, "관심자 관심목록 제거 완료!!")
+                                }.addOnFailureListener { e ->
+                                    Log.i(TAG, e.toString())
+                                }
+                        } else {
+                            Log.i(TAG, "유저 문서 정보 없음!")
+                        }
+                    }.addOnFailureListener { e ->
+                        Log.i(TAG, e.toString())
+                    }.await()
+            }
+        }
+    }
+
+    // 판매자의 판매내역 제거
+    suspend fun removeSellList(documentSnapshot: DocumentSnapshot) {
+        val item = documentSnapshot.toObject(ProductEntity::class.java)!!
+        val db = FirebaseFirestore.getInstance()
+        db.collection(activity.resources.getString(R.string.db_user))
+            .document(item.seller)
+            .get()
+            .addOnSuccessListener {
+                if (it.exists()) {
+                    it.reference.update("salesArray", FieldValue.arrayRemove(documentSnapshot.id))
+                        .addOnSuccessListener {
+                            Log.i(TAG, "판매자 판매내역 제거 완료!!")
+                        }.addOnFailureListener { e ->
+                            Log.i(TAG, e.toString())
+                        }
+                } else {
+                    Log.i(TAG, "유저 문서 정보 없음!")
+                }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }.await()
+    }
+
+    // 구매자의 구매목록 제거
+    suspend fun removeBuyerHistory(documentSnapshot: DocumentSnapshot) {
+        val item = documentSnapshot.toObject(ProductEntity::class.java)!!
+        if (item.buyer.isNotEmpty()) {
+            val db = FirebaseFirestore.getInstance()
+            db.collection(activity.resources.getString(R.string.db_user))
+                .document(item.buyer)
+                .get()
+                .addOnSuccessListener {
+                    if (it.exists()) {
+                        it.reference.update("purchaseArray", FieldValue.arrayRemove(documentSnapshot.id))
+                            .addOnSuccessListener {
+                                Log.i(TAG, "구매자 구매목록 제거 완료!!")
+                            }.addOnFailureListener { e ->
+                                Log.i(TAG, e.toString())
+                            }
+                    } else {
+                        Log.i(TAG, "유저 문서 정보 없음!")
+                    }
+                }.addOnFailureListener { e ->
+                    Log.i(TAG, e.toString())
+                }.await()
         }
     }
 
@@ -157,8 +241,21 @@ class FireStoreUtils : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         db.collection(activity.resources.getString(R.string.db_user))
             .document(buyer)
-            .update("chatting", FieldValue.arrayRemove(room))
-            .await()
+            .get()
+            .addOnSuccessListener {
+                if (it.exists()) {
+                    it.reference.update("chatting", FieldValue.arrayRemove(room))
+                        .addOnSuccessListener {
+                            Log.i(TAG, "구매자 채팅방 제거 완료!!")
+                        }.addOnFailureListener { e ->
+                            Log.i(TAG, e.toString())
+                        }
+                } else {
+                    Log.i(TAG, "구매자 문서 정보 없음!")
+                }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }.await()
     }
 
     // 판매자 채팅방 제거
@@ -166,8 +263,21 @@ class FireStoreUtils : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         db.collection(activity.resources.getString(R.string.db_user))
             .document(seller)
-            .update("chatting", FieldValue.arrayRemove(room))
-            .await()
+            .get()
+            .addOnSuccessListener {
+                if (it.exists()) {
+                    it.reference.update("chatting", FieldValue.arrayRemove(room))
+                        .addOnSuccessListener {
+                            Log.i(TAG, "판매자 채팅방 제거 완료!!")
+                        }.addOnFailureListener { e ->
+                            Log.i(TAG, e.toString())
+                        }
+                } else {
+                    Log.i(TAG, "판매자 문서 정보 없음!")
+                }
+            }.addOnFailureListener { e ->
+                Log.i(TAG, e.toString())
+            }.await()
     }
 
     // 이미지 삭제
@@ -175,7 +285,18 @@ class FireStoreUtils : AppCompatActivity() {
         val storage = FirebaseStorage.getInstance()
         if (imageArray.isNotEmpty()) {
             for (url in imageArray) {
-                storage.getReferenceFromUrl(url).delete().await()
+                try {
+                    storage.getReferenceFromUrl(url)
+                        .delete()
+                        .addOnSuccessListener {
+                            Log.i(TAG, "이미지 제거 완료!!")
+                        }.addOnFailureListener { e ->
+                            Log.i(TAG, "이미지 파일이 존재하지 않음!")
+                            Log.i(TAG, e.toString())
+                        }.await()
+                } catch (e: Exception) {
+                    Log.i(TAG, e.toString())
+                }
             }
         }
     }
@@ -277,6 +398,54 @@ class FireStoreUtils : AppCompatActivity() {
                 }
         }
     }
+
+    // 댓글목록 제거
+    suspend fun removeCommentList(list: List<DocumentSnapshot>) {
+        for (document in list) {
+            if (document.exists()) {
+                val item = document.toObject(CommentEntity::class.java)!!
+                if (item.replySize > 0) {
+                    val replyQuery = getReplyQuery(document.reference)
+                    // 답글 삭제
+                    removeReplyList(replyQuery.documents)
+                }
+                // 댓글 삭제
+                document.reference
+                    .delete()
+                    .addOnSuccessListener {
+                        Log.i(TAG, "댓글 목록 삭제 성공!")
+                    }.addOnFailureListener { e ->
+                        Log.i(TAG, e.toString())
+                        Log.i(TAG, "댓글 목록 삭제 실패!")
+                    }.await()
+            } else {
+                Log.i(TAG, "댓글 문서 정보 없음")
+            }
+        }
+    }
+
+    // 답글목록 제거
+    suspend fun removeReplyList(list: List<DocumentSnapshot>) {
+        for (document in list) {
+            // 답글 삭제
+            if (document.exists()) {
+                document.reference.delete()
+                    .addOnSuccessListener {
+                        Log.i(TAG, "답글 목록 삭제 성공!!")
+                    }.addOnFailureListener { e ->
+                        Log.i(TAG, e.toString())
+                    }.await()
+            } else {
+                Log.i(TAG, "답글 문서 정보 없음")
+            }
+        }
+    }
+
+    // 판매자 채팅방 제거
+    suspend fun getReplyQuery(reference: DocumentReference) = reference
+        .collection(activity.resources.getString(R.string.db_reply))
+        .get()
+        .await()
 
     // 구매자의 구매목록 제거
     private fun deleteBuyerHistory(documentSnapshot: DocumentSnapshot) {
