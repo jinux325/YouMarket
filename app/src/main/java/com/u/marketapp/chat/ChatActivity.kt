@@ -1,6 +1,8 @@
 package com.u.marketapp.chat
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -55,12 +57,15 @@ class ChatActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         val intentItems = intent
-        if(intentItems.getStringExtra("name") != null ){
+     /*   Log.e(" Chatting ", " |${intentItems.getStringExtra("name")}|")
+        if(intentItems.getStringExtra("name").isNotBlank()){
+            Log.e(" Chatting ", " null x")
             tv_partner_nickname.text = intentItems.getStringExtra("name")
         }else{
+            Log.e(" Chatting ", " null ")
             tv_partner_nickname.text = "알 수 없음"
-        }
-       // tv_partner_nickname.text = intentItems.getStringExtra("name")
+        }*/
+        tv_partner_nickname.text = intentItems.getStringExtra("name")
 
         myData()
 
@@ -111,32 +116,9 @@ class ChatActivity : AppCompatActivity() {
                 return true
             }
             R.id.delete_chatting -> {
-                if(chatRoomUid == ""){
-                    // 채팅방 아직 없음
-                    finish()
-                }else{
-                    // 채팅방 나가기
-                    val arr : MutableList<String> = myData.chatting
-                    for(i in 0 until arr.size){
-                        if(arr[i] == chatRoomUid){
-                            arr.removeAt(i)
-                            break
-                        }
-                    }
-                    val delete = hashMapOf<String, Any>(
-                        "chatting" to arr
-                    )
 
-                    db.collection(resources.getString(R.string.db_user)).document(myUid)
-                        .update(delete).addOnSuccessListener {
-                            storageImageDel()
-                           // chattingMyUidDel()
-                            Toast.makeText(applicationContext, "채팅 나가기", Toast.LENGTH_LONG).show()
-                        }
+               return chatDel(chatRoomUid, myUid)
 
-                }
-
-                return true
             }
             else -> {
                 Toast.makeText(applicationContext, "나머지 버튼 클릭됨", Toast.LENGTH_LONG).show()
@@ -612,6 +594,45 @@ class ChatActivity : AppCompatActivity() {
 
                 }
             }
+    }
+    private fun chatDel(chatRoomUid:String, myUid:String):Boolean{
+        val dialog = AlertDialog.Builder(this)
+        dialog.setMessage("정말 나가시겠습니까?").setCancelable(false)
+        val dialogListener = object: DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, p1: Int) {
+                when(p1){
+                    DialogInterface.BUTTON_POSITIVE ->
+                        if(chatRoomUid == ""){
+                            // 채팅방 아직 없음
+                            finish()
+                        }else{
+                            // 채팅방 나가기
+                            val arr : MutableList<String> = myData.chatting
+                            for(i in 0 until arr.size){
+                                if(arr[i] == chatRoomUid){
+                                    arr.removeAt(i)
+                                    break
+                                }
+                            }
+                            val delete = hashMapOf<String, Any>(
+                                "chatting" to arr
+                            )
+
+                            db.collection(resources.getString(R.string.db_user)).document(myUid)
+                                .update(delete).addOnSuccessListener {
+                                    storageImageDel()
+                                    // chattingMyUidDel()
+                                    Toast.makeText(applicationContext, "채팅 나가기", Toast.LENGTH_LONG).show()
+                                }
+                        }
+                }
+            }
+        }
+        dialog.setPositiveButton("확인",dialogListener)
+        dialog.setNegativeButton("취소",dialogListener)
+        dialog.show()
+
+        return true
     }
 
 

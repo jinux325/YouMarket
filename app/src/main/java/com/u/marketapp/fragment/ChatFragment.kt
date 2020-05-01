@@ -16,10 +16,7 @@ import com.u.marketapp.entity.UserEntity
 import com.u.marketapp.vo.ChatRoomVO
 import kotlinx.android.synthetic.main.fragment_account.*
 import kotlinx.android.synthetic.main.fragment_chat.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.*
 
 
@@ -35,16 +32,17 @@ class ChatFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         (activity as MainActivity?)!!.setSupportActionBar(account_toolbar)
-/*
+
 
         swipe.setOnRefreshListener{
-            chattingRoomList.clear()
-            chattingRoomUidList.clear()
-            userData()
+            CoroutineScope(Dispatchers.Main).launch{
+                chattingRoomList.clear()
+                chattingRoomUidList.clear()
+                userData()
+            }
 
-            swipe.isRefreshing= false
         }
-*/
+
 
     }
 
@@ -121,6 +119,8 @@ class ChatFragment : Fragment() {
                                 Log.e(" chattingRoomList ", "for 문 list  firebase if  if  ${list.size}   ${chattingRoomUidList.size}")
                                 chat_recyclerView.layoutManager = LinearLayoutManager(context)
                                 chat_recyclerView.adapter = ChatAdapter(context, chattingRoomList)
+
+                                swipe.isRefreshing= false
                             }
                         }
                     }

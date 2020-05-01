@@ -116,6 +116,7 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
     }
 
     private fun getName(uid:String, holder:ViewHolder){
+        Log.e(" getName ", " $uid")
         if(uid != ""){
             db.collection(context!!.resources.getString(R.string.db_user)).document(uid).get()
                 .addOnSuccessListener{ documentSnapshot ->
@@ -157,12 +158,18 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
     private fun chattingIntent(uid:String, chatRoomUid:String, pid:String){
         if(uid != ""){
         db.collection(context!!.resources.getString(R.string.db_user)).document(uid).get()
-            .addOnCompleteListener{ task ->
-                if (task.isSuccessful) {
-                    val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
+            .addOnSuccessListener{ documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val userEntity: UserEntity? = documentSnapshot.toObject<UserEntity>(UserEntity::class.java)
                     val intent = Intent(context, ChatActivity::class.java)
                     intent.putExtra("chatRoomUid", chatRoomUid)
                     intent.putExtra("name", userEntity?.name.toString())
+                    intent.putExtra("chatPid", pid)
+                    context.startActivity(intent)
+                }else{
+                    val intent = Intent(context, ChatActivity::class.java)
+                    intent.putExtra("chatRoomUid", chatRoomUid)
+                    intent.putExtra("name", "알 수 없음")
                     intent.putExtra("chatPid", pid)
                     context.startActivity(intent)
                 }
