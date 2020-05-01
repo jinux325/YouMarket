@@ -35,6 +35,7 @@ class ChatFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         (activity as MainActivity?)!!.setSupportActionBar(account_toolbar)
+/*
 
         swipe.setOnRefreshListener{
             chattingRoomList.clear()
@@ -43,6 +44,7 @@ class ChatFragment : Fragment() {
 
             swipe.isRefreshing= false
         }
+*/
 
     }
 
