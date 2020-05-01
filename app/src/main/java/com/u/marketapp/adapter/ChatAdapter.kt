@@ -118,9 +118,9 @@ class ChatAdapter(val context: Context?, private val chatList: MutableList<ChatR
     private fun getName(uid:String, holder:ViewHolder){
         if(uid != ""){
             db.collection(context!!.resources.getString(R.string.db_user)).document(uid).get()
-                .addOnCompleteListener{ task ->
-                    if (task.isSuccessful) {
-                        val userEntity: UserEntity? = task.result!!.toObject<UserEntity>(UserEntity::class.java)
+                .addOnSuccessListener{ documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val userEntity: UserEntity? = documentSnapshot.toObject<UserEntity>(UserEntity::class.java)
                         //name = userEntity?.name.toString()
                         Log.d("getName 1231 231 2  ", userEntity?.name+"    image:   "+ userEntity?.imgPath)
                         holder.nickname.text = userEntity?.name
