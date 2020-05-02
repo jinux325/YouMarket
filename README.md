@@ -1,8 +1,7 @@
 # YouMarket
 
 ## 전체영상
-[![image](https://user-images.githubusercontent.com/39791769/80787836-90f34600-8bc2-11ea-97bb-bf9d44201aa5.png)]
-(https://youtu.be/-qJ-hwq-FVE)
+[![image](https://user-images.githubusercontent.com/39791769/80787836-90f34600-8bc2-11ea-97bb-bf9d44201aa5.png)](https://youtu.be/-qJ-hwq-FVE)
 
 ## 회원가입
 [![image](https://user-images.githubusercontent.com/39791769/80787836-90f34600-8bc2-11ea-97bb-bf9d44201aa5.png)](https://youtu.be/91CZh9mdrcc)
