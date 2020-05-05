@@ -125,7 +125,7 @@ class SmsActivity : AppCompatActivity() {
             //Toast.makeText(this@SmsActivity, p0.message, Toast.LENGTH_LONG).show()
             when (p0) {
                 is FirebaseAuthInvalidCredentialsException -> {
-                    Toast.makeText(this@SmsActivity, " error ", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@SmsActivity, " CredentialsException ", Toast.LENGTH_LONG).show()
                 }
                 is FirebaseTooManyRequestsException -> {
                     Toast.makeText(this@SmsActivity, " 인증 많이함. 나중에 다시 해주세요. ", Toast.LENGTH_LONG).show()
