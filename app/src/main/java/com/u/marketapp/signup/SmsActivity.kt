@@ -50,7 +50,7 @@ class SmsActivity : AppCompatActivity() {
         }
         verifyButton.setOnClickListener {
             BaseApplication.instance.progressON(this@SmsActivity, resources.getString(R.string.loading))
-            Toast.makeText(this,"잠시만 기다려 주세요.", Toast.LENGTH_LONG).show()
+            //Toast.makeText(this,"잠시만 기다려 주세요.", Toast.LENGTH_LONG).show()
             verifySignIn()
         }
 
@@ -67,14 +67,10 @@ class SmsActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val uid = FirebaseAuth.getInstance().currentUser!!.uid
-
-                    Log.e(" 탈퇴하기 ", " signInWithPhoneAuthCredential  4  " + intent.getStringExtra("delete"))
                     //val intentItems = intent
                     if(intent.getStringExtra("delete")!=null){
-                        Log.e(" 탈퇴하기 ", " signInWithPhoneAuthCredential 5  ")
                         userDelete()
                     }else{
-                        Log.e(" 탈퇴하기 ", " signInWithPhoneAuthCredential 6  ")
                         userExist(uid)
                     }
 
@@ -198,14 +194,11 @@ class SmsActivity : AppCompatActivity() {
                 count++
                 if(document.id == uid){
                     // 로그인
-                    Log.d("유저 확인", "true  로그인")
-
                     userData()
 
                     break
                 }else if(count ==  result.size()){
                     BaseApplication.instance.progressOFF()
-                    Log.d("유저 확인", "false  가입")
                     val intent = Intent(this, AddressActivity::class.java)
                     intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
                     intent.putExtra("phoneNumber", phone)
